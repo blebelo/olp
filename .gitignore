@@ -9,4 +9,4 @@ aspnet-core/src/OnlineLearningPlatform.Web.Mvc/App_Data/Logs/
 aspnet-core/src/OnlineLearningPlatform.Migrator/Logs/Logs.txt
 aspnet-core/build/outputs/
 aspnet-core/docker/mvc/Mvc-Logs/
-
+front-end/node_modules/
