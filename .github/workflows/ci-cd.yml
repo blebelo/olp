@@ -73,7 +73,7 @@ jobs:
   
       - name: Build Docker image
         run: |
-          docker build -t olp:latest -f ./app/Dockerfile ./app
+          docker build -t olp:latest -f .
   
       - name: Verify Docker image
         run: |
