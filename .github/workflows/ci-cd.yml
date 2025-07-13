@@ -74,6 +74,7 @@ jobs:
   
       - name: Build Docker image
         run: |
+          cd aspnet-core
           docker build -f Dockerfile -t olp:latest .
   
       - name: Verify Docker image
