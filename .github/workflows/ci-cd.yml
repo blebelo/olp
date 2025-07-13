@@ -50,9 +50,10 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore aspnet-core/OnlineLearningPlatform.sln
   
-      - name: Run Tests with Code Coverage
+      - name: Run tests
         run: |
           (cd aspnet-core && dotnet test --verbosity normal)
+
           
   deploy:
     name: Deploy Stage
@@ -73,7 +74,7 @@ jobs:
   
       - name: Build Docker image
         run: |
-          docker build -t olp:latest -f ./Dockerfile .
+          docker build -f Dockerfile -t olp:latest .
   
       - name: Verify Docker image
         run: |
