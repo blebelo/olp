@@ -49,14 +49,11 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore aspnet-core/OnlineLearningPlatform.sln
-
-      - name: Build
-        run: dotnet build --no-restore --configuration Release aspnet-core/OnlineLearningPlatform.sln
   
       - name: Run Tests with Code Coverage
         run: |
-          (cd aspnet-core/test/OnlineLearningPlatform.Tests && dotnet test --no-build --verbosity normal)
-          (cd aspnet-core/test/OnlineLearningPlatform.Web.Tests && dotnet test --no-build --verbosity normal)
+          (cd aspnet-core/test/OnlineLearningPlatform.Tests && dotnet test --verbosity normal)
+          (cd aspnet-core/test/OnlineLearningPlatform.Web.Tests && dotnet test --verbosity normal)
 
 
   deploy:
