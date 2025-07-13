@@ -20,13 +20,13 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Restore dependencies
-        run: dotnet restore OnlineLearningPlatform.sln
+        run: dotnet restore aspnet-core/OnlineLearningPlatform.sln
 
       - name: Build
-        run: dotnet build --no-restore --configuration Release OnlineLearningPlatform.sln
+        run: dotnet build --no-restore --configuration Release aspnet-core/OnlineLearningPlatform.sln
 
       - name: Publish
-        run: dotnet publish OnlineLearningPlatform.sln --no-build --configuration Release --output ./publish
+        run: dotnet publish aspnet-core/OnlineLearningPlatform.sln --no-build --configuration Release --output ./publish
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -48,13 +48,13 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Restore dependencies
-        run: dotnet restore OnlineLearningPlatform.sln
+        run: dotnet restore aspnet-core/OnlineLearningPlatform.sln
 
       - name: Build
-        run: dotnet build --no-restore --configuration Release OnlineLearningPlatform.sln
+        run: dotnet build --no-restore --configuration Release aspnet-core/OnlineLearningPlatform.sln
 
       - name: Run Tests
-        run: dotnet test --no-build --verbosity normal OnlineLearningPlatform.sln
+        run: dotnet test --no-build --verbosity normal aspnet-core/OnlineLearningPlatform.sln
 
   deploy:
     name: Deploy Stage
