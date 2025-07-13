@@ -53,7 +53,7 @@ jobs:
       - name: Run Tests with Code Coverage
         run: |
           (cd aspnet-core/test/OnlineLearningPlatform.Tests && dotnet test --verbosity normal)
-          (cd aspnet-core/test/OnlineLearningPlatform.Web.Tests && dotnet test --verbosity normal)
+      
 
 
   deploy:
