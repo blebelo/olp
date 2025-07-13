@@ -55,8 +55,8 @@ jobs:
   
       - name: Run Tests with Code Coverage
         run: |
-          (cd aspnet-core/test/OnlineLearningPlatform.Tests && dotnet test --no-build --verbosity normal --collect:"Code Coverage")
-          (cd aspnet-core/test/OnlineLearningPlatform.Web.Tests && dotnet test --no-build --verbosity normal --collect:"Code Coverage")
+          (cd aspnet-core/test/OnlineLearningPlatform.Tests && dotnet test --no-build --verbosity normal)
+          (cd aspnet-core/test/OnlineLearningPlatform.Web.Tests && dotnet test --no-build --verbosity normal)
 
 
   deploy:
