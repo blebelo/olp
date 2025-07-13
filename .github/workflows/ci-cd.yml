@@ -54,7 +54,10 @@ jobs:
         run: dotnet build --no-restore --configuration Release aspnet-core/OnlineLearningPlatform.sln
 
       - name: Run Tests
-        run: dotnet test --no-build --verbosity normal aspnet-core/OnlineLearningPlatform.sln
+        run: | 
+          dotnet test --no-build --verbosity normal aspnet-core/test/OnlineLearningPlatform.Tests/OnlineLearningPlatform.Tests.csproj
+          dotnet test --no-build --verbosity normal aspnet-core/test/OnlineLearningPlatform.Web.Tests/OnlineLearningPlatform.Web.Tests.csproj
+
 
   deploy:
     name: Deploy Stage
