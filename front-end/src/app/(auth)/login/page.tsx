@@ -3,11 +3,11 @@ import React from "react";
 import type { FormProps } from "antd";
 import { Button, Form, Input, Typography } from 'antd';
 import { useStyles } from "./Style/style";
-import { UserOutlined, MailOutlined, LockOutlined } from "@ant-design/icons";
+import { MailOutlined, LockOutlined } from "@ant-design/icons";
 // import Image from "next/image";
 import Link from "next/link";
 
-const StudentSignUp: React.FC = () => {
+const Login: React.FC = () => {
 
     const {styles} = useStyles();
 
@@ -53,15 +53,8 @@ const StudentSignUp: React.FC = () => {
                     height={50}
                     priority
                 /> */}
-                <Typography className={styles.Typography}>Student Sign Up</Typography>
+                <Typography className={styles.Typography}>Login</Typography>
                 <div className={styles.FormItems}>
-                    <Form.Item<IUser>
-                        name="name"
-                        rules={[{ required: true, message: 'Please input your Name' }]}
-                    >
-                        <Input placeholder="Name" className={styles.Input} prefix={<UserOutlined/>} />
-                    </Form.Item>
-
                     <Form.Item<IUser>
                         name="email"
                         rules={[{ required: true, message: 'Please input your email' }]}
@@ -74,21 +67,15 @@ const StudentSignUp: React.FC = () => {
                     >
                         <Input.Password placeholder="Password" className={styles.Input} prefix={<LockOutlined />} />
                     </Form.Item>
-                    <Form.Item<IUser>
-                        name="confirmPassword"
-                        rules={[{ required: true, message: 'Please confirm password!' }]}
-                    >
-                        <Input.Password placeholder="Confirm Password" className={styles.Input} prefix={<LockOutlined />} />
-                    </Form.Item>
                 </div>
 
                 <Form.Item>
                     <Button type="primary" htmlType="submit" className={styles.Submit}>
-                        Sign Up
+                        Login
                     </Button>
                 </Form.Item>
-                <Link href={'login'}>
-                    <Typography className={styles.Text}>Already have an account? Login</Typography>
+                <Link href={'student-signup'}>
+                    <Typography className={styles.Text}>Dont have an account? Signup</Typography>
                 </Link>
             </Form>
         </div>
@@ -97,4 +84,4 @@ const StudentSignUp: React.FC = () => {
     )
 }
 
-export default StudentSignUp;
+export default Login;
