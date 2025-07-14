@@ -3,6 +3,7 @@ using Abp.Zero.EntityFrameworkCore;
 using OnlineLearningPlatform.Authorization.Roles;
 using OnlineLearningPlatform.Authorization.Users;
 using OnlineLearningPlatform.MultiTenancy;
+using OnlineLearningPlatform.Domain.Students;
 
 namespace OnlineLearningPlatform.EntityFrameworkCore
 {
@@ -14,5 +15,6 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
             : base(options)
         {
         }
+        public DbSet<Student> Students { get; set; }
     }
 }
