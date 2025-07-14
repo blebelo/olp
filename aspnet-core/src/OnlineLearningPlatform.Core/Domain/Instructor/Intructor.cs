@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using OnlineLearningPlatform.Domain.Person;
 
-namespace OnlineLearningPlatform.Domain.Person
+namespace OnlineLearningPlatform.Domain.Instructor
 {
-    public class Intructor: Person
+    public class Intructor
     {
-      public int Id { get; set; }
+      public Guid instutorId { get; set; }
+
     }
 }
