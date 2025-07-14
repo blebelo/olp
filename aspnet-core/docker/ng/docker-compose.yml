@@ -3,22 +3,22 @@ version: '3'
 services:
 
   abp_host:
+    build:
+      context: ../../
+      dockerfile: Dockerfile  
     image: abp/host
     environment:
-      ASPNETCORE_ENVIRONMENT: "Staging"
-      ConnectionStrings__Default: "Server=10.0.75.1; Database=OnlineLearningPlatformDb; User=OnlineLearningPlatformUser; Password=YourStrongPassword;TrustServerCertificate=True;"
-      App__ServerRootAddress: "http://localhost:44311/"
-      App__ClientRootAddress: "http://localhost:4200/"
-      App__CorsOrigins: "http://localhost:4200"
-      TZ: "America/Toronto"
-      Kestrel__Endpoints__Http__Url: "http://+:80"
+      - PORT=80
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - CONNECTION_STRING=Username=postgres; Password=NeZAxqllaJenrOiKmRKLOELmhiBfZNOI; Host=yamabiko.proxy.rlwy.net; Port=56579; Database=railwaySSL Mode=Require;Trust Server Certificate=true;
+      - App__ServerRootAddress=http://localhost:44311/
+      - App__ClientRootAddress=http://localhost:4200/
+      - App__CorsOrigins=http://localhost:4200
+      - TZ=America/Toronto
+      - Kestrel__Endpoints__Http__Url=http://+:80
     ports:
       - "44311:80"
     volumes:
       - "./Host-Logs:/app/App_Data/Logs"
+      - "../../dataProtectionKeys:/root/.aspnet/DataProtection-Keys"
     restart: always
-
-  abp_ng:
-    image: abp/ng
-    ports:
-      - "4200:80"
