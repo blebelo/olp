@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineLearningPlatform.Authorization.Roles;
 using OnlineLearningPlatform.Authorization.Users;
+using OnlineLearningPlatform.Domain.Person;
+using OnlineLearningPlatform.Domain.Students;
 using OnlineLearningPlatform.MultiTenancy;
 using System;
 using System.Linq;
@@ -17,7 +19,7 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
             : base(options)
         {
         }
-
+        public DbSet<Student> Students { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

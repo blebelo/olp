@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace OnlineLearningPlatform.Domain.Person
 {
 
-    public class Person : FullAuditedEntity<Guid>
+    public class Persons : FullAuditedEntity<Guid>
     {
        public long UserId { get; set; }
         [ForeignKey("UserId")]
