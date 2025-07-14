@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OnlineLearningPlatform.Domain.Person;
 
-namespace OnlineLearningPlatform.Domain.Instructor
+namespace OnlineLearningPlatform.Domain.Entities
 {
     public class Intructor
     {

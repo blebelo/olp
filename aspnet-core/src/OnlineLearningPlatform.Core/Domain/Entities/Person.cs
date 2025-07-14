@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnlineLearningPlatform.Domain.Person
+namespace OnlineLearningPlatform.Domain.Entities
 {
 
     public class Person : FullAuditedEntity<Guid>
