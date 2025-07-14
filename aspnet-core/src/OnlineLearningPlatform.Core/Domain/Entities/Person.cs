@@ -1,4 +1,5 @@
-﻿using Abp.Domain.Entities.Auditing;
+﻿using Abp.Domain.Entities;
+using Abp.Domain.Entities.Auditing;
 using OnlineLearningPlatform.Authorization.Users;
 using System;
 using System.Collections.Generic;
@@ -7,15 +8,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnlineLearningPlatform.Domain.Person
+namespace OnlineLearningPlatform.Domain.Persons
 {
 
     public class Person : FullAuditedEntity<Guid>
     {
-       public long UserId { get; set; }
+        public long UserId { get; set; }
+
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
-
 
     }
 }
