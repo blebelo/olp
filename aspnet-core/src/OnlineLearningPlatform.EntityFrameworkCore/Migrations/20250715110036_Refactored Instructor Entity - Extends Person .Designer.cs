@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OnlineLearningPlatform.EntityFrameworkCore;
@@ -11,9 +12,11 @@ using OnlineLearningPlatform.EntityFrameworkCore;
 namespace OnlineLearningPlatform.Migrations
 {
     [DbContext(typeof(OnlineLearningPlatformDbContext))]
-    partial class OnlineLearningPlatformDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250715110036_Refactored Instructor Entity - Extends Person ")]
+    partial class RefactoredInstructorEntityExtendsPerson
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1656,6 +1659,9 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -1668,7 +1674,13 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<string>("Password")
+                        .HasColumnType("text");
+
                     b.Property<string>("Profession")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Role")
                         .HasColumnType("text");
 
                     b.Property<string>("Surname")

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OnlineLearningPlatform.EntityFrameworkCore;
@@ -11,9 +12,11 @@ using OnlineLearningPlatform.EntityFrameworkCore;
 namespace OnlineLearningPlatform.Migrations
 {
     [DbContext(typeof(OnlineLearningPlatformDbContext))]
-    partial class OnlineLearningPlatformDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250715103504_Refactored Instructor Entity")]
+    partial class RefactoredInstructorEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1604,6 +1607,9 @@ namespace OnlineLearningPlatform.Migrations
                     b.PrimitiveCollection<string[]>("EnrolledStudents")
                         .HasColumnType("text[]");
 
+                    b.Property<string>("Instructor")
+                        .HasColumnType("text");
+
                     b.Property<Guid?>("InstructorId")
                         .HasColumnType("uuid");
 
@@ -1641,45 +1647,10 @@ namespace OnlineLearningPlatform.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Bio")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("CreatorUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("DeleterUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("LastModifierUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
                     b.Property<string>("Profession")
                         .HasColumnType("text");
 
-                    b.Property<string>("Surname")
-                        .HasColumnType("text");
-
-                    b.Property<long?>("UserAccountId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserAccountId");
 
                     b.ToTable("Instructors");
                 });
@@ -1968,20 +1939,9 @@ namespace OnlineLearningPlatform.Migrations
 
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Entities.Course", b =>
                 {
-                    b.HasOne("OnlineLearningPlatform.Domain.Entities.Instructor", "Instructor")
+                    b.HasOne("OnlineLearningPlatform.Domain.Entities.Instructor", null)
                         .WithMany("CoursesCreated")
                         .HasForeignKey("InstructorId");
-
-                    b.Navigation("Instructor");
-                });
-
-            modelBuilder.Entity("OnlineLearningPlatform.Domain.Entities.Instructor", b =>
-                {
-                    b.HasOne("OnlineLearningPlatform.Authorization.Users.User", "UserAccount")
-                        .WithMany()
-                        .HasForeignKey("UserAccountId");
-
-                    b.Navigation("UserAccount");
                 });
 
             modelBuilder.Entity("OnlineLearningPlatform.MultiTenancy.Tenant", b =>
