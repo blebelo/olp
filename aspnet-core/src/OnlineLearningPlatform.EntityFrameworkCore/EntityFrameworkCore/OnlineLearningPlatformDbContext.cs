@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineLearningPlatform.Authorization.Roles;
 using OnlineLearningPlatform.Authorization.Users;
+using OnlineLearningPlatform.Domain.Entities;
 using OnlineLearningPlatform.MultiTenancy;
 using System;
 using System.Linq;
@@ -12,7 +13,9 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
     public class OnlineLearningPlatformDbContext : AbpZeroDbContext<Tenant, Role, User, OnlineLearningPlatformDbContext>
     {
         /* Define a DbSet for each entity of the application */
-        
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<Instructor> Instructors { get; set; }
+
         public OnlineLearningPlatformDbContext(DbContextOptions<OnlineLearningPlatformDbContext> options)
             : base(options)
         {
@@ -23,8 +26,8 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
             base.OnModelCreating(modelBuilder);
 
             var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
-                v => v.ToUniversalTime(),           // Convert to UTC when saving
-                v => DateTime.SpecifyKind(v, DateTimeKind.Utc)); // Specify UTC kind when reading
+                v => v.ToUniversalTime(),
+                v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
