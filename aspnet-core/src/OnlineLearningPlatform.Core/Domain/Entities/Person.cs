@@ -16,7 +16,9 @@ namespace OnlineLearningPlatform.Domain.Entities
         [NotMapped]
         public string Password { get; set; }
         public string Bio { get; set; }
+        public long UserId { get; set; }
 
-        public virtual User UserAccount { get; set; }
+        [ForeignKey("UserId")]
+        public virtual User User { get; set; }
     }
 }

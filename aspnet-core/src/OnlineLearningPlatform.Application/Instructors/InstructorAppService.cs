@@ -15,37 +15,86 @@ namespace OnlineLearningPlatform.Instructors
 {
     public class InstructorAppService : AsyncCrudAppService<Instructor, CreateInstructorDto, Guid>
     {
-        private readonly IRepository<User, long> _userRepository;
+       
         private readonly IRepository<Instructor, Guid> _instructorRepository;
         private readonly UserManager _userManager;
-        private readonly RoleManager _roleManager;
         private readonly ILogger<InstructorAppService> _logger;
-        private readonly InstructorManager _instructorManager;
 
         public InstructorAppService(
             IRepository<Instructor, Guid> repository,
             IRepository<User, long> userRepository,
             UserManager userManager,
             RoleManager roleManager,
-            ILogger<InstructorAppService> logger,
-            InstructorManager instructorManager
+            ILogger<InstructorAppService> logger
             )
             : base(repository)
         {
             _instructorRepository = repository;
             _userManager = userManager;
-            _userRepository = userRepository;
-            _roleManager = roleManager;
             _logger = logger;
-            _instructorManager = instructorManager;
         }
 
         public override async Task<CreateInstructorDto> CreateAsync(CreateInstructorDto input)
         {
-            var createUserResult = await _instructorManager.CreateInstructorAsync(input.UserName, input.Name, input.Surname,input.Email, input.Password, input.Bio, input.Profession);
-        
+                       _logger.LogInformation("Starting instructor creation for username: {UserName}", input.UserName);
+
+                        var newUser = new User
+                      {
+                        UserName = input.UserName,
+                            Name = input.Name,
+                          Surname = input.Surname,
+                           EmailAddress = input.Email,
+                            IsActive = true,
+                           IsEmailConfirmed = true,
+                      };
+                       newUser.SetNormalizedNames();
+            
+
+             //Create the user
+            var createUserResult = await _userManager.CreateAsync(newUser, input.Password);
+            if (!createUserResult.Succeeded)
+            {
+               var errorMsg = string.Join(", ", createUserResult.Errors.Select(e => e.Description));
+
+                throw new UserFriendlyException("User creation failed: " + errorMsg);
+            }
+
+            //var createUserResult = await _instructorManager.CreateInstructorAsync(input.UserName, input.Name, input.Surname, input.Email, input.Password, input.Bio, input.Profession);
 
 
+
+
+
+            // Assign the Instructor role
+             var roleResult = await _userManager.AddToRoleAsync(newUser, "Instructor");
+             if (!roleResult.Succeeded)
+             {
+                 var errorMsg = string.Join(", ", roleResult.Errors.Select(e => e.Description));
+                 throw new UserFriendlyException("Role assignment failed: " + errorMsg);
+             }
+
+
+
+
+
+
+             // Check if instructor already exists for new user
+             var existingInstructor = await _instructorRepository.FirstOrDefaultAsync(x => x.UserId == newUser.Id);
+             if (existingInstructor != null)
+             {
+                 throw new UserFriendlyException("An instructor record already exists for this user.");
+             }
+
+             var instructor = new Instructor
+             {
+                 Name = input.Name,
+                 Surname = input.Surname,
+                 Bio = input.Bio,
+                 Profession = input.Profession,
+                 User = newUser
+             };
+ 
+            await _instructorRepository.InsertAsync(instructor);
 
 
 

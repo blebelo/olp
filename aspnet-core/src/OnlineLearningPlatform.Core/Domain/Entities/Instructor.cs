@@ -6,8 +6,6 @@ namespace OnlineLearningPlatform.Domain.Entities
 {
     public class Instructor : Person
     {
-
-        //public virtual User User { get; set; }
         public string Profession { get; set; }
         public virtual ICollection<Course> CoursesCreated { get; set; }
 

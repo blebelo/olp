@@ -1677,18 +1677,12 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<string>("Surname")
                         .HasColumnType("text");
 
-                    b.Property<long?>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("UserId1")
+                    b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Instructors");
                 });
@@ -1986,18 +1980,13 @@ namespace OnlineLearningPlatform.Migrations
 
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Entities.Instructor", b =>
                 {
-                    b.HasOne("OnlineLearningPlatform.Authorization.Users.User", "UserAccount")
-                        .WithOne()
-                        .HasForeignKey("OnlineLearningPlatform.Domain.Entities.Instructor", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("OnlineLearningPlatform.Authorization.Users.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
-
-                    b.Navigation("UserAccount");
                 });
 
             modelBuilder.Entity("OnlineLearningPlatform.MultiTenancy.Tenant", b =>

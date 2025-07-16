@@ -12,8 +12,8 @@ using OnlineLearningPlatform.EntityFrameworkCore;
 namespace OnlineLearningPlatform.Migrations
 {
     [DbContext(typeof(OnlineLearningPlatformDbContext))]
-    [Migration("20250715145923_addedRole")]
-    partial class addedRole
+    [Migration("20250716205738_test")]
+    partial class test
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1659,6 +1659,9 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -1677,12 +1680,12 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<string>("Surname")
                         .HasColumnType("text");
 
-                    b.Property<long?>("UserAccountId")
+                    b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserAccountId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Instructors");
                 });
@@ -1980,11 +1983,13 @@ namespace OnlineLearningPlatform.Migrations
 
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Entities.Instructor", b =>
                 {
-                    b.HasOne("OnlineLearningPlatform.Authorization.Users.User", "UserAccount")
+                    b.HasOne("OnlineLearningPlatform.Authorization.Users.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserAccountId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("UserAccount");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("OnlineLearningPlatform.MultiTenancy.Tenant", b =>
