@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OnlineLearningPlatform.EntityFrameworkCore;
@@ -11,9 +12,11 @@ using OnlineLearningPlatform.EntityFrameworkCore;
 namespace OnlineLearningPlatform.Migrations
 {
     [DbContext(typeof(OnlineLearningPlatformDbContext))]
-    partial class OnlineLearningPlatformDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250716041432_updated")]
+    partial class updated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1656,9 +1659,6 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("text");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -1677,18 +1677,13 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<string>("Surname")
                         .HasColumnType("text");
 
-                    b.Property<long?>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("UserId1")
+                    b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId")
                         .IsUnique();
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("Instructors");
                 });
@@ -1989,13 +1984,8 @@ namespace OnlineLearningPlatform.Migrations
                     b.HasOne("OnlineLearningPlatform.Authorization.Users.User", "UserAccount")
                         .WithOne()
                         .HasForeignKey("OnlineLearningPlatform.Domain.Entities.Instructor", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("OnlineLearningPlatform.Authorization.Users.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId1");
-
-                    b.Navigation("User");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("UserAccount");
                 });
