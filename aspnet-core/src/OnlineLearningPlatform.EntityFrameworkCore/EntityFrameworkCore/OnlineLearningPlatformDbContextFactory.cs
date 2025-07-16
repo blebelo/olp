@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using OnlineLearningPlatform.Configuration;
 using OnlineLearningPlatform.Web;
-using System;
 
 namespace OnlineLearningPlatform.EntityFrameworkCore
 {
@@ -12,24 +11,17 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
     {
         public OnlineLearningPlatformDbContext CreateDbContext(string[] args)
         {
-            var currentEnv = DotNetEnv.Env.Load(".env"); 
-
             var builder = new DbContextOptionsBuilder<OnlineLearningPlatformDbContext>();
 
-            var connection = new Npgsql.NpgsqlConnectionStringBuilder
-            {
-                Host = Environment.GetEnvironmentVariable("PGHOST"),
-                Port = int.Parse(Environment.GetEnvironmentVariable("PGPORT") ?? "5432"),
-                Username = Environment.GetEnvironmentVariable("PGUSER"),
-                Password = Environment.GetEnvironmentVariable("PGPASSWORD"),
-                Database = Environment.GetEnvironmentVariable("PGDATABASE")
-            };
-
-            var connectionString = connection.ConnectionString;
-
+            /*
+             You can provide an environmentName parameter to the AppConfigurations.Get method. 
+             In this case, AppConfigurations will try to read appsettings.{environmentName}.json.
+             Use Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") method or from string[] args to get environment if necessary.
+             https://docs.microsoft.com/en-us/ef/core/cli/dbcontext-creation?tabs=dotnet-core-cli#args
+             */
             var configuration = AppConfigurations.Get(WebContentDirectoryFinder.CalculateContentRootFolder());
 
-            OnlineLearningPlatformDbContextConfigurer.Configure(builder, connectionString);
+            OnlineLearningPlatformDbContextConfigurer.Configure(builder, configuration.GetConnectionString(OnlineLearningPlatformConsts.ConnectionStringName));
 
             return new OnlineLearningPlatformDbContext(builder.Options);
         }
