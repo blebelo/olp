@@ -11,7 +11,6 @@ namespace OnlineLearningPlatform.Instructors
 {
     public class InstructorAppService : AsyncCrudAppService<Instructor, CreateInstructorDto, Guid>
     {
-
         private readonly IRepository<Instructor, Guid> _instructorRepository;
         private readonly UserManager _userManager;
         public InstructorAppService(
@@ -34,19 +33,16 @@ namespace OnlineLearningPlatform.Instructors
                 EmailAddress = input.Email,
                 IsActive = true
             };
+            Logger.Info($"Creating new user: {newUser.UserName} with email: {newUser.EmailAddress}");
 
             var createUserResult = await _userManager.CreateAsync(newUser, input.Password);
             if (!createUserResult.Succeeded)
             {
+                Logger.Error($"Failed to create user: {newUser.UserName}. Errors: {string.Join(", ", createUserResult.Errors)}");
                 throw new UserFriendlyException("User creation failed: " + string.Join(", ", createUserResult.Errors));
             }
 
-
-            /*
-             * 
-             * HUGE BUG
-            //await _userManager.AddToRoleAsync(newUser, "Instructor");
-            */
+            Logger.Info($"User created successfully: {newUser.UserName}");
             var instructor = new Instructor
             {
                 Name = input.Name,
@@ -58,8 +54,10 @@ namespace OnlineLearningPlatform.Instructors
                 Profession = input.Profession,
                 UserAccount = newUser
             };
+            Logger.Info($"Creating instructor: {instructor.Name} {instructor.Surname} with profession: {instructor.Profession}");
 
             await _instructorRepository.InsertAsync(instructor);
+            Logger.Info($"Instructor created successfully: {instructor.Name} {instructor.Surname}");
 
             return input;
         }

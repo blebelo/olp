@@ -12,8 +12,8 @@ using OnlineLearningPlatform.EntityFrameworkCore;
 namespace OnlineLearningPlatform.Migrations
 {
     [DbContext(typeof(OnlineLearningPlatformDbContext))]
-    [Migration("20250715074336_Added Course Entity")]
-    partial class AddedCourseEntity
+    [Migration("20250716100420_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1610,6 +1610,9 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<string>("Instructor")
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("InstructorId")
+                        .HasColumnType("uuid");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -1633,7 +1636,58 @@ namespace OnlineLearningPlatform.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("InstructorId");
+
                     b.ToTable("Courses");
+                });
+
+            modelBuilder.Entity("OnlineLearningPlatform.Domain.Entities.Instructor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Bio")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Profession")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Surname")
+                        .HasColumnType("text");
+
+                    b.Property<long?>("UserAccountId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserAccountId");
+
+                    b.ToTable("Instructors");
                 });
 
             modelBuilder.Entity("OnlineLearningPlatform.MultiTenancy.Tenant", b =>
@@ -1918,6 +1972,22 @@ namespace OnlineLearningPlatform.Migrations
                     b.Navigation("LastModifierUser");
                 });
 
+            modelBuilder.Entity("OnlineLearningPlatform.Domain.Entities.Course", b =>
+                {
+                    b.HasOne("OnlineLearningPlatform.Domain.Entities.Instructor", null)
+                        .WithMany("CoursesCreated")
+                        .HasForeignKey("InstructorId");
+                });
+
+            modelBuilder.Entity("OnlineLearningPlatform.Domain.Entities.Instructor", b =>
+                {
+                    b.HasOne("OnlineLearningPlatform.Authorization.Users.User", "UserAccount")
+                        .WithMany()
+                        .HasForeignKey("UserAccountId");
+
+                    b.Navigation("UserAccount");
+                });
+
             modelBuilder.Entity("OnlineLearningPlatform.MultiTenancy.Tenant", b =>
                 {
                     b.HasOne("OnlineLearningPlatform.Authorization.Users.User", "CreatorUser")
@@ -2014,6 +2084,11 @@ namespace OnlineLearningPlatform.Migrations
                     b.Navigation("Settings");
 
                     b.Navigation("Tokens");
+                });
+
+            modelBuilder.Entity("OnlineLearningPlatform.Domain.Entities.Instructor", b =>
+                {
+                    b.Navigation("CoursesCreated");
                 });
 #pragma warning restore 612, 618
         }
