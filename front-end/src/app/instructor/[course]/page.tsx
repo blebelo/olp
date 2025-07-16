@@ -2,6 +2,7 @@
 import React from "react";
 import { Layout, Typography, Button, Row, Col,Card } from "antd";
 import { useStyles } from "./Style/style";
+import Link from "next/link";
 import InstructorHeader from "@/components/instructorNavbar/InstructorHeader";
 
 const CourseDetails = () => {
@@ -18,9 +19,18 @@ const CourseDetails = () => {
                         <Typography className={styles.Typography}>JavaScript Fundamentals</Typography>
                         <Button className={styles.Button}> Add Lesson</Button>
                         <Typography className={styles.CourseLesson}>Course Lessons</Typography>
-                        <a className={styles.LessonItem} href="/instructor">1. Introduction to JavaScript</a>
+                        {/* <a className={styles.LessonItem} href="/instructor">1. Introduction to JavaScript</a>
                         <a className={styles.LessonItem} href="/instructor">2. Variables and Data Types</a>
-                        <a className={styles.LessonItem} href="/instructor">3. Functions and Scope</a>
+                        <a className={styles.LessonItem} href="/instructor">3. Functions and Scope</a> */}
+                        <Link href={"/instructor"} className={styles.LessonItem}>
+                            1. Introduction to JS
+                        </Link>
+                        <Link href={"/instructor"} className={styles.LessonItem}>
+                            2. Variables and Data Types
+                        </Link>
+                        <Link href={"/instructor"} className={styles.LessonItem}>
+                            3. Functions and Scope
+                        </Link>
                     </Sider>
                     <Content className={styles.Content}>
                         <Typography className={styles.CourseDetailsTitle}>Course Details</Typography>
