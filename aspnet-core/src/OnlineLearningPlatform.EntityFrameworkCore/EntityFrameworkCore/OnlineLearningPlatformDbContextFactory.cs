@@ -12,16 +12,21 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
     {
         public OnlineLearningPlatformDbContext CreateDbContext(string[] args)
         {
-            DotNetEnv.Env.Load();
+            var currentEnv = DotNetEnv.Env.Load(".env"); 
 
             var builder = new DbContextOptionsBuilder<OnlineLearningPlatformDbContext>();
-            var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
-            /*
-             You can provide an environmentName parameter to the AppConfigurations.Get method. 
-             In this case, AppConfigurations will try to read appsettings.{environmentName}.json.
-             Use Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") method or from string[] args to get environment if necessary.
-             https://docs.microsoft.com/en-us/ef/core/cli/dbcontext-creation?tabs=dotnet-core-cli#args
-             */
+
+            var connection = new Npgsql.NpgsqlConnectionStringBuilder
+            {
+                Host = Environment.GetEnvironmentVariable("PGHOST"),
+                Port = int.Parse(Environment.GetEnvironmentVariable("PGPORT") ?? "5432"),
+                Username = Environment.GetEnvironmentVariable("PGUSER"),
+                Password = Environment.GetEnvironmentVariable("PGPASSWORD"),
+                Database = Environment.GetEnvironmentVariable("PGDATABASE")
+            };
+
+            var connectionString = connection.ConnectionString;
+
             var configuration = AppConfigurations.Get(WebContentDirectoryFinder.CalculateContentRootFolder());
 
             OnlineLearningPlatformDbContextConfigurer.Configure(builder, connectionString);
