@@ -55,7 +55,8 @@ jobs:
           (cd aspnet-core && dotnet test --verbosity normal)
   
   
-  db_migration:
+  db_update:
+    name: Database Update
     runs-on: ubuntu-latest
     needs: build
 
@@ -72,7 +73,7 @@ jobs:
 
       - name:  Update Database
         run: |
-          cd aspnet-core/src/\OnlineLearningPlatform.EntityFrameworkCore
+          cd aspnet-core/src/OnlineLearningPlatform.EntityFrameworkCore
           dotnet ef migrations add 'Production Update'
           dotnet ef database update
       
@@ -106,4 +107,27 @@ jobs:
       - name: Deploy application
         run: |
           echo "Starting deployment..."
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
 
+  notify:
+    name: Deployment Notification
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    if: always() && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Notify Teams on Success
+        if: needs.deploy.result == 'success' && secrets.TEAMS_WEBHOOK_URL
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          webhook_url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          text: "Deployment successful "
+          
+      - name: Notify Teams on Failure
+        if: needs.deploy.result == 'failure' && secrets.TEAMS_WEBHOOK_URL
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          webhook_url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          text: "Deployment failed "
