@@ -11,3 +11,5 @@ aspnet-core/build/outputs/
 aspnet-core/docker/mvc/Mvc-Logs/
 front-end/node_modules/
 front-end/.next/
+aspnet-core/src/OnlineLearningPlatform.Web.Host/.env
+.env
