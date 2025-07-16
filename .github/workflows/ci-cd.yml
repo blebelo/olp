@@ -55,29 +55,37 @@ jobs:
           (cd aspnet-core && dotnet test --verbosity normal)
   
   db_update:
-      name: Database Update
-      runs-on: ubuntu-latest
-      needs: [build, test]
-      if: github.ref == 'refs/heads/main'
+    name: Database Update
+    runs-on: ubuntu-latest
+    needs: [build, test]
+    if: github.ref == 'refs/heads/main'
 
-      steps:
-        - uses: actions/checkout@v4
+    env:
+      PGHOST: ${{ secrets.DB_HOST }}
+      PGPORT: ${{ secrets.DB_PORT }}
+      PGNAME: ${{ secrets.DB_NAME }}
+      PGUSERNAME: ${{ secrets.DB_USERNAME }}
+      PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+      ASPNETCORE_ENVIRONMENT: Production
 
-        - name: Setup .NET
-          uses: actions/setup-dotnet@v4
-          with:
-            dotnet-version: 8.0.x
+    steps:
+      - uses: actions/checkout@v4
 
-        - name: Restore dependencies
-          run: dotnet restore aspnet-core/OnlineLearningPlatform.sln
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
 
-        - name: Install EF Core 
-          run: dotnet tool install --global dotnet-ef
+      - name: Restore dependencies
+        run: dotnet restore aspnet-core/OnlineLearningPlatform.sln
 
-        - name: Update Database
-          run: |
-            cd aspnet-core/src/OnlineLearningPlatform.EntityFrameworkCore
-            dotnet ef database update
+      - name: Install EF Core 
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Update Database
+        run: |
+          cd aspnet-core/src/OnlineLearningPlatform.EntityFrameworkCore
+          dotnet ef database update
 
   deploy:
     name: Deploy Stage
