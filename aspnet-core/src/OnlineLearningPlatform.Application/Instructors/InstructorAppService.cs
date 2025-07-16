@@ -1,5 +1,4 @@
-﻿using Abp.Application.Services;
-
+using Abp.Application.Services;
 using Abp.Domain.Repositories;
 using Abp.UI;
 using Microsoft.Extensions.Logging;
@@ -8,14 +7,12 @@ using OnlineLearningPlatform.Authorization.Users;
 using OnlineLearningPlatform.Domain.Entities;
 using OnlineLearningPlatform.Instructors.Dto;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace OnlineLearningPlatform.Instructors
 {
     public class InstructorAppService : AsyncCrudAppService<Instructor, CreateInstructorDto, Guid>
     {
-        private readonly IRepository<User, long> _userRepository;
         private readonly IRepository<Instructor, Guid> _instructorRepository;
         private readonly UserManager _userManager;
         private readonly RoleManager _roleManager;
@@ -42,12 +39,6 @@ namespace OnlineLearningPlatform.Instructors
 
         public override async Task<CreateInstructorDto> CreateAsync(CreateInstructorDto input)
         {
-            var createUserResult = await _instructorManager.CreateInstructorAsync(input.UserName, input.Name, input.Surname,input.Email, input.Password, input.Bio, input.Profession);
-        
-
-
-
-
 
             return input;
         }

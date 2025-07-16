@@ -1604,6 +1604,9 @@ namespace OnlineLearningPlatform.Migrations
                     b.PrimitiveCollection<string[]>("EnrolledStudents")
                         .HasColumnType("text[]");
 
+                    b.Property<string>("Instructor")
+                        .HasColumnType("text");
+
                     b.Property<Guid?>("InstructorId")
                         .HasColumnType("uuid");
 
@@ -1977,11 +1980,9 @@ namespace OnlineLearningPlatform.Migrations
 
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Entities.Course", b =>
                 {
-                    b.HasOne("OnlineLearningPlatform.Domain.Entities.Instructor", "Instructor")
+                    b.HasOne("OnlineLearningPlatform.Domain.Entities.Instructor", null)
                         .WithMany("CoursesCreated")
                         .HasForeignKey("InstructorId");
-
-                    b.Navigation("Instructor");
                 });
 
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Entities.Instructor", b =>

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using OnlineLearningPlatform.Configuration;
 using OnlineLearningPlatform.Web;
+using System;
 
 namespace OnlineLearningPlatform.EntityFrameworkCore
 {
@@ -11,8 +12,10 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
     {
         public OnlineLearningPlatformDbContext CreateDbContext(string[] args)
         {
+            DotNetEnv.Env.Load();
+
             var builder = new DbContextOptionsBuilder<OnlineLearningPlatformDbContext>();
-            
+            var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL");
             /*
              You can provide an environmentName parameter to the AppConfigurations.Get method. 
              In this case, AppConfigurations will try to read appsettings.{environmentName}.json.
@@ -21,7 +24,7 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
              */
             var configuration = AppConfigurations.Get(WebContentDirectoryFinder.CalculateContentRootFolder());
 
-            OnlineLearningPlatformDbContextConfigurer.Configure(builder, configuration.GetConnectionString(OnlineLearningPlatformConsts.ConnectionStringName));
+            OnlineLearningPlatformDbContextConfigurer.Configure(builder, connectionString);
 
             return new OnlineLearningPlatformDbContext(builder.Options);
         }
