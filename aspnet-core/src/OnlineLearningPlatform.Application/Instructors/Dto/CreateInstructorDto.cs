@@ -1,9 +1,7 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.AutoMapper;
-using OnlineLearningPlatform.Authorization.Roles;
 using OnlineLearningPlatform.Domain.Entities;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace OnlineLearningPlatform.Instructors.Dto

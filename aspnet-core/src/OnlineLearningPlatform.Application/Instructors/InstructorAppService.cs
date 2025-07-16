@@ -1,71 +1,55 @@
 ﻿using Abp.Application.Services;
-using Abp.Authorization.Users;
+
 using Abp.Domain.Repositories;
 using Abp.UI;
+using Microsoft.Extensions.Logging;
+using OnlineLearningPlatform.Authorization.Roles;
 using OnlineLearningPlatform.Authorization.Users;
 using OnlineLearningPlatform.Domain.Entities;
 using OnlineLearningPlatform.Instructors.Dto;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace OnlineLearningPlatform.Instructors
 {
     public class InstructorAppService : AsyncCrudAppService<Instructor, CreateInstructorDto, Guid>
     {
-
+        private readonly IRepository<User, long> _userRepository;
         private readonly IRepository<Instructor, Guid> _instructorRepository;
         private readonly UserManager _userManager;
+        private readonly RoleManager _roleManager;
+        private readonly ILogger<InstructorAppService> _logger;
+        private readonly InstructorManager _instructorManager;
+
         public InstructorAppService(
             IRepository<Instructor, Guid> repository,
-            UserManager userManager
+            IRepository<User, long> userRepository,
+            UserManager userManager,
+            RoleManager roleManager,
+            ILogger<InstructorAppService> logger,
+            InstructorManager instructorManager
             )
             : base(repository)
         {
             _instructorRepository = repository;
             _userManager = userManager;
+            _userRepository = userRepository;
+            _roleManager = roleManager;
+            _logger = logger;
+            _instructorManager = instructorManager;
         }
 
         public override async Task<CreateInstructorDto> CreateAsync(CreateInstructorDto input)
         {
-            var newUser = new User
-            {
-                TenantId = AbpSession.TenantId,
-                UserName = input.UserName,
-                Name = input.Name,
-                Surname = input.Surname,
-                EmailAddress = input.Email,
-                IsActive = true
-            };
-
-            var createUserResult = await _userManager.CreateAsync(newUser, input.Password);
-            if (!createUserResult.Succeeded)
-            {
-                throw new UserFriendlyException("User creation failed: " + string.Join(", ", createUserResult.Errors));
-            }
+            var createUserResult = await _instructorManager.CreateInstructorAsync(input.UserName, input.Name, input.Surname,input.Email, input.Password, input.Bio, input.Profession);
+        
 
 
-            /*
-             * 
-             * HUGE BUG
-            //await _userManager.AddToRoleAsync(newUser, "Instructor");
-            */
-            var instructor = new Instructor
-            {
-                Name = input.Name,
-                Surname = input.Surname,
-                UserName = input.UserName,
-                Email = input.Email,
-                Password = input.Password,
-                Bio = input.Bio,
-                Profession = input.Profession,
-                UserAccount = newUser
-            };
 
-            await _instructorRepository.InsertAsync(instructor);
+
 
             return input;
         }
-
     }
 }

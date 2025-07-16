@@ -25,21 +25,29 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
         {
             base.OnModelCreating(modelBuilder);
 
-            var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
-                v => v.ToUniversalTime(),
-                v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
 
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-            {
-                var properties = entityType.ClrType.GetProperties()
-                    .Where(p => p.PropertyType == typeof(DateTime));
+            // Configure Instructor-User relationship
+            modelBuilder.Entity<Instructor>()
+                .HasOne(i => i.UserAccount)
+                .WithOne()
+                .HasForeignKey<Instructor>("UserId")
+                .OnDelete(DeleteBehavior.Cascade);
 
-                foreach (var property in properties)
-                {
-                    modelBuilder.Entity(entityType.Name).Property(property.Name)
-                        .HasConversion(dateTimeConverter);
-                }
-            }
+            //var dateTimeConverter = new ValueConverter<DateTime, DateTime>(
+            //    v => v.ToUniversalTime(),
+            //    v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+
+            //foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            //{
+            //    var properties = entityType.ClrType.GetProperties()
+            //        .Where(p => p.PropertyType == typeof(DateTime));
+
+            //    foreach (var property in properties)
+            //    {
+            //        modelBuilder.Entity(entityType.Name).Property(property.Name)
+            //            .HasConversion(dateTimeConverter);
+            //    }
+            //}
         }
     }
 }
