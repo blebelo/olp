@@ -53,8 +53,30 @@ jobs:
       - name: Run tests
         run: |
           (cd aspnet-core && dotnet test --verbosity normal)
+  
+  
+  db_migration:
+    runs-on: ubuntu-latest
+    needs: build
 
-          
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore aspnet-core/OnlineLearningPlatform.sln
+
+      - name:  Update Database
+        run: |
+          cd aspnet-core/src/\OnlineLearningPlatform.EntityFrameworkCore
+          dotnet ef migrations add 'Production Update'
+          dotnet ef database update
+      
+
   deploy:
     name: Deploy Stage
     runs-on: ubuntu-latest
