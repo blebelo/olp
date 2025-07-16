@@ -254,3 +254,4 @@ paket-files/
 src/OnlineLearningPlatform.Web.Mvc/secrets.json
 src/OnlineLearningPlatform.Web.Host/secrets.json
 src/OnlineLearningPlatform.Migrator/secrets.json
+src/OnlineLearningPlatform.Web.Host/AppData/Logs
