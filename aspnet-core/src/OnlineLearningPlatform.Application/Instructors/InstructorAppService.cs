@@ -1,12 +1,10 @@
 ﻿using Abp.Application.Services;
-using Abp.Authorization.Users;
 using Abp.Domain.Repositories;
 using Abp.UI;
 using OnlineLearningPlatform.Authorization.Users;
 using OnlineLearningPlatform.Domain.Entities;
 using OnlineLearningPlatform.Instructors.Dto;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace OnlineLearningPlatform.Instructors
@@ -30,7 +28,6 @@ namespace OnlineLearningPlatform.Instructors
         {
             var newUser = new User
             {
-                TenantId = AbpSession.TenantId,
                 UserName = input.UserName,
                 Name = input.Name,
                 Surname = input.Surname,
