@@ -2,22 +2,25 @@
 using Abp.Modules;
 using Abp.Reflection.Extensions;
 using Abp.Zero.EntityFrameworkCore;
+using Abp.Timing; // <-- 
 using OnlineLearningPlatform.EntityFrameworkCore.Seed;
 
 namespace OnlineLearningPlatform.EntityFrameworkCore
 {
     [DependsOn(
-        typeof(OnlineLearningPlatformCoreModule), 
+        typeof(OnlineLearningPlatformCoreModule),
         typeof(AbpZeroCoreEntityFrameworkCoreModule))]
     public class OnlineLearningPlatformEntityFrameworkModule : AbpModule
     {
-        /* Used it tests to skip dbcontext registration, in order to use in-memory database of EF Core */
+        /* Used in tests to skip dbcontext registration, in order to use in-memory database of EF Core */
         public bool SkipDbContextRegistration { get; set; }
 
         public bool SkipDbSeed { get; set; }
 
         public override void PreInitialize()
         {
+            Clock.Provider = ClockProviders.Utc; // <--
+
             if (!SkipDbContextRegistration)
             {
                 Configuration.Modules.AbpEfCore().AddDbContext<OnlineLearningPlatformDbContext>(options =>
