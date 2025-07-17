@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from "react";
 import { Card, Button, Layout, Typography, Form } from "antd";
-import { useStyles } from "./style/style";
+import { useStyles } from "./style";
 import InstructorHeader from "@/components/instructorNavbar/InstructorHeader";
 import ReusableModalForm from "@/components/modal/ReusableModalForm";
 import type { FieldConfig } from "@/components/modal/ReusableModalForm";
