@@ -4,7 +4,7 @@ using System;
 
 namespace OnlineLearningPlatform.Courses
 {
-    public interface ICourseAppService : IAsyncCrudAppService<CreateCourseDto, Guid>
+    public interface ICourseAppService : IAsyncCrudAppService<CourseDto, Guid>
     { 
     }
 }
