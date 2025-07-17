@@ -1,6 +1,7 @@
 ﻿using Abp.EntityFrameworkCore.Configuration;
 using Abp.Modules;
 using Abp.Reflection.Extensions;
+using Abp.Timing; // <-- 
 using Abp.Zero.EntityFrameworkCore;
 using OnlineLearningPlatform.EntityFrameworkCore.Seed;
 
@@ -18,6 +19,8 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
 
         public override void PreInitialize()
         {
+
+            Clock.Provider = ClockProviders.Utc; // <-- 
             if (!SkipDbContextRegistration)
             {
                 Configuration.Modules.AbpEfCore().AddDbContext<OnlineLearningPlatformDbContext>(options =>
