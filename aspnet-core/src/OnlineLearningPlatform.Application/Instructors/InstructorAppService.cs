@@ -1,58 +1,69 @@
-﻿using Abp.Domain.Repositories;
+﻿using Abp.Application.Services;
+
+using Abp.Domain.Repositories;
 using Abp.UI;
 using Microsoft.Extensions.Logging;
+using OnlineLearningPlatform.Authorization.Roles;
 using OnlineLearningPlatform.Authorization.Users;
+using OnlineLearningPlatform.Domain.Entities;
+using OnlineLearningPlatform.Instructors.Dto;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace OnlineLearningPlatform.Domain.Entities
+namespace OnlineLearningPlatform.Instructors
 {
-    public class InstructorManager
+    public class InstructorAppService : AsyncCrudAppService<Instructor, CreateInstructorDto, Guid>
     {
+
         private readonly IRepository<Instructor, Guid> _instructorRepository;
         private readonly UserManager _userManager;
-        private readonly ILogger<InstructorManager> _logger;
+        private readonly ILogger<InstructorAppService> _logger;
 
-        public InstructorManager(
-            IRepository<Instructor, Guid> instructorRepository,
+        public InstructorAppService(
+            IRepository<Instructor, Guid> repository,
+            IRepository<User, long> userRepository,
             UserManager userManager,
-            ILogger<InstructorManager> logger)
+            RoleManager roleManager,
+            ILogger<InstructorAppService> logger
+            )
+            : base(repository)
         {
-            _instructorRepository = instructorRepository;
+            _instructorRepository = repository;
             _userManager = userManager;
             _logger = logger;
         }
 
-        public async Task<Instructor> CreateInstructorAsync(
-            string userName,
-            string name,
-            string surname,
-            string email,
-            string password,
-            string bio,
-            string profession)
+        public override async Task<CreateInstructorDto> CreateAsync(CreateInstructorDto input)
         {
-            _logger.LogInformation("Creating instructor with username: {UserName}", userName);
+            _logger.LogInformation("Starting instructor creation for username: {UserName}", input.UserName);
 
             var newUser = new User
             {
-                UserName = userName,
-                Name = name,
-                Surname = surname,
-                EmailAddress = email,
+                UserName = input.UserName,
+                Name = input.Name,
+                Surname = input.Surname,
+                EmailAddress = input.Email,
                 IsActive = true,
                 IsEmailConfirmed = true,
             };
             newUser.SetNormalizedNames();
 
-            // Create the user
-            var createUserResult = await _userManager.CreateAsync(newUser, password);
+
+            //Create the user
+            var createUserResult = await _userManager.CreateAsync(newUser, input.Password);
             if (!createUserResult.Succeeded)
             {
                 var errorMsg = string.Join(", ", createUserResult.Errors.Select(e => e.Description));
+
                 throw new UserFriendlyException("User creation failed: " + errorMsg);
             }
+
+            //var createUserResult = await _instructorManager.CreateInstructorAsync(input.UserName, input.Name, input.Surname, input.Email, input.Password, input.Bio, input.Profession);
+
+
+
+
 
             // Assign the Instructor role
             var roleResult = await _userManager.AddToRoleAsync(newUser, "Instructor");
@@ -62,10 +73,13 @@ namespace OnlineLearningPlatform.Domain.Entities
                 throw new UserFriendlyException("Role assignment failed: " + errorMsg);
             }
 
+
+
+
+
+
             // Check if instructor already exists for new user
-            var existingInstructor = await _instructorRepository.FirstOrDefaultAsync(
-                x => x.UserAccount != null && x.UserAccount.Id == newUser.Id
-            );
+            var existingInstructor = await _instructorRepository.FirstOrDefaultAsync(x => x.UserAccount != null && x.UserAccount.Id == newUser.Id);
             if (existingInstructor != null)
             {
                 throw new UserFriendlyException("An instructor record already exists for this user.");
@@ -73,16 +87,18 @@ namespace OnlineLearningPlatform.Domain.Entities
 
             var instructor = new Instructor
             {
-                Name = name,
-                Surname = surname,
-                Bio = bio,
-                Profession = profession,
+                Name = input.Name,
+                Surname = input.Surname,
+                Bio = input.Bio,
+                Profession = input.Profession,
                 UserAccount = newUser
             };
 
             await _instructorRepository.InsertAsync(instructor);
 
-            return instructor;
+
+
+            return input;
         }
     }
 }
