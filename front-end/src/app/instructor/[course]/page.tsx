@@ -1,13 +1,52 @@
 "use client"
-import React from "react";
-import { Layout, Typography, Button, Row, Col,Card } from "antd";
+import React, { useState } from "react";
+import { Layout, Typography, Button, Row, Col, Card, Form } from "antd";
 import { useStyles } from "./Style/style";
 import Link from "next/link";
 import InstructorHeader from "@/components/instructorNavbar/InstructorHeader";
+import ReusableModalForm from "@/components/modal/ReusableModalForm";
+import type { FieldConfig } from "@/components/modal/ReusableModalForm";
 
 const CourseDetails = () => {
     const { styles } = useStyles();
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [form] = Form.useForm();
     const { Sider, Content } = Layout;
+
+    const handleUpdateCourse = () => {
+        form.validateFields().then((values) => {
+            console.log("Course updated:", values);
+            form.resetFields();
+            setIsModalVisible(false);
+        });
+    };
+
+        const handleCancel = () => {
+        form.resetFields();
+        setIsModalVisible(false);
+    };
+
+    const courseFormFields: FieldConfig[] = [
+        {
+            label: "Course Title",
+            name: "title",
+            rules: [{ required: true, message: "Please enter course title" }],
+            type: "input",
+        },
+        {
+            label: "Topic",
+            name: "topic",
+            rules: [{ required: true, message: "Please enter course description" }],
+            type: "input",
+        },
+        {
+            label: "Course Description",
+            name: "description",
+            rules: [{ required: true, message: "Please enter course description" }],
+            type: "input",
+        },
+
+    ];
 
     return (
         <>
@@ -19,9 +58,6 @@ const CourseDetails = () => {
                         <Typography className={styles.Typography}>JavaScript Fundamentals</Typography>
                         <Button className={styles.Button}> Add Lesson</Button>
                         <Typography className={styles.CourseLesson}>Course Lessons</Typography>
-                        {/* <a className={styles.LessonItem} href="/instructor">1. Introduction to JavaScript</a>
-                        <a className={styles.LessonItem} href="/instructor">2. Variables and Data Types</a>
-                        <a className={styles.LessonItem} href="/instructor">3. Functions and Scope</a> */}
                         <Link href={"/instructor"} className={styles.LessonItem}>
                             1. Introduction to JS
                         </Link>
@@ -34,7 +70,15 @@ const CourseDetails = () => {
                     </Sider>
                     <Content className={styles.Content}>
                         <Typography className={styles.CourseDetailsTitle}>Course Details</Typography>
-                        <Button className={styles.ManageButton}> Update Details</Button>
+                        <Button className={styles.ManageButton} onClick={()=> setIsModalVisible(true)}> Update Details</Button>
+                        <ReusableModalForm
+                            title="Update Course"
+                            isVisible={isModalVisible}
+                            onCancel={handleCancel}
+                            onSubmit={handleUpdateCourse}
+                            fields={courseFormFields}
+                            form={form}
+                        />
                         <Button className={styles.ManageButton}> View Student Progress</Button>
                         <Button className={styles.ManageButton}> Add Quiz</Button>
                         <Button className={styles.ManageButton}> Unpublish</Button>
