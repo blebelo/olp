@@ -1,66 +1,88 @@
-﻿using Abp.Application.Services;
-using Abp.Domain.Repositories;
+﻿using Abp.Domain.Repositories;
 using Abp.UI;
+using Microsoft.Extensions.Logging;
 using OnlineLearningPlatform.Authorization.Users;
-using OnlineLearningPlatform.Domain.Entities;
-using OnlineLearningPlatform.Instructors.Dto;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
-namespace OnlineLearningPlatform.Instructors
+namespace OnlineLearningPlatform.Domain.Entities
 {
-    public class InstructorAppService : AsyncCrudAppService<Instructor, CreateInstructorDto, Guid>
+    public class InstructorManager
     {
         private readonly IRepository<Instructor, Guid> _instructorRepository;
         private readonly UserManager _userManager;
-        public InstructorAppService(
-            IRepository<Instructor, Guid> repository,
-            UserManager userManager
-            )
-            : base(repository)
+        private readonly ILogger<InstructorManager> _logger;
+
+        public InstructorManager(
+            IRepository<Instructor, Guid> instructorRepository,
+            UserManager userManager,
+            ILogger<InstructorManager> logger)
         {
-            _instructorRepository = repository;
+            _instructorRepository = instructorRepository;
             _userManager = userManager;
+            _logger = logger;
         }
 
-        public override async Task<CreateInstructorDto> CreateAsync(CreateInstructorDto input)
+        public async Task<Instructor> CreateInstructorAsync(
+            string userName,
+            string name,
+            string surname,
+            string email,
+            string password,
+            string bio,
+            string profession)
         {
+            _logger.LogInformation("Creating instructor with username: {UserName}", userName);
+
             var newUser = new User
             {
-                UserName = input.UserName,
-                Name = input.Name,
-                Surname = input.Surname,
-                EmailAddress = input.Email,
-                IsActive = true
+                UserName = userName,
+                Name = name,
+                Surname = surname,
+                EmailAddress = email,
+                IsActive = true,
+                IsEmailConfirmed = true,
             };
-            Logger.Info($"Creating new user: {newUser.UserName} with email: {newUser.EmailAddress}");
+            newUser.SetNormalizedNames();
 
-            var createUserResult = await _userManager.CreateAsync(newUser, input.Password);
+            // Create the user
+            var createUserResult = await _userManager.CreateAsync(newUser, password);
             if (!createUserResult.Succeeded)
             {
-                Logger.Error($"Failed to create user: {newUser.UserName}. Errors: {string.Join(", ", createUserResult.Errors)}");
-                throw new UserFriendlyException("User creation failed: " + string.Join(", ", createUserResult.Errors));
+                var errorMsg = string.Join(", ", createUserResult.Errors.Select(e => e.Description));
+                throw new UserFriendlyException("User creation failed: " + errorMsg);
             }
 
-            Logger.Info($"User created successfully: {newUser.UserName}");
+            // Assign the Instructor role
+            var roleResult = await _userManager.AddToRoleAsync(newUser, "Instructor");
+            if (!roleResult.Succeeded)
+            {
+                var errorMsg = string.Join(", ", roleResult.Errors.Select(e => e.Description));
+                throw new UserFriendlyException("Role assignment failed: " + errorMsg);
+            }
+
+            // Check if instructor already exists for new user
+            var existingInstructor = await _instructorRepository.FirstOrDefaultAsync(
+                x => x.UserAccount != null && x.UserAccount.Id == newUser.Id
+            );
+            if (existingInstructor != null)
+            {
+                throw new UserFriendlyException("An instructor record already exists for this user.");
+            }
+
             var instructor = new Instructor
             {
-                Name = input.Name,
-                Surname = input.Surname,
-                UserName = input.UserName,
-                Email = input.Email,
-                Password = input.Password,
-                Bio = input.Bio,
-                Profession = input.Profession,
+                Name = name,
+                Surname = surname,
+                Bio = bio,
+                Profession = profession,
                 UserAccount = newUser
             };
-            Logger.Info($"Creating instructor: {instructor.Name} {instructor.Surname} with profession: {instructor.Profession}");
 
             await _instructorRepository.InsertAsync(instructor);
-            Logger.Info($"Instructor created successfully: {instructor.Name} {instructor.Surname}");
 
-            return input;
+            return instructor;
         }
-
     }
 }
