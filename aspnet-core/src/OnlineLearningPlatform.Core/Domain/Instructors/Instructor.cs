@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using OnlineLearningPlatform.Domain.Entities;
+using System.Collections.Generic;
 
-namespace OnlineLearningPlatform.Domain.Entities
+namespace OnlineLearningPlatform.Domain.Instructors
 {
     public class Instructor : Person
     {

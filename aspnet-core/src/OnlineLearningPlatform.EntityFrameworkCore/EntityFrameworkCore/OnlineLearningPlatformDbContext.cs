@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineLearningPlatform.Authorization.Roles;
 using OnlineLearningPlatform.Authorization.Users;
 using OnlineLearningPlatform.Domain.Entities;
+using OnlineLearningPlatform.Domain.Instructors;
 using OnlineLearningPlatform.MultiTenancy;
 using System;
 using System.Linq;
