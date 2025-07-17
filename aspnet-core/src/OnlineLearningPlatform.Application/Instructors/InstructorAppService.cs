@@ -2,7 +2,7 @@
 using Abp.Domain.Repositories;
 using Abp.UI;
 using OnlineLearningPlatform.Authorization.Users;
-using OnlineLearningPlatform.Domain.Entities;
+using OnlineLearningPlatform.Domain.Instructors;
 using OnlineLearningPlatform.Instructors.Dto;
 using System;
 using System.Threading.Tasks;

@@ -1,8 +1,9 @@
 ﻿using Abp.Domain.Entities.Auditing;
+using OnlineLearningPlatform.Domain.Entities;
 using System;
 using System.Collections.Generic;
 
-namespace OnlineLearningPlatform.Domain.Entities
+namespace OnlineLearningPlatform.Domain.Courses
 {
     public class Course : FullAuditedEntity<Guid>
     {
@@ -10,12 +11,12 @@ namespace OnlineLearningPlatform.Domain.Entities
         public string Topic { get; set; }
         public string Description { get; set; }
         public bool IsPublished { get; set; }
-        public String Instructor { get; set; }
+        public string Instructor { get; set; }
         public ICollection<string> EnrolledStudents { get; set; }
         public ICollection<Lesson> Lessons {get; set; }
 
 
-        public void UpdateCourse(string title, string topic, string description, bool isPublished, String instructor)
+        public void UpdateCourse(string title, string topic, string description, bool isPublished, string instructor)
         {
             Title = title;
             Topic = topic;

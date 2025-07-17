@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace OnlineLearningPlatform.Lessons.Dto
 {
-    public class CreateLessonDto: EntityDto<int>
+    public class CreateLessonDto: EntityDto<Guid>
     {
         public string Title { get; set; }
         public string Description { get; set; }
@@ -12,6 +12,6 @@ namespace OnlineLearningPlatform.Lessons.Dto
         public string Instructor { get; set; }
         public Boolean isCompleted { get; set; }
         public ICollection<string> StudyMaterialLinks { get; set; }
-
+        
     }
 }
