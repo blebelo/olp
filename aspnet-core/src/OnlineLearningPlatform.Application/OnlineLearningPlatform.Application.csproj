@@ -14,7 +14,4 @@
   <ItemGroup>
     <ProjectReference Include="..\OnlineLearningPlatform.Core\OnlineLearningPlatform.Core.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
 </Project>

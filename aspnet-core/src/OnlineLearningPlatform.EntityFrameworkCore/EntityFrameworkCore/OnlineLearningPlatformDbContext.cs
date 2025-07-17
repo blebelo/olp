@@ -16,6 +16,7 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
         /* Define a DbSet for each entity of the application */
         public DbSet<Course> Courses { get; set; }
         public DbSet<Instructor> Instructors { get; set; }
+        public DbSet<Student> Students { get; set; }
 
         public OnlineLearningPlatformDbContext(DbContextOptions<OnlineLearningPlatformDbContext> options)
             : base(options)
@@ -31,6 +32,12 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
                 .WithOne()
                 .HasForeignKey<Student>("UserId")
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Course>()
+                .Property(c => c.EnrolledStudents)
+                .HasConversion(
+                v => string.Join(',', v),
+                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList());
         }
     }
 }
