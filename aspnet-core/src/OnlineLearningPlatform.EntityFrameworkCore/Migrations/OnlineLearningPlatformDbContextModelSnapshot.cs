@@ -1682,7 +1682,8 @@ namespace OnlineLearningPlatform.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserAccountId");
+                    b.HasIndex("UserAccountId")
+                        .IsUnique();
 
                     b.ToTable("Instructors");
                 });
