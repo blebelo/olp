@@ -1,15 +1,18 @@
 "use client"
 import React, { useState } from "react";
-import { Layout, Typography, Button, Row, Col, Card, Form } from "antd";
+import { Layout, Typography, Button, Row, Col, Card, Form, Upload } from "antd";
 import { useStyles } from "./Style/style";
 import Link from "next/link";
 import InstructorHeader from "@/components/instructorNavbar/InstructorHeader";
 import ReusableModalForm from "@/components/modal/ReusableModalForm";
 import type { FieldConfig } from "@/components/modal/ReusableModalForm";
+import { UploadOutlined } from "@ant-design/icons";
+
 
 const CourseDetails = () => {
     const { styles } = useStyles();
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isAddLesson, setIsAddLesson] = useState(false);
     const [form] = Form.useForm();
     const { Sider, Content } = Layout;
 
@@ -21,12 +24,24 @@ const CourseDetails = () => {
         });
     };
 
-        const handleCancel = () => {
+    const handleAddLesson = () => {
+        form.validateFields().then((values) => {
+            console.log("Lesson Added:", values);
+            form.resetFields();
+            setIsAddLesson(false);
+        });
+    };
+
+    const handleCancel = () => {
         form.resetFields();
         setIsModalVisible(false);
     };
+    const handleCancelAdd = () => {
+        form.resetFields();
+        setIsAddLesson(false);
+    };
 
-    const courseFormFields: FieldConfig[] = [
+    const courseUpdateFields: FieldConfig[] = [
         {
             label: "Course Title",
             name: "title",
@@ -48,6 +63,49 @@ const CourseDetails = () => {
 
     ];
 
+    const lessonFields: FieldConfig[] = [
+        {
+            label: "Lesson Name",
+            name: "lessonName",
+            rules: [{ required: true, message: "Please enter lesson name" }],
+            type: "input",
+        },
+        {
+            label: "Description",
+            name: "description",
+            rules: [{ required: true, message: "Please enter description" }],
+            type: "textarea",
+        },
+        {
+            label: "Video Upload",
+            name: "video",
+            type: "custom",
+            component: (
+                <Upload
+                    name="video"
+                    maxCount={1}
+                    beforeUpload={() => false}
+                >
+                    <Button icon={<UploadOutlined />}>Upload Video</Button>
+                </Upload>
+            ),
+        },
+        {
+            label: "Additional Content",
+            name: "additionalContent",
+            type: "custom",
+            component: (
+                <Upload
+                    name="documents"
+                    multiple
+                    beforeUpload={() => false}
+                >
+                    <Button icon={<UploadOutlined />}>Upload Documents</Button>
+                </Upload>
+            ),
+        },
+    ];
+
     return (
         <>
             <InstructorHeader />
@@ -56,7 +114,15 @@ const CourseDetails = () => {
                 <Layout>
                     <Sider className={styles.Sider} width="30%">
                         <Typography className={styles.Typography}>JavaScript Fundamentals</Typography>
-                        <Button className={styles.Button}> Add Lesson</Button>
+                        <Button className={styles.Button} onClick={() => setIsAddLesson(true)}> Add Lesson</Button>
+                        <ReusableModalForm
+                            title="Add Lesson"
+                            isVisible={isAddLesson}
+                            onCancel={handleCancelAdd}
+                            onSubmit={handleAddLesson}
+                            fields={lessonFields}
+                            form={form}
+                        />
                         <Typography className={styles.CourseLesson}>Course Lessons</Typography>
                         <Link href={"/instructor"} className={styles.LessonItem}>
                             1. Introduction to JS
@@ -70,13 +136,13 @@ const CourseDetails = () => {
                     </Sider>
                     <Content className={styles.Content}>
                         <Typography className={styles.CourseDetailsTitle}>Course Details</Typography>
-                        <Button className={styles.ManageButton} onClick={()=> setIsModalVisible(true)}> Update Details</Button>
+                        <Button className={styles.ManageButton} onClick={() => setIsModalVisible(true)}> Update Details</Button>
                         <ReusableModalForm
                             title="Update Course"
                             isVisible={isModalVisible}
                             onCancel={handleCancel}
                             onSubmit={handleUpdateCourse}
-                            fields={courseFormFields}
+                            fields={courseUpdateFields}
                             form={form}
                         />
                         <Button className={styles.ManageButton}> View Student Progress</Button>

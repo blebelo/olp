@@ -7,7 +7,7 @@ export interface FieldConfig {
   label: string;
   name: string;
   rules?: Rule[];
-  type?: "input" | "date" | "custom";
+  type?: "input" | "date" | "custom" | "textarea" | "upload";
   component?: React.ReactNode;
 }
 
@@ -20,14 +20,17 @@ interface ReusableModalFormProps {
   form: FormInstance;
 }
 
-const ReusableModalForm: React.FC<ReusableModalFormProps> = ({title, isVisible, onCancel, onSubmit, fields,form}) => {
-
+const ReusableModalForm: React.FC<ReusableModalFormProps> = ({ title, isVisible, onCancel, onSubmit, fields, form }) => {
+  const { TextArea } = Input;
   const { styles } = useStyles();
 
   const renderField = (field: FieldConfig) => {
 
     if (field.type === "custom" && field.component) {
       return field.component;
+    }
+    if (field.type === "textarea") {
+      return <TextArea rows={4} className={styles.Input} />;
     }
 
     return <Input className={styles.Input} />;
