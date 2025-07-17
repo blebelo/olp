@@ -92,9 +92,8 @@ namespace OnlineLearningPlatform.EntityFrameworkCore.Seed.Tenants
             if (instructorRole == null)
             {
                 instructorRole = _context.Roles
-                    .Add(new Role(null, "Instructor", "Instructor") { IsStatic = true })
-                    .Entity;
-                _context.SaveChanges();
+                .Add(new Role(_tenantId, "Instructor", "Instructor") { IsStatic = true })
+                .Entity;
             }
 
             //  Grant specific permissions to Instructor
@@ -134,9 +133,8 @@ namespace OnlineLearningPlatform.EntityFrameworkCore.Seed.Tenants
             if (studentRole == null)
             {
                 studentRole = _context.Roles
-                    .Add(new Role(null, "Student", "Student") { IsStatic = true })
-                    .Entity;
-                _context.SaveChanges();
+                .Add(new Role(_tenantId, "Student", "Student") { IsStatic = true })
+                .Entity;
             }
 
         }
