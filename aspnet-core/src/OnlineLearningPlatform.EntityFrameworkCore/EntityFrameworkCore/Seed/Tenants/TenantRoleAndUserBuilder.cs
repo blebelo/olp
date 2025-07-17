@@ -84,6 +84,61 @@ namespace OnlineLearningPlatform.EntityFrameworkCore.Seed.Tenants
                 _context.UserRoles.Add(new UserRole(_tenantId, adminUser.Id, adminRole.Id));
                 _context.SaveChanges();
             }
+
+            // Instructor Role Seeding
+            var instructorRole = _context.Roles.IgnoreQueryFilters()
+                .FirstOrDefault(r => r.TenantId == _tenantId && r.Name == StaticRoleNames.Tenants.Instructor);
+
+            if (instructorRole == null)
+            {
+                instructorRole = _context.Roles
+                    .Add(new Role(null, "Instructor", "Instructor") { IsStatic = true })
+                    .Entity;
+                _context.SaveChanges();
+            }
+
+            //  Grant specific permissions to Instructor
+            var grantedInstructorPermissions = _context.Permissions.IgnoreQueryFilters()
+                .OfType<RolePermissionSetting>()
+
+                .Where(p => p.TenantId == _tenantId && p.RoleId == instructorRole.Id)
+                .Select(p => p.Name)
+                .ToList();
+
+            var instructorPermissions = PermissionFinder
+                .GetAllPermissions(new OnlineLearningPlatformAuthorizationProvider())
+                .Where(p =>
+                    p.MultiTenancySides.HasFlag(MultiTenancySides.Tenant) &&
+                    p.Name.StartsWith("Pages.Instructors") && // Only instructor-related permissions
+                    !grantedInstructorPermissions.Contains(p.Name))
+                .ToList();
+
+            if (instructorPermissions.Any())
+            {
+                _context.Permissions.AddRange(
+                    instructorPermissions.Select(permission => new RolePermissionSetting
+                    {
+                        TenantId = _tenantId,
+                        Name = permission.Name,
+                        IsGranted = true,
+                        RoleId = instructorRole.Id
+                    })
+                );
+                _context.SaveChanges();
+            }
+
+            // Student Role Seeding
+            var studentRole = _context.Roles.IgnoreQueryFilters()
+                .FirstOrDefault(r => r.TenantId == _tenantId && r.Name == StaticRoleNames.Tenants.Student);
+
+            if (studentRole == null)
+            {
+                studentRole = _context.Roles
+                    .Add(new Role(null, "Student", "Student") { IsStatic = true })
+                    .Entity;
+                _context.SaveChanges();
+            }
+
         }
     }
 }
