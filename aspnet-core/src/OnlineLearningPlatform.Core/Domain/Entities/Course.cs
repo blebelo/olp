@@ -12,7 +12,7 @@ namespace OnlineLearningPlatform.Domain.Entities
         public bool IsPublished { get; set; }
         public String Instructor { get; set; }
         public ICollection<string> EnrolledStudents { get; set; }
-        public ICollection<string> Lessons {get; set; }
+        public ICollection<Lesson> Lessons {get; set; }
 
 
         public void UpdateCourse(string title, string topic, string description, bool isPublished, String instructor)
@@ -38,14 +38,14 @@ namespace OnlineLearningPlatform.Domain.Entities
                 EnrolledStudents.Remove(studentId);
             }
         }
-        public void AddLesson(string lesson)
+        public void AddLesson(Lesson lesson)
         {
             if (!Lessons.Contains(lesson))
             {
                 Lessons.Add(lesson);
             }
         }
-        public void RemoveLesson(string lesson)
+        public void RemoveLesson(Lesson lesson)
         {
             if (Lessons.Contains(lesson))
             {
