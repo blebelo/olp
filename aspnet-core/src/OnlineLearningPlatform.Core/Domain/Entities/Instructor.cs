@@ -1,21 +1,10 @@
-﻿using Abp.Domain.Entities.Auditing;
-using OnlineLearningPlatform.Authorization.Users;
-using System;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
 
 namespace OnlineLearningPlatform.Domain.Entities
 {
-
-    public abstract class Person : FullAuditedEntity<Guid>
+    public class Instructor : Person
     {
-        public string Name { get; set; }
-        public string Surname { get; set; }
-        [NotMapped]
-        public string UserName { get; set; }
-        public string Email { get; set; }
-        [NotMapped]
-        public string Password { get; set; }
-        public string Bio { get; set; }
-        public User UserAccount { get; set; }
+        public string Profession { get; set; }
+        public ICollection<Course> CoursesCreated { get; set; }
     }
 }
