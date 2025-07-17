@@ -10,30 +10,12 @@ namespace OnlineLearningPlatform.Domain.Entities
         public string Topic { get; set; }
         public string Description { get; set; }
         public bool IsPublished { get; set; }
-        public Instructor Instructor { get; set; }
+        public String Instructor { get; set; }
         public ICollection<string> EnrolledStudents { get; set; }
         public ICollection<string> Lessons {get; set; }
 
 
-        public Course()
-        {
-            Id = Guid.NewGuid();
-            IsPublished = false;
-            EnrolledStudents = new List<string>();
-            Lessons = new List<string>();
-        }
-        public Course(string title, string topic, string description, Instructor instructor, string lesson)
-        {
-            Id = Guid.NewGuid();
-            Title = title;
-            Topic = topic;
-            Description = description;
-            IsPublished = false;
-            Instructor = instructor;
-            EnrolledStudents = new List<string>();
-            Lessons = new List<string>();
-        }
-        public void UpdateCourse(string title, string topic, string description, bool isPublished, Instructor instructor)
+        public void UpdateCourse(string title, string topic, string description, bool isPublished, String instructor)
         {
             Title = title;
             Topic = topic;

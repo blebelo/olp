@@ -25,7 +25,7 @@ namespace OnlineLearningPlatform.Web.Host.Startup
         private const string _defaultCorsPolicyName = "localhost";
 
         private const string _apiVersion = "v1";
-
+        
         private readonly IConfigurationRoot _appConfiguration;
         private readonly IWebHostEnvironment _hostingEnvironment;
 

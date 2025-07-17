@@ -33,7 +33,7 @@ namespace OnlineLearningPlatform.Configuration
             {
                 builder = builder.AddJsonFile($"appsettings.{environmentName}.json", optional: true);
             }
-
+            DotNetEnv.Env.Load();
             builder = builder.AddEnvironmentVariables();
 
             if (addUserSecrets)

@@ -1,6 +1,7 @@
 ﻿using Abp.AspNetCore.Dependency;
 using Abp.Dependency;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 namespace OnlineLearningPlatform.Web.Host.Startup
@@ -8,7 +9,7 @@ namespace OnlineLearningPlatform.Web.Host.Startup
     public class Program
     {
         public static void Main(string[] args)
-        {
+        {      
             CreateHostBuilder(args).Build().Run();
         }
 

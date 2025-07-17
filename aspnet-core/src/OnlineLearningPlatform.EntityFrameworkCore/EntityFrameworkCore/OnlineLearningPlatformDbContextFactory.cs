@@ -12,7 +12,7 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
         public OnlineLearningPlatformDbContext CreateDbContext(string[] args)
         {
             var builder = new DbContextOptionsBuilder<OnlineLearningPlatformDbContext>();
-            
+
             /*
              You can provide an environmentName parameter to the AppConfigurations.Get method. 
              In this case, AppConfigurations will try to read appsettings.{environmentName}.json.
