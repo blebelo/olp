@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.AutoMapper;
+using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Domain.Entities;
 using System;
 using System.Collections.Generic;

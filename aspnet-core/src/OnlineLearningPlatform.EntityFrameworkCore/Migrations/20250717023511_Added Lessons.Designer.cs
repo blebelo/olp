@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OnlineLearningPlatform.EntityFrameworkCore;
@@ -11,9 +12,11 @@ using OnlineLearningPlatform.EntityFrameworkCore;
 namespace OnlineLearningPlatform.Migrations
 {
     [DbContext(typeof(OnlineLearningPlatformDbContext))]
-    partial class OnlineLearningPlatformDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250717023511_Added Lessons")]
+    partial class AddedLessons
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1695,6 +1698,9 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<Guid?>("CourseId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -1709,6 +1715,9 @@ namespace OnlineLearningPlatform.Migrations
 
                     b.Property<string>("Title")
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("VideoLink")
                         .HasColumnType("text");

@@ -5,9 +5,14 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using OnlineLearningPlatform.Courses.Dto;
 using OnlineLearningPlatform.Domain.Courses;
+<<<<<<< HEAD
 using OnlineLearningPlatform.Domain.Entities;
 using System;
 using System.Collections.Generic;
+=======
+using OnlineLearningPlatform.Instructors.Dto;
+using System;
+>>>>>>> f5809b615cba864677f6945c667ad0a4f64c3ef7
 using System.Threading.Tasks;
 
 namespace OnlineLearningPlatform.Courses
@@ -16,14 +21,20 @@ namespace OnlineLearningPlatform.Courses
         : AsyncCrudAppService<Course, CourseDto, Guid, PagedAndSortedResultRequestDto, CreateCourseDto, UpdateCourseDto>,
           ICourseAppService
     {
+<<<<<<< HEAD
         private readonly IRepository<Course, Guid> _courseRepository;
 
         public CourseAppService(IRepository<Course, Guid> repository)
+=======
+        private readonly CourseManager _courseManager;
+        public CourseAppService(IRepository<Course, Guid> repository, CourseManager courseManager)
+>>>>>>> f5809b615cba864677f6945c667ad0a4f64c3ef7
             : base(repository)
         {
-            _courseRepository = repository;
+            _courseManager = courseManager;
         }
 
+<<<<<<< HEAD
         public override async Task<CourseDto> CreateAsync(CreateCourseDto input)
         {
             var course = ObjectMapper.Map<Course>(input);
@@ -68,5 +79,29 @@ namespace OnlineLearningPlatform.Courses
             return new OkObjectResult("Course deleted successfully.");
         }
 
+=======
+        public async override Task<CreateCourseDto> CreateAsync(CreateCourseDto input)
+        {
+            await _courseManager.CreateCourseAsync(
+                input.Title,
+                input.Topic,
+                input.Description,
+                input.IsPublished,
+                input.Instructor
+            );
+            return input;
+        }
+
+
+        public async Task<UpdateCourseDto> UpdateAsync(UpdateCourseDto input)
+        {
+            await _courseManager.UpdateCourseAsync(
+                input.Title,
+                input.Topic,
+                input.Description
+            );
+            return input;
+        }
+>>>>>>> f5809b615cba864677f6945c667ad0a4f64c3ef7
     }
 }
