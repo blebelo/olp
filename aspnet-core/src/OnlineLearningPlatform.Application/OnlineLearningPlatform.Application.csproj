@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <VersionPrefix>1.0.0.0</VersionPrefix>
     <TargetFramework>net8.0</TargetFramework>
@@ -13,5 +13,8 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\OnlineLearningPlatform.Core\OnlineLearningPlatform.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
 </Project>
