@@ -56,6 +56,8 @@ namespace OnlineLearningPlatform.Domain.Instructors
                 UserAccount = user
             };
 
+            await _instructorRepository.InsertAsync(instructor);
+
             return instructor;
         }
     }
