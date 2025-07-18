@@ -37,6 +37,20 @@ namespace OnlineLearningPlatform.EntityFrameworkCore.Seed.Host
                 _context.SaveChanges();
             }
 
+            var studentRole = _context.Roles.IgnoreQueryFilters().FirstOrDefault(r => r.TenantId == null && r.Name == "Student");
+            if (studentRole == null)
+            {
+                studentRole = _context.Roles.Add(new Role(null, "Student", "Student") { IsStatic = true }).Entity;
+                _context.SaveChanges();
+            }
+
+            var instructorRole = _context.Roles.IgnoreQueryFilters().FirstOrDefault(r => r.TenantId == null && r.Name == "Instructor");
+            if (instructorRole == null)
+            {
+                instructorRole = _context.Roles.Add(new Role(null, "Instructor", "Instructor") { IsStatic = true }).Entity;
+                _context.SaveChanges();
+            }
+
             // Grant all permissions to admin role for host
 
             var grantedPermissions = _context.Permissions.IgnoreQueryFilters()

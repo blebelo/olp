@@ -12,11 +12,10 @@ namespace OnlineLearningPlatform.Domain.Persons
         public string Surname { get; set; }
         [NotMapped]
         public string UserName { get; set; }
-        [NotMapped]
         public string Email { get; set; }
         [NotMapped]
         public string Password { get; set; }
         public string Bio { get; set; }
-        public User UserAccount { get; set; }
+        public virtual User UserAccount { get; set; }
     }
 }
