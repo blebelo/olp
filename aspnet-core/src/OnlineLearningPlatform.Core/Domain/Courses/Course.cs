@@ -15,7 +15,6 @@ namespace OnlineLearningPlatform.Domain.Courses
         public ICollection<string> EnrolledStudents { get; set; }
         public ICollection<Lesson> Lessons {get; set; }
 
-
         public void UpdateCourse(string title, string topic, string description, bool isPublished, string instructor)
         {
             Title = title;
