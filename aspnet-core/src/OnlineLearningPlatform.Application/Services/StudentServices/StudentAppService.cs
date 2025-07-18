@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using Abp.Application.Services;
 using Abp.Domain.Repositories;
-using Abp.Runtime.Session;
-using Microsoft.AspNetCore.Http.HttpResults;
 using OnlineLearningPlatform.Authorization.Users;
 using OnlineLearningPlatform.Courses;
-using OnlineLearningPlatform.Domain.Entities;
+using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Domain.Students;
 using OnlineLearningPlatform.Services.StudentServices.Dto;
 

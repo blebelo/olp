@@ -1,4 +1,5 @@
-﻿using OnlineLearningPlatform.Domain.Entities;
+﻿using OnlineLearningPlatform.Domain.Courses;
+using OnlineLearningPlatform.Domain.Persons;
 using System.Collections.Generic;
 
 namespace OnlineLearningPlatform.Domain.Instructors

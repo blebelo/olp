@@ -3,7 +3,7 @@ using OnlineLearningPlatform.Authorization.Users;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace OnlineLearningPlatform.Domain.Entities
+namespace OnlineLearningPlatform.Domain.Persons
 {
 
     public abstract class Person : FullAuditedEntity<Guid>
