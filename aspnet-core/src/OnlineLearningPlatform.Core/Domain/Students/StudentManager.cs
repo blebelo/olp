@@ -7,7 +7,7 @@ using Abp.Domain.Services;
 using OnlineLearningPlatform.Authorization.Users;
 using OnlineLearningPlatform.Domain.Entities;
 
-namespace OnlineLearningPlatform.Domain.Student
+namespace OnlineLearningPlatform.Domain.Students
 {
     public class StudentManager : DomainService
     {

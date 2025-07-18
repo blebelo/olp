@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using OnlineLearningPlatform.Authorization.Users;
 using OnlineLearningPlatform.Courses;
 using OnlineLearningPlatform.Domain.Entities;
-using OnlineLearningPlatform.Domain.Student;
+using OnlineLearningPlatform.Domain.Students;
 using OnlineLearningPlatform.Services.StudentServices.Dto;
 
 namespace OnlineLearningPlatform.Services.StudentServices

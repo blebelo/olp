@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OnlineLearningPlatform.Domain.Entities;
 
-namespace OnlineLearningPlatform.Domain.Student
+namespace OnlineLearningPlatform.Domain.Students
 {
     public class Student : Person
     {
