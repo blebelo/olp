@@ -1,10 +1,5 @@
-﻿using System;
+﻿using OnlineLearningPlatform.Domain.Persons;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OnlineLearningPlatform.Domain.Entities;
-using OnlineLearningPlatform.Domain.Persons;
 
 namespace OnlineLearningPlatform.Domain.Students
 {
@@ -20,7 +15,6 @@ namespace OnlineLearningPlatform.Domain.Students
         public Student()
         {
             EnrolledCourses = new List<string>();
-            StudentId = Guid.NewGuid().ToString();
         }
 
 

@@ -1601,8 +1601,8 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<string>("EnrolledStudents")
-                        .HasColumnType("text");
+                    b.PrimitiveCollection<string[]>("EnrolledStudents")
+                        .HasColumnType("text[]");
 
                     b.Property<string>("Instructor")
                         .HasColumnType("text");
@@ -1793,13 +1793,12 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<string>("Surname")
                         .HasColumnType("text");
 
-                    b.Property<long?>("UserId")
+                    b.Property<long?>("UserAccountId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserAccountId");
 
                     b.ToTable("Students");
                 });
@@ -2112,9 +2111,8 @@ namespace OnlineLearningPlatform.Migrations
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Students.Student", b =>
                 {
                     b.HasOne("OnlineLearningPlatform.Authorization.Users.User", "UserAccount")
-                        .WithOne()
-                        .HasForeignKey("OnlineLearningPlatform.Domain.Students.Student", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany()
+                        .HasForeignKey("UserAccountId");
 
                     b.Navigation("UserAccount");
                 });

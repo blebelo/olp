@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace OnlineLearningPlatform.Migrations
 {
     /// <inheritdoc />
-    public partial class AddedStudententity : Migration
+    public partial class AddedStudentEntity : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -793,17 +793,16 @@ namespace OnlineLearningPlatform.Migrations
                     Surname = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: true),
                     Bio = table.Column<string>(type: "text", nullable: true),
-                    UserId = table.Column<long>(type: "bigint", nullable: true)
+                    UserAccountId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Students", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Students_AbpUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Students_AbpUsers_UserAccountId",
+                        column: x => x.UserAccountId,
                         principalTable: "AbpUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -944,7 +943,7 @@ namespace OnlineLearningPlatform.Migrations
                     Description = table.Column<string>(type: "text", nullable: true),
                     IsPublished = table.Column<bool>(type: "boolean", nullable: false),
                     Instructor = table.Column<string>(type: "text", nullable: true),
-                    EnrolledStudents = table.Column<string>(type: "text", nullable: true),
+                    EnrolledStudents = table.Column<string[]>(type: "text[]", nullable: true),
                     InstructorId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatorUserId = table.Column<long>(type: "bigint", nullable: true),
@@ -1359,10 +1358,9 @@ namespace OnlineLearningPlatform.Migrations
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Students_UserId",
+                name: "IX_Students_UserAccountId",
                 table: "Students",
-                column: "UserId",
-                unique: true);
+                column: "UserAccountId");
         }
 
         /// <inheritdoc />
