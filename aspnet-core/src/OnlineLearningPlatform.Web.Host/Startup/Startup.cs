@@ -72,14 +72,15 @@ namespace OnlineLearningPlatform.Web.Host.Startup
             //CORS Service
             services.AddCors(options =>
             {
-                options.AddPolicy(_defaultCorsPolicyName, builder =>
+                options.AddPolicy("AllowAll", builder =>
                 {
-                    builder.AllowAnyHeader()
+                    builder
+                        .AllowAnyOrigin() 
                         .AllowAnyMethod()
-                        .AllowCredentials()
-                        .SetIsOriginAllowed(_=> true);
+                        .AllowAnyHeader();
                 });
             });
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
