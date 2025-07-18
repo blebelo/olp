@@ -29,18 +29,6 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-           modelBuilder.Entity<Student>()
-                .HasOne(s => s.UserAccount)
-                .WithOne()
-                .HasForeignKey<Student>("UserId")
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Course>()
-                .Property(c => c.EnrolledStudents)
-                .HasConversion(
-                v => string.Join(',', v),
-                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList());
         }
     }
 }

@@ -66,7 +66,6 @@ namespace OnlineLearningPlatform.Domain.Courses
             IsPublished = isPublished;
             Instructor = instructor;
         }
-
         public void PublishCourse()
         {
             IsPublished = true;
