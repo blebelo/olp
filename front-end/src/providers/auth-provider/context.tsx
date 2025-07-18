@@ -20,6 +20,7 @@ export interface IAuthStateContext {
 
 export interface IAuthActionContext {
     registerInstructor: (user: IUser) => void;
+    registerStudent : (user: IUser) => void;
     loginUser: (user: IUser) => void;
 }
 
