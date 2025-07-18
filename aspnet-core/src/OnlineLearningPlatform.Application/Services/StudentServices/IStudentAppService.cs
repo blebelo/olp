@@ -8,18 +8,11 @@ using OnlineLearningPlatform.Services.StudentServices.Dto;
 
 namespace OnlineLearningPlatform.Services.StudentServices
 {
-    public interface IStudentAppService : IAsyncCrudAppService<CreateStudentDto, Guid>
+    public interface IStudentAppService : IAsyncCrudAppService<CreateStudentDto, Guid, GetStudentsInput, CreateStudentDto, UpdateStudentDto>
     {
-        ////Dashboard
-        //Task<StudentDashboardDto> GetDashboardAsync();
-
-        ////Enrollment
-        //Task<bool> EnrollInCourseAsync(EnrollInCourseDto input);
-        //Task<bool> UnenrollFromCourseAsync(Guid course);
-
-        ////Student Info
-        //Task<StudentDto> GetCurrentStudentAsync();
-       
-        //Task<List<CourseDto>> GetMyCoursesAsync();
+        Task EnrollStudentInCourseAsync(Guid studentId, Guid courseId);
+        Task UnenrollStudentFromCourseAsync(Guid studentId, Guid courseId);
+        Task<List<CourseDtos>> GetStudentEnrolledCoursesAsync(Guid studentId);
+        // Task<List<CourseDto>> GetAvailableCoursesForStudentAsync(Guid studentId);
     }
 }

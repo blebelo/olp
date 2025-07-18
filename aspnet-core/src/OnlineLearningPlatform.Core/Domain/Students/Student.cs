@@ -1,47 +1,65 @@
 ﻿using OnlineLearningPlatform.Domain.Persons;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using OnlineLearningPlatform.Domain.Courses;
+using OnlineLearningPlatform.Domain.Entities;
+using OnlineLearningPlatform.Domain.StudentCourses;
+using System;
 
 namespace OnlineLearningPlatform.Domain.Students
 {
     public class Student : Person
     {
-        public string StudentId { get; set; }
         public string Interests { get; set; }
         public string AcademicLevel { get; set; }
 
         //Course.EnrolledCourses is a collection of course IDs based on Course.cs for course enrollment
-        public ICollection<string> EnrolledCourses { get; set; }
+        public virtual ICollection<StudentCourse> StudentCourses { get; set; }
+        public ICollection<Course> EnrolledCourses => StudentCourses?.Select(sc => sc.Course).ToList();
 
         public Student()
         {
-            EnrolledCourses = new List<string>();
+            StudentCourses = new List<StudentCourse>();
         }
 
 
-        //Course enrollment methods
-        public void EnrollInCourse(string courseId)
+        public void EnrollInCourse(Course course)
         {
-            if (!EnrolledCourses.Contains(courseId))
-            {
-                EnrolledCourses.Add(courseId);
+                if (course == null)
+                    throw new ArgumentNullException(nameof(course));
+
+            if (!IsEnrolledInCourse(course.Id))
+            { 
+                StudentCourses.Add(new StudentCourse
+                {
+                    StudentId = this.Id,
+                    CourseId = course.Id,
+                    Student = this,
+                    Course = course
+                });
             }
         }
-        public void UnenrollFromCourse(string courseId)
+        public void UnenrollFromCourse(Guid courseId)
         {
-            if (EnrolledCourses.Contains(courseId))
+            var enrollment = StudentCourses.FirstOrDefault(sc => sc.CourseId == courseId);
+            if (enrollment != null)
             {
-                EnrolledCourses.Remove(courseId);
+                StudentCourses.Remove(enrollment);
             }
         }
-
-        public bool IsEnrolledInCourse(string courseId)
+        public bool IsEnrolledInCourse(Guid courseId)
         {
-            return EnrolledCourses.Contains(courseId);
+            return StudentCourses.Any(sc => sc.CourseId == courseId);
         }
-
         public int GetEnrolledCoursesCount()
         {
-            return EnrolledCourses.Count;
+            return StudentCourses.Count;
+        }
+        public IEnumerable<Course> GetEnrolledCoursesList()
+        {
+            return StudentCourses.Select(sc => sc.Course);
         }
     }
 }

@@ -7,7 +7,7 @@ using Abp.Application.Services.Dto;
 
 namespace OnlineLearningPlatform.Services.StudentServices.Dto
 {
-    public class StudentDto : FullAuditedEntityDto<Guid>
+    public class UpdateStudentDto : EntityDto<Guid>
     {
         public string Name { get; set; }
         public string Surname { get; set; }
@@ -15,7 +15,5 @@ namespace OnlineLearningPlatform.Services.StudentServices.Dto
         public string Username { get; set; }
         public string Interests { get; set; }
         public string AcademicLevel { get; set; }
-        public int EnrolledCoursesCount { get; set; }
-        public List<CourseDtos> EnrolledCourses { get; set; }
     }
 }
