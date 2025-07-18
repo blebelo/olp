@@ -20,6 +20,7 @@ namespace OnlineLearningPlatform.Domain.Courses
 
         //navigation properties
         public virtual ICollection<StudentCourse> StudentCourses { get; set; }
+        //Convenience property
         public virtual ICollection<Student> EnrolledStudentsList => StudentCourses?.Select(sc => sc.Student).ToList();
 
         public Course()
