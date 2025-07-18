@@ -5,13 +5,16 @@ import { INITIAL_STATE, IUser, AuthStateContext, AuthActionContext } from "./con
 import { AuthReducer } from "./reducer";
 import { AbpTokenProperies, decodeToken } from "@/utils/jwt";
 import { useRouter } from "next/navigation";
-import { 
-    registerInstructorPending, 
-    registerInstructorSuccess, 
-    registerInstructorError, 
+import {
+    registerInstructorPending,
+    registerInstructorSuccess,
+    registerInstructorError,
     loginUserPending,
     loginUserSuccess,
-    loginUserError
+    loginUserError,
+    registerStudentPending,
+    registerStudentSuccess,
+    registerStudentError
 } from "./actions";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -29,8 +32,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 router.push('/instructor/dashboard')
             }).catch((error) => {
                 dispatch(registerInstructorError())
-                console.log(error)
-                console.log(error.message)
+                console.error(error)
+            })
+    }
+
+    const registerStudent = async (user: IUser) => {
+        dispatch(registerStudentPending());
+        const endpoint: string = '/api/services/app/Student/Create';
+
+        await instance.post(endpoint, user)
+            .then((response) => {
+                dispatch(registerStudentSuccess(response.data))
+                router.push('/instructor/dashboard')
+            }).catch((error) => {
+                dispatch(registerStudentError())
+                console.error(error)
             })
     }
 
@@ -39,28 +55,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const endpoint = `/TokenAuth/Authenticate`;
 
         await instance
-    .post(endpoint, user)
-    .then((response) => {
-      const token = response.data.result.accessToken;
-      
-      const decoded = decodeToken(token);
-      const userRole = decoded[AbpTokenProperies.role];
-      
-      sessionStorage.setItem("token", token);
-      sessionStorage.setItem("role", userRole);
-      
-      dispatch(loginUserSuccess(token));
-      router.push('/instructor/dashboard');
-    })
-    .catch((error) => {
-      console.error(error);
-      dispatch(loginUserError());
-    });
+            .post(endpoint, user)
+            .then((response) => {
+                const token = response.data.result.accessToken;
+
+                const decoded = decodeToken(token);
+                const userRole = decoded[AbpTokenProperies.role];
+
+                sessionStorage.setItem("token", token);
+                sessionStorage.setItem("role", userRole);
+
+                dispatch(loginUserSuccess(token));
+                router.push('/instructor/dashboard');
+            })
+            .catch((error) => {
+                console.error(error)
+                dispatch(loginUserError());
+            });
     }
 
     return (
         <AuthStateContext.Provider value={state}>
-            <AuthActionContext.Provider value={{ registerInstructor, loginUser}}>
+            <AuthActionContext.Provider value={{ registerInstructor, loginUser, registerStudent }}>
                 {children}
             </AuthActionContext.Provider>
         </AuthStateContext.Provider>

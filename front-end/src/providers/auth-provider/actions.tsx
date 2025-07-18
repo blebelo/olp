@@ -13,6 +13,12 @@ export enum AuthActionEnums {
     loginUserSuccess = "LOGIN_TRAINER_SUCCESS",
     loginUserError = "LOGIN_TRAINER_ERROR",
 
+    //Register Student
+    registerStudentPending = "REGISTER_STUDENT_PENDING",
+    registerStudentSuccess = "REGISTER_STUDENT_SUCCESS",
+    registerStudentError = "REGISTER_STUDENT_ERROR",
+
+
 }
 
 export const registerInstructorPending = createAction<IAuthStateContext>(
@@ -69,6 +75,37 @@ export const loginUserSuccess = createAction<IAuthStateContext, IUser>(
 
 export const loginUserError = createAction<IAuthStateContext>(
     AuthActionEnums.loginUserError, () => (
+        {
+            isPending: false,
+            isSuccess: false,
+            isError: true
+        }
+    )
+)
+
+export const registerStudentPending = createAction<IAuthStateContext>(
+    AuthActionEnums.registerStudentPending, () => (
+        {
+            isPending: true,
+            isSuccess: false,
+            isError: false
+        }
+    )
+)
+
+export const registerStudentSuccess = createAction<IAuthStateContext, IUser>(
+    AuthActionEnums.registerStudentSuccess, (user: IUser) => (
+        {
+            isPending: false,
+            isSuccess: true,
+            isError: false,
+            user
+        }
+    )
+)
+
+export const registerStudentError = createAction<IAuthStateContext>(
+    AuthActionEnums.registerStudentError, () => (
         {
             isPending: false,
             isSuccess: false,
