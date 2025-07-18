@@ -4,34 +4,32 @@ import type { FormProps } from "antd";
 import { Button, Form, Input, Typography } from 'antd';
 import { useStyles } from "./Style/style";
 import { UserOutlined, MailOutlined, LockOutlined, FormOutlined } from "@ant-design/icons";
-// import Image from "next/image";
 import Link from "next/link";
+import { useAuthActions, useAuthState } from "@/providers/auth-provider";
+import { IUser } from "@/providers/auth-provider/context";
 
 const InstructorSignUp: React.FC = () => {
 
     const {styles} = useStyles();
+    const { registerInstructor } = useAuthActions();
+    const {isError } = useAuthState();
 
-    interface IUser{
-        name:string,
-        email: string,
-        password: string,
-        profession: string,
-        confirmPassword: string,
-        role:string,
-        contactNumber: string,
+    if (isError) {
+        return (<div>Error registering instructor</div>)
     }
 
-    // const onFinish: FormProps<IUser>['onFinish'] = (values) => {
-    //     const newUser: IUser = {
-    //         name: values.name,
-    //         email: values.email,
-    //         password: values.password,
-    //         confirmPassword: values.confirmPassword,
-    //         role: "admin",
-    //         contactNumber: values.contactNumber,
-    //     }
-    //     signUpStudent(newUser)
-    // };
+    const onFinish: FormProps<IUser>['onFinish'] = (values) => {
+        const newUser: IUser = {
+            name: values.name,
+            surname: values.surname,
+            username: values.username,
+            email: values.email,
+            password: values.password,
+            bio: values.bio,
+            profession: values.profession
+        }
+        registerInstructor(newUser);
+    };
 
     const onFinishFailed: FormProps<IUser>['onFinishFailed'] = (errorInfo) => {
         console.log('Failed:', errorInfo);
@@ -43,17 +41,10 @@ const InstructorSignUp: React.FC = () => {
                 name="basic"
                 className={styles.Form}
                 initialValues={{ remember: true }}
-                // onFinish={onFinish}
+                onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
             >
-                {/* <Image
-                    src="/logo.png"
-                    alt="NutriCoach"
-                    width={50}
-                    height={50}
-                    priority
-                /> */}
                 <Typography className={styles.Typography}>Instructor Sign Up</Typography>
                 <div className={styles.FormItems}>
                     <Form.Item<IUser>
@@ -62,18 +53,23 @@ const InstructorSignUp: React.FC = () => {
                     >
                         <Input placeholder="Name" className={styles.Input} prefix={<UserOutlined/>} />
                     </Form.Item>
-
+                    <Form.Item<IUser>
+                        name="surname"
+                        rules={[{ required: true, message: 'Please input your surname' }]}
+                    >
+                        <Input placeholder="Surname" className={styles.Input} prefix={<MailOutlined />}/>
+                    </Form.Item>
+                    <Form.Item<IUser>
+                        name="username"
+                        rules={[{ required: true, message: 'Please input your username' }]}
+                    >
+                        <Input placeholder="Username" className={styles.Input} prefix={<MailOutlined />}/>
+                    </Form.Item>
                     <Form.Item<IUser>
                         name="email"
                         rules={[{ required: true, message: 'Please input your email' }]}
                     >
                         <Input placeholder="Email" className={styles.Input} prefix={<MailOutlined />}/>
-                    </Form.Item>
-                    <Form.Item<IUser>
-                        name="profession"
-                        rules={[{ required: true, message: 'Please input your profession' }]}
-                    >
-                        <Input placeholder="Profession" className={styles.Input} prefix={<FormOutlined />}/>
                     </Form.Item>
                     <Form.Item<IUser>
                         name="password"
@@ -82,11 +78,23 @@ const InstructorSignUp: React.FC = () => {
                         <Input.Password placeholder="Password" className={styles.Input} prefix={<LockOutlined />} />
                     </Form.Item>
                     <Form.Item<IUser>
+                        name="profession"
+                        rules={[{ required: true, message: 'Please input your profession' }]}
+                    >
+                        <Input placeholder="Profession" className={styles.Input} prefix={<FormOutlined />}/>
+                    </Form.Item>
+                    <Form.Item<IUser>
+                        name="bio"
+                        rules={[{ required: true, message: 'Please input your bio' }]}
+                    >
+                        <Input placeholder="bio" className={styles.Input} prefix={<FormOutlined />}/>
+                    </Form.Item>
+                    {/* <Form.Item<IUser>
                         name="confirmPassword"
                         rules={[{ required: true, message: 'Please confirm password!' }]}
                     >
                         <Input.Password placeholder="Confirm Password" className={styles.Input} prefix={<LockOutlined />} />
-                    </Form.Item>
+                    </Form.Item> */}
                 </div>
 
                 <Form.Item>
