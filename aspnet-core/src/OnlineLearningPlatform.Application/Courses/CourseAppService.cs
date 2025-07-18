@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineLearningPlatform.Courses.Dto;
 using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Domain.Entities;
+using OnlineLearningPlatform.Instructors.Dto;
 using OnlineLearningPlatform.Lessons.Dto;
 using System;
 using System.Collections.Generic;

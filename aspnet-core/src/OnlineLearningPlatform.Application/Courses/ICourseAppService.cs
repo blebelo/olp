@@ -4,6 +4,7 @@ using System;
 using OnlineLearningPlatform.Courses.Dto;
 using System.Threading.Tasks;
 using OnlineLearningPlatform.Lessons.Dto;
+using OnlineLearningPlatform.Instructors.Dto;
 
 namespace OnlineLearningPlatform.Courses
 {
