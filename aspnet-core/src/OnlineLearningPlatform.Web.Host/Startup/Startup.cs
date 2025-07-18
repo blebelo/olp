@@ -68,13 +68,25 @@ namespace OnlineLearningPlatform.Web.Host.Startup
                 options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
                 options.HttpsPort = null; 
             });
+
+            //CORS Service
+            services.AddCors(options =>
+            {
+                options.AddPolicy(_defaultCorsPolicyName, builder =>
+                {
+                    builder.AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials()
+                        .SetIsOriginAllowed(_=> true);
+                });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             app.UseAbp(options => { options.UseAbpRequestLocalization = false; }); // Initializes ABP framework.
 
-            app.UseCors(_defaultCorsPolicyName); // Enable CORS!
+            app.UseCors("AllowAll"); // Enable CORS!
 
             app.UseStaticFiles();
 
