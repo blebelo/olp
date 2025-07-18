@@ -7,7 +7,7 @@ using Abp.Application.Services.Dto;
 
 namespace OnlineLearningPlatform.Services.StudentServices.Dto
 {
-    public class CourseDto : EntityDto<Guid>
+    public class CourseDtos : EntityDto<Guid>
     {
         public string Title { get; set; }
         public string Topic { get; set; }

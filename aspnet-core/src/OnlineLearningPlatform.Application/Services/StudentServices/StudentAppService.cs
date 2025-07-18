@@ -78,17 +78,17 @@ namespace OnlineLearningPlatform.Services.StudentServices
 
             await _studentCourseRepository.DeleteAsync(enrollment);
         }
-        public async Task<List<CourseDto>> GetStudentEnrolledCoursesAsync(Guid studentId)
+        public async Task<List<CourseDtos>> GetStudentEnrolledCoursesAsync(Guid studentId)
         {
             var enrollments = await _studentCourseRepository.GetAllListAsync(sc => sc.StudentId == studentId);
             if (!enrollments.Any())
-                return new List<CourseDto>();
+                return new List<CourseDtos>();
 
             var courseIds = enrollments.Select(sc => sc.CourseId).ToList();
             var courses = await _courseRepository.GetAllListAsync(c => courseIds.Contains(c.Id));
 
             // Map courses to DTOs
-            return courses.Select(c => new CourseDto
+            return courses.Select(c => new CourseDtos
             {
                 Id = c.Id,
                 Title = c.Title,

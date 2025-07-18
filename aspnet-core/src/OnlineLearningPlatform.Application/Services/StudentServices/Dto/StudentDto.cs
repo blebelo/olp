@@ -16,6 +16,6 @@ namespace OnlineLearningPlatform.Services.StudentServices.Dto
         public string Interests { get; set; }
         public string AcademicLevel { get; set; }
         public int EnrolledCoursesCount { get; set; }
-        public List<CourseDto> EnrolledCourses { get; set; }
+        public List<CourseDtos> EnrolledCourses { get; set; }
     }
 }

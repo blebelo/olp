@@ -12,7 +12,7 @@ namespace OnlineLearningPlatform.Services.StudentServices
     {
         Task EnrollStudentInCourseAsync(Guid studentId, Guid courseId);
         Task UnenrollStudentFromCourseAsync(Guid studentId, Guid courseId);
-        Task<List<CourseDto>> GetStudentEnrolledCoursesAsync(Guid studentId);
+        Task<List<CourseDtos>> GetStudentEnrolledCoursesAsync(Guid studentId);
         // Task<List<CourseDto>> GetAvailableCoursesForStudentAsync(Guid studentId);
     }
 }
