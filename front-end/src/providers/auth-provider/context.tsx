@@ -8,6 +8,7 @@ export interface IUser {
     password?: string,
     bio?: string,
     profession?: string
+    userNameOrEmailAddress?: string
 }
 
 export interface IAuthStateContext {
@@ -19,7 +20,7 @@ export interface IAuthStateContext {
 
 export interface IAuthActionContext {
     registerInstructor: (user: IUser) => void;
-    // loginUser: (user: IUser) => void;
+    loginUser: (user: IUser) => void;
 }
 
 export const INITIAL_STATE: IAuthStateContext = {

@@ -3,14 +3,16 @@ import { useContext, useReducer } from "react";
 import { axiosInstance } from "@/utils/axiosInstance";
 import { INITIAL_STATE, IUser, AuthStateContext, AuthActionContext } from "./context";
 import { AuthReducer } from "./reducer";
-
+import { AbpTokenProperies, decodeToken } from "@/utils/jwt";
+import { useRouter } from "next/navigation";
 import { 
     registerInstructorPending, 
     registerInstructorSuccess, 
-    registerInstructorError 
+    registerInstructorError, 
+    loginUserPending,
+    loginUserSuccess,
+    loginUserError
 } from "./actions";
-
-import { useRouter } from "next/navigation";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
@@ -32,9 +34,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             })
     }
 
+    const loginUser = async (user: IUser) => {
+        dispatch(loginUserPending());
+        const endpoint = `/TokenAuth/Authenticate`;
+
+        await instance
+    .post(endpoint, user)
+    .then((response) => {
+      const token = response.data.result.accessToken;
+      
+      const decoded = decodeToken(token);
+      const userRole = decoded[AbpTokenProperies.role];
+      
+      sessionStorage.setItem("token", token);
+      sessionStorage.setItem("role", userRole);
+      
+      dispatch(loginUserSuccess(token));
+      router.push('/instructor/dashboard');
+    })
+    .catch((error) => {
+      console.error(error);
+      dispatch(loginUserError());
+    });
+    }
+
     return (
         <AuthStateContext.Provider value={state}>
-            <AuthActionContext.Provider value={{ registerInstructor}}>
+            <AuthActionContext.Provider value={{ registerInstructor, loginUser}}>
                 {children}
             </AuthActionContext.Provider>
         </AuthStateContext.Provider>
