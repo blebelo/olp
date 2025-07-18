@@ -25,34 +25,7 @@ namespace OnlineLearningPlatform.Domain.Courses
             Instructor = instructor;
 
         }
-        public void EnrollStudent(string studentId)
-        {
-            if (!EnrolledStudents.Contains(studentId))
-            {
-                EnrolledStudents.Add(studentId);
-            }
-        }
-        public void UnenrollStudent(string studentId)
-        {
-            if (EnrolledStudents.Contains(studentId))
-            {
-                EnrolledStudents.Remove(studentId);
-            }
-        }
-        public void AddLesson(Lesson lesson)
-        {
-            if (!Lessons.Contains(lesson))
-            {
-                Lessons.Add(lesson);
-            }
-        }
-        public void RemoveLesson(Lesson lesson)
-        {
-            if (Lessons.Contains(lesson))
-            {
-                Lessons.Remove(lesson);
-            }
-        }
+
         public void PublishCourse()
         {
             IsPublished = true;

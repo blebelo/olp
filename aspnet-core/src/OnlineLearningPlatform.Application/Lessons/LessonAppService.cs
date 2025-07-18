@@ -2,40 +2,44 @@
 using Abp.Domain.Repositories;
 using OnlineLearningPlatform.Domain.Entities;
 using OnlineLearningPlatform.Lessons.Dto;
-using System.Threading.Tasks;
-using Abp.UI;
-using Abp.Application.Services.Dto;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Abp.Application.Services.Dto;
 
 namespace OnlineLearningPlatform.Lessons
 {
-    public class LessonAppService : AsyncCrudAppService<Lesson, CreateLessonDto, Guid>
+    public class LessonAppService : ApplicationService, ILessonAppService
     {
         private readonly IRepository<Lesson, Guid> _lessonRepository;
 
         public LessonAppService(IRepository<Lesson, Guid> lessonRepository)
-            : base(lessonRepository)
         {
             _lessonRepository = lessonRepository;
         }
 
-        public override async Task<CreateLessonDto> CreateAsync(CreateLessonDto input)
+        public async Task<LessonDto> CreateAsync(CreateLessonDto input)
         {
-            var newLesson = new Lesson
-            {
-                Title = input.Title,
-                Description = input.Description,
-                VideoLink = input.VideoLink,
-                Instructor = input.Instructor,
-                IsCompleted = input.isCompleted,
-                StudyMaterialLinks = input.StudyMaterialLinks
-            };
-
-            await _lessonRepository.InsertAsync(newLesson);
-
-            return input;
+            var lesson = ObjectMapper.Map<Lesson>(input);
+            await _lessonRepository.InsertAsync(lesson);
+            return ObjectMapper.Map<LessonDto>(lesson);
         }
 
+        public async Task<LessonDto> GetAsync(EntityDto<Guid> input)
+        {
+            var lesson = await _lessonRepository.GetAsync(input.Id);
+            return ObjectMapper.Map<LessonDto>(lesson);
+        }
 
+        public async Task DeleteAsync(EntityDto<Guid> input)
+        {
+            await _lessonRepository.DeleteAsync(input.Id);
+        }
+
+        public async Task<ListResultDto<LessonDto>> GetAllAsync()
+        {
+            var lessons = await _lessonRepository.GetAllListAsync();
+            return new ListResultDto<LessonDto>(ObjectMapper.Map<List<LessonDto>>(lessons));
+        }
     }
 }
