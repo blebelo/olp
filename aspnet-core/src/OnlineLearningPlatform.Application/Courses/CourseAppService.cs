@@ -63,11 +63,6 @@ namespace OnlineLearningPlatform.Courses
             return ObjectMapper.Map<CourseDto>(course);
         }
 
-        public override async Task<ActionResult<string>> DeleteAsync(EntityDto<Guid> input)
-        {
-            await _courseRepository.DeleteAsync(input.Id);
-            return new OkObjectResult("Course deleted successfully.");
-        }
 
         public async Task EnrollStudentAsync(Guid courseId, string student)
         {
