@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using AutoMapper;
-using OnlineLearningPlatform.Domain.Student;
+using OnlineLearningPlatform.Domain.Students;
 
 namespace OnlineLearningPlatform.Services.StudentServices.Dto
 {
