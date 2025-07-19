@@ -1,6 +1,8 @@
 ﻿using Abp.Application.Services;
+using Abp.Authorization;
 using Abp.Domain.Repositories;
 using Abp.UI;
+using Microsoft.EntityFrameworkCore;
 using OnlineLearningPlatform.Authorization.Users;
 using OnlineLearningPlatform.Domain.Instructors;
 using OnlineLearningPlatform.Instructors.Dto;
@@ -35,5 +37,88 @@ namespace OnlineLearningPlatform.Instructors
             return input;
         }
 
+
+        [AbpAuthorize]
+        public async Task<InstructorProfileDto> GetMyProfileAsync()
+        {
+            if (!AbpSession.UserId.HasValue)
+            {
+                throw new UserFriendlyException("User is not logged in.");
+            }
+
+            // Find instructor linked to current user
+            var instructor = await _instructorRepository
+            .GetAll()
+            .Include(x => x.UserAccount)
+            .FirstOrDefaultAsync(x => x.UserAccount != null && x.UserAccount.Id == AbpSession.UserId.Value);
+
+            if (instructor == null)
+            {
+                throw new UserFriendlyException("Instructor profile not found.");
+            }
+
+            var email = instructor.UserAccount?.EmailAddress;
+
+            return new InstructorProfileDto
+            {
+                Id = instructor.Id,
+                Name = instructor.UserAccount?.Name,
+                Surname = instructor.UserAccount?.Surname,
+                UserName = instructor.UserAccount?.UserName,
+                Email = instructor.UserAccount?.EmailAddress,
+                Bio = instructor.Bio,
+                Profession = instructor.Profession
+            };
+        }
+
+
+        public async Task<InstructorProfileDto> UpdateMyProfileAsync(UpdateInstructorProfileDto input)
+        {
+            if (!AbpSession.UserId.HasValue)
+            {
+                throw new UserFriendlyException("User is not logged in.");
+            }
+
+
+            var instructor = await _instructorRepository
+            .GetAll()
+            .Include(x => x.UserAccount)
+            .FirstOrDefaultAsync(x => x.UserAccount != null && x.UserAccount.Id == AbpSession.UserId.Value);
+
+            if (instructor == null)
+            {
+                throw new UserFriendlyException("Instructor profile not found.");
+            }
+
+
+            instructor.UserAccount.Name = input.Name;
+            instructor.UserAccount.Surname = input.Surname;
+            instructor.UserAccount.UserName = input.UserName;
+            instructor.Bio = input.Bio;
+            instructor.Profession = input.Profession;
+
+            // Update email on User entity
+            if (!string.IsNullOrWhiteSpace(input.Email) && instructor.UserAccount != null)
+            {
+                instructor.UserAccount.EmailAddress = input.Email;
+                instructor.UserAccount.IsEmailConfirmed = false;
+            }
+
+            await _instructorRepository.UpdateAsync(instructor);
+
+
+            return new InstructorProfileDto
+            {
+                Id = instructor.Id,
+                Name = instructor.UserAccount?.Name,
+                Surname = instructor.UserAccount?.Surname,
+                UserName = instructor.UserAccount?.UserName,
+                Email = instructor.UserAccount?.EmailAddress,
+                Bio = instructor.Bio,
+                Profession = instructor.Profession
+            };
+        }
+
     }
+
 }
