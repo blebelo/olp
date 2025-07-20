@@ -51,8 +51,8 @@ export default function InstructorProfilePage() {
       await updateProfile(payload);
       setIsEditModalVisible(false);
       notification.success({ message: "Profile updated successfully!" });
-    } catch (err: any) {
-      const msg = err?.message || "Failed to update profile.";
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to update profile.";
       setEditError(msg);
       notification.error({ message: msg });
     } finally {

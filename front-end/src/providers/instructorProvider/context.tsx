@@ -26,6 +26,7 @@ export interface IInstructorActionContext {
   getProfile: () => Promise<void>;
   updateProfile: (data: Partial<IInstructor>) => Promise<void>;
   setProfile: (profile: IInstructor | null) => void;
+  resetProfile: () => void;
 }
 
 // Initial state
@@ -43,4 +44,4 @@ export const InstructorProfileStateContext =
 
 // Action context
 export const InstructorProfileActionContext =
-  createContext<IInstructorActionContext>(undefined as any);
+  createContext<IInstructorActionContext | undefined>(undefined);

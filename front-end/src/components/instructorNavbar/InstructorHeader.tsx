@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import type { MenuInfo } from "rc-menu/lib/interface";
 import { Menu, Layout } from "antd";
 import { useRouter } from "next/navigation";
 import { useStyles } from "./Style/styles";
@@ -14,7 +15,7 @@ const InstructorHeader = () => {
         { key: "2", label: "Profile" }
     ];
 
-    const handleMenuClick = (e: any) => {
+    const handleMenuClick = (e: MenuInfo) => {
         setActiveTab(e.key);
         if (e.key === "1") {
             router.push("/instructor");

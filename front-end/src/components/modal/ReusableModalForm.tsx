@@ -11,6 +11,8 @@ export interface FieldConfig {
   component?: React.ReactNode;
 }
 
+import type { IInstructor } from "@/providers/instructorProvider/context";
+
 interface ReusableModalFormProps {
   title: string;
   isVisible: boolean;
@@ -18,7 +20,7 @@ interface ReusableModalFormProps {
   onSubmit: () => void;
   fields: FieldConfig[];
   form: FormInstance;
-  initialValues?: any;
+  initialValues?: Partial<IInstructor>;
 }
 
 const ReusableModalForm: React.FC<ReusableModalFormProps> = ({ title, isVisible, onCancel, onSubmit, fields, form, initialValues }) => {
