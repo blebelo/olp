@@ -5,9 +5,10 @@ import { useStyles } from "./Style/style";
 import Link from "next/link";
 import InstructorHeader from "@/components/instructorNavbar/InstructorHeader";
 import ReusableModalForm from "@/components/modal/ReusableModalForm";
+import QuizModalForm from "@/components/modal/quiz-modal/QuizModalForm";
 import type { FieldConfig } from "@/components/modal/ReusableModalForm";
 import { UploadOutlined } from "@ant-design/icons";
-
+import { QuizQuestion } from "@/components/modal/quiz-modal/QuizModalForm";
 
 const CourseDetails = () => {
     const { styles } = useStyles();
@@ -15,6 +16,15 @@ const CourseDetails = () => {
     const [isAddLesson, setIsAddLesson] = useState(false);
     const [form] = Form.useForm();
     const { Sider, Content } = Layout;
+    const [isAddQuiz, setIsAddQuiz] = useState(false);
+
+    const [quizQuestions, setQuizQuestions] = useState([
+        {
+            question: "",
+            options: ["", "", "", ""],
+            correctAnswer: 0,
+        },
+    ]);
 
     const handleUpdateCourse = () => {
         form.validateFields().then((values) => {
@@ -31,6 +41,11 @@ const CourseDetails = () => {
             setIsAddLesson(false);
         });
     };
+
+    const handleCreateQuiz = (questions: QuizQuestion[]) => {
+        console.log("Quiz submitted:", questions);
+        setIsAddQuiz(false);
+    }
 
     const handleCancel = () => {
         form.resetFields();
@@ -146,7 +161,15 @@ const CourseDetails = () => {
                             form={form}
                         />
                         <Button className={styles.ManageButton}> View Student Progress</Button>
-                        <Button className={styles.ManageButton}> Add Quiz</Button>
+                        <Button className={styles.ManageButton} onClick={() => setIsAddQuiz(true)}> Add Quiz</Button>
+                        <QuizModalForm
+                            visible={isAddQuiz}
+                            onCancel={() => setIsAddQuiz(false)}
+                            onSubmit={handleCreateQuiz}
+                            questions={quizQuestions}
+                            setQuestions={setQuizQuestions}
+                        />
+
                         <Button className={styles.ManageButton}> Unpublish</Button>
                         <Row gutter={[16, 16]}>
                             <Col xs={22} sm={12} md={8} lg={6}>
