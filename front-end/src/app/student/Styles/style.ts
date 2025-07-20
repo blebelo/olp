@@ -1,4 +1,3 @@
-// components/styles/HomePageStyle.ts
 import { createStyles, css } from "antd-style";
 
 export const useStyles = createStyles({
@@ -15,7 +14,7 @@ export const useStyles = createStyles({
     left: 10%;
     width: 6.25rem;
     height: 6.25rem;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.1);
     border-radius: 50%;
     z-index: 1;
   `,
@@ -25,8 +24,40 @@ export const useStyles = createStyles({
     right: 15%;
     width: 3.75rem;
     height: 3.75rem;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.15);
     border-radius: 50%;
+    z-index: 1;
+  `,
+  decorativeCircleMedium: css`
+    position: fixed;
+    bottom: 25%;
+    left: 20%;
+    width: 5rem;
+    height: 5rem;
+    background: rgba(0, 0, 0, 0.12);
+    border-radius: 50%;
+    z-index: 1;
+  `,
+  decorativeSquareLarge: css`
+    position: fixed;
+    top: 40%;
+    right: 40%;
+    width: 10rem;
+    height: 10rem;
+    background: rgba(0, 0, 0, 0.08);
+    border-radius: 0.5rem;
+    transform: rotate(45deg);
+    z-index: 1;
+  `,
+  decorativeSquareSmall: css`
+    position: fixed;
+    bottom: 10%;
+    left: 70%;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 0.3rem;
+    transform: rotate(30deg);
     z-index: 1;
   `,
   contentRow: css`

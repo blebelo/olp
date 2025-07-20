@@ -7,11 +7,14 @@ import CourseCard from "@/components/course-card/CourseCard";
 
 const HomePage = () => {
     const { styles } = useStyles();
-    
+
     return (
         <div className={styles.heroContainer}>
-            <div className={styles.decorativeCircleLarge}></div>
-            <div className={styles.decorativeCircleSmall}></div>
+            <div className={styles.decorativeCircleLarge} />
+            <div className={styles.decorativeCircleSmall} />
+            <div className={styles.decorativeCircleMedium} />
+            <div className={styles.decorativeSquareLarge} />
+            <div className={styles.decorativeSquareSmall} />
             <div className={styles.contentRow}>
                 <div className={styles.textContainer}>
                     <Typography.Title className={styles.mainTitle}>
