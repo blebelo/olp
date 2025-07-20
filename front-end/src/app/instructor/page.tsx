@@ -5,15 +5,23 @@ import { useStyles } from "./style";
 import InstructorHeader from "@/components/instructorNavbar/InstructorHeader";
 import ReusableModalForm from "@/components/modal/ReusableModalForm";
 import type { FieldConfig } from "@/components/modal/ReusableModalForm";
+import { useCourseActions, useCourseState } from "@/providers/course-provider";
+import { ICourse } from "@/providers/course-provider/context";
 
 
 const Dashboard = () => {
     const { styles } = useStyles();
+    const { createCourse } = useCourseActions();
+    const { isError } = useCourseState();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [form] = Form.useForm();
 
     const { Content } = Layout;
     const { Title } = Typography;
+
+    if (isError) {
+        return (<div>Error creating course</div>)
+    }
 
     const courseFormFields: FieldConfig[] = [
         {
@@ -23,16 +31,38 @@ const Dashboard = () => {
             type: "input",
         },
         {
+            label: "Course Topic",
+            name: "topic",
+            rules: [{ required: true, message: "Please enter course topic" }],
+            type: "input",
+        },
+        {
             label: "Course Description",
             name: "description",
             rules: [{ required: true, message: "Please enter course description" }],
             type: "input",
         },
-        
+        {
+            label: "Instructor",
+            name: "instructor",
+            rules: [{ required: true, message: "Please enter Instructor" }],
+            type: "input",
+        }
+
     ];
 
     const handleCreateCourse = () => {
         form.validateFields().then((values) => {
+            const newCourse: ICourse = {
+                title: values.title,
+                topic: values.topic,
+                description: values.description,
+                isPublished: false,
+                instructor: values.instructor
+            }
+
+            createCourse(newCourse);
+
             console.log("Course created:", values);
             form.resetFields();
             setIsModalVisible(false);
