@@ -3,13 +3,11 @@ import { createContext } from "react";
 export interface IUser {
     name?: string,
     surname?: string,
-    username?: string,
+    userName?: string,
     email?: string,
     password?: string,
     bio?: string,
     profession?: string,
-    interests?: string,
-    academicLevel?: string,
     userNameOrEmailAddress?: string
 }
 

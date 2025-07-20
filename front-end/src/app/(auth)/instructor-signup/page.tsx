@@ -22,7 +22,7 @@ const InstructorSignUp: React.FC = () => {
         const newUser: IUser = {
             name: values.name,
             surname: values.surname,
-            username: values.username,
+            userName: values.userName,
             email: values.email,
             password: values.password,
             bio: values.bio,
@@ -60,7 +60,7 @@ const InstructorSignUp: React.FC = () => {
                         <Input placeholder="Surname" className={styles.Input} prefix={<MailOutlined />}/>
                     </Form.Item>
                     <Form.Item<IUser>
-                        name="username"
+                        name="userName"
                         rules={[{ required: true, message: 'Please input your username' }]}
                     >
                         <Input placeholder="Username" className={styles.Input} prefix={<MailOutlined />}/>

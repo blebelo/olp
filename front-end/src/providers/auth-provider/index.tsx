@@ -19,7 +19,7 @@ import {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [state, dispatch] = useReducer(AuthReducer, INITIAL_STATE);
-    const instance = axiosInstance();
+    const instance = axiosInstance;
     const router = useRouter();
 
     const registerInstructor = async (user: IUser) => {
@@ -32,7 +32,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 router.push('/instructor/dashboard')
             }).catch((error) => {
                 dispatch(registerInstructorError())
-                console.error(error)
             })
     }
 
