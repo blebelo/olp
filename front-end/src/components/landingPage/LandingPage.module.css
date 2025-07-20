@@ -95,3 +95,64 @@
   font-size: 60px;
   color: rgba(255, 255, 255, 0.7);
 }
+
+/*navbar*/
+.navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 20px 40px;
+  z-index: 10;
+}
+
+.navContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logoImage {
+  height: 40px;
+  width: auto;
+}
+
+.siteName {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.navButton {
+  color: white !important;
+  border: none !important;
+  background: transparent !important;
+}
+
+.navButton:hover {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.signInButton {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: white !important;
+}
+
+.signInButton:hover {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}

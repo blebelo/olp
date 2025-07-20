@@ -9,6 +9,16 @@ const { Title, Paragraph } = Typography;
 const LandingPage: React.FC = () => {
   return (
     <div className={styles.heroContainer}>
+
+    <div className={styles.navbar}>
+        <div className={styles.navContent}>
+          <div className={styles.logo}>
+            <img src="/globe.svg" alt="Logo" className={styles.logoImage} />
+            <span className={styles.siteName}>DevAcademy</span>
+          </div>
+        </div>
+      </div>
+
       <div className={styles.decorativeCircleLarge}></div>
       <div className={styles.decorativeCircleSmall}></div>
 
