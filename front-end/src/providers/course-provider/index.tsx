@@ -12,7 +12,7 @@ import {
 
 export const CourseProvider = ({children}: {children: React.ReactNode}) => {
     const [state, dispatch] = useReducer(CourseReducer, INITIAL_STATE);
-    const instance = axiosInstance();
+    const instance = axiosInstance;
     const router = useRouter();
 
     const createCourse = async (course: ICourse) => {

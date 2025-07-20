@@ -18,15 +18,14 @@ export default function RootLayout({
   return (
     <AuthProvider>
       <InstructorProvider>
-        
-      <CourseProvider>
-        <html lang="en">
-          <body>
-            {children}
-          </body>
-        </html>
+        <CourseProvider>
+          <html lang="en">
+            <body>
+              {children}
+            </body>
+          </html>
+        </CourseProvider>
       </InstructorProvider>
-      </CourseProvider>
     </AuthProvider>
   );
 }
