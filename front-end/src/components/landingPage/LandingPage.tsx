@@ -4,10 +4,22 @@ import Image from 'next/image';
 import { Typography, Button, Row, Col, Space } from 'antd';
 import { SearchOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import styles from './LandingPage.module.css';
+import { useRouter } from 'next/navigation';
 
 const { Title, Paragraph } = Typography;
 
 const LandingPage: React.FC = () => {
+
+  const router = useRouter();
+
+  const handleInstructor = () => {
+    router.push('/instructor-signup');
+  }
+
+    const handleStudent = () => {
+    router.push('/student-signup');
+  }
+
   return (
     <div className={styles.heroContainer}>
 
@@ -31,7 +43,7 @@ const LandingPage: React.FC = () => {
             </Title>
             
             <Paragraph className={styles.subtitleText}>
-              Click the buttons below to sign up as an instructor or a student
+              Continue as an Instructor or Student
             </Paragraph>
             
             <Space size="large" wrap>
@@ -40,6 +52,7 @@ const LandingPage: React.FC = () => {
                 size="large"
                 icon={<SearchOutlined />}
                 className={styles.primaryButton}
+                onClick={handleInstructor}
               >
                 Instructor
               </Button>
@@ -48,6 +61,7 @@ const LandingPage: React.FC = () => {
                 size="large"
                 icon={<PlayCircleOutlined />}
                 className={styles.secondaryButton}
+                onClick={handleStudent}
               >
                 Student
               </Button>
