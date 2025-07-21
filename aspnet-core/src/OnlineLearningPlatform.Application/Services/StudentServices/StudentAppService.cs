@@ -49,7 +49,7 @@ namespace OnlineLearningPlatform.Services.StudentServices
                 UserName = createStudent.UserName,
                 Interests = createStudent.Interests,
                 AcademicLevel = createStudent.AcademicLevel,
-                EnrolledCoursesCount = 0, // Initially no courses are enrolled
+                EnrolledCoursesCount = 0, // Initially no courses are enrolled 
 
                 EnrolledCourses = new List<CourseDtos>()
             };
