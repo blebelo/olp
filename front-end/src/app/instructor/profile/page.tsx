@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { Card, Layout, Typography, Skeleton, Alert, Button, Form, notification } from "antd";
-import { useStyles } from "../style";
 import { useInstructorProfileState, useInstructorProfileActions } from "@/providers/instructorProvider";
 import ReusableModalForm, { FieldConfig } from "@/components/modal/ReusableModalForm";
 
@@ -12,7 +11,6 @@ const { Title, Paragraph } = Typography;
 export default function InstructorProfilePage() {
   const { profile, isPending: profilePending, error: profileError } = useInstructorProfileState();
   const { updateProfile } = useInstructorProfileActions();
-  const { styles } = useStyles();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [editForm] = Form.useForm();
   const [editLoading, setEditLoading] = useState(false);
