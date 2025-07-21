@@ -8,6 +8,7 @@ using OnlineLearningPlatform.Courses.Dto;
 using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Domain.Students;
 using OnlineLearningPlatform.Students.Dto;
+using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,6 +74,41 @@ namespace OnlineLearningPlatform.Students
                 Interests = student.Interests,
                 AcademicLevel = student.AcademicLevel
             };
+        }
+
+
+        public async Task<StudentProfileDto> UpdateStudentProfileAsync(UpdateStudentDto input)
+        {
+            var student = await _studentRepository
+                .GetAll()
+                .Include(s => s.UserAccount)
+                .FirstOrDefaultAsync(s => s.UserAccount != null && s.UserAccount.Id == AbpSession.UserId.Value);
+
+
+            if (student == null)
+            {
+                throw new UserFriendlyException("Student profile not found.");
+            }
+
+            student.UserAccount.Name = input.Name;
+            student.UserAccount.Surname = input.Surname;
+            student.UserAccount.UserName = input.UserName;
+            student.Interests = input.Interests;
+            student.AcademicLevel = input.AcademicLevel;
+
+            await _studentRepository.UpdateAsync(student);
+
+
+            return new StudentProfileDto
+            {
+                Id = student.Id,
+                Name = student.Name,
+                Surname = student.Surname,
+                UserName = student.UserName,
+                Interests = student.Interests,
+                AcademicLevel = student.AcademicLevel,
+            };
+
         }
 
 
