@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         await instance.post(endpoint, user)
             .then((response) => {
                 dispatch(registerStudentSuccess(response.data))
-                router.push('/instructor/dashboard')
+                router.push('/student')
             }).catch(() => {
                 dispatch(registerStudentError())
             })

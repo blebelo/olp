@@ -12,7 +12,12 @@ const StudentNavbar = () => {
   const [open, setOpen] = useState(false);
 
   const handleNavigate = (path: string) => {
-    router.push(path);
+    if (path === '/logout') {
+      sessionStorage.clear()
+      router.push('/login')
+    } else {
+      router.push(path);
+    }
     setOpen(false);
   };
 

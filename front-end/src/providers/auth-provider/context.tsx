@@ -9,6 +9,8 @@ export interface IUser {
     bio?: string,
     profession?: string,
     userNameOrEmailAddress?: string
+    interest?: string;
+    academicLevel?: string;
 }
 
 export interface IAuthStateContext {

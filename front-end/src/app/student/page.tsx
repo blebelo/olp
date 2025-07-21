@@ -4,15 +4,12 @@ import { Row, Col, Typography, Button } from "antd";
 import { useStyles } from "./Styles/style";
 import { sampleCourses } from "@/utils/sample-courses/sampleCourse";
 import CourseCard from "@/components/course-card/CourseCard";
-import StudentNavbar from "@/components/student-nabvar/page";
 
 const HomePage = () => {
     const { styles } = useStyles();
 
     return (
-       <>
-            <StudentNavbar/>
-             <div className={styles.heroContainer}>
+        <div className={styles.heroContainer}>
             <div className={styles.decorativeCircleLarge} />
             <div className={styles.decorativeCircleSmall} />
             <div className={styles.decorativeCircleMedium} />
@@ -52,7 +49,6 @@ const HomePage = () => {
                 ))}
             </div>
         </div>
-       </>
     );
 };
 

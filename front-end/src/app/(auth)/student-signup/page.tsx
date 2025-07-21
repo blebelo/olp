@@ -25,6 +25,8 @@ const StudentSignUp: React.FC = () => {
             userName: values.userName,
             email: values.email,
             password: values.password,
+            interest: values.interest,
+            academicLevel: values.academicLevel
 
         }
         registerStudent(newUser);
@@ -59,7 +61,7 @@ const StudentSignUp: React.FC = () => {
                         <Input placeholder="Surname" className={styles.Input} prefix={<MailOutlined />}/>
                     </Form.Item>
                     <Form.Item<IUser>
-                        // name="username"
+                        name="userName"
                         rules={[{ required: true, message: 'Please input your username' }]}
                     >
                         <Input placeholder="Username" className={styles.Input} prefix={<MailOutlined />}/>
@@ -77,13 +79,13 @@ const StudentSignUp: React.FC = () => {
                         <Input.Password placeholder="Password" className={styles.Input} prefix={<LockOutlined />} />
                     </Form.Item>
                     <Form.Item<IUser>
-                        // name="interests"
+                        name="interest"
                         rules={[{ required: true, message: 'Please input your interests' }]}
                     >
                         <Input placeholder="interests" className={styles.Input} prefix={<FormOutlined />}/>
                     </Form.Item>
                     <Form.Item<IUser>
-                        // name="academicLevel"
+                        name="academicLevel"
                         rules={[{ required: true, message: 'Please input your academicLevel' }]}
                     >
                         <Input placeholder="academicLevel" className={styles.Input} prefix={<FormOutlined />}/>
