@@ -18,7 +18,7 @@ using OnlineLearningPlatform.Services.StudentServices.Dto;
 
 namespace OnlineLearningPlatform.Services.StudentServices
 {
-    public class StudentAppService : AsyncCrudAppService<Student, CreateStudentDto, Guid, GetStudentsInput, CreateStudentDto, UpdateStudentDto>, IStudentAppService
+    public class StudentAppService : AsyncCrudAppService<Student, StudentDto, Guid, GetStudentsInput, CreateStudentDto, UpdateStudentDto>, IStudentAppService
     {
         private readonly IRepository<Student, Guid> _studentRepository;
         private readonly IRepository<Course, Guid> _courseRepository;
@@ -36,11 +36,20 @@ namespace OnlineLearningPlatform.Services.StudentServices
             _courseRepository = courseRepository;
             _studentCourseRepository = studentCourseRepository;
         }
-        public override async Task<CreateStudentDto> CreateAsync(CreateStudentDto input)
+        public override async Task<StudentDto> CreateAsync(CreateStudentDto input)
         {
             var createStudent = await _studentManager.CreateStudentAsync(input.UserName, input.Name, input.Surname, input.Email, input.Password, input.Interests, input.AcademicLevel);
 
-            return input;
+            return new StudentDto
+            {
+                Id = createStudent.Id,
+                Name = createStudent.Name,
+                Surname = createStudent.Surname,
+                Interests = createStudent.Interests,
+                AcademicLevel = createStudent.AcademicLevel,
+                EnrolledCoursesCount = 0, // Initially no courses are enrolled
+                EnrolledCourses = new List<CourseDtos>()
+            };
         }
         //Enrollment
         public async Task EnrollStudentInCourseAsync(Guid studentId, Guid courseId)

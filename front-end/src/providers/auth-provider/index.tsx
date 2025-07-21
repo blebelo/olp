@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const registerInstructor = async (user: IUser) => {
         dispatch(registerInstructorPending());
-        const endpoint: string = '/api/services/app/Instructor/Create';
+        const endpoint: string = '/services/app/Instructor/Create';
 
         await instance.post(endpoint, user)
             .then((response) => {
@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const registerStudent = async (user: IUser) => {
         dispatch(registerStudentPending());
-        const endpoint: string = '/api/services/app/Student/Create';
+        const endpoint: string = '/services/app/Student/Create';
 
         await instance.post(endpoint, user)
             .then((response) => {
