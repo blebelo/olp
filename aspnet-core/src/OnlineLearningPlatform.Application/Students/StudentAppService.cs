@@ -2,6 +2,7 @@
 using Abp.Domain.Entities;
 using Abp.Domain.Repositories;
 using Abp.UI;
+using Microsoft.EntityFrameworkCore;
 using OnlineLearningPlatform.Authorization.Users;
 using OnlineLearningPlatform.Courses.Dto;
 using OnlineLearningPlatform.Domain.Courses;
@@ -49,6 +50,31 @@ namespace OnlineLearningPlatform.Students
                 throw new UserFriendlyException("An error occurred while creating the student. Please try again.");
             }
         }
+
+
+        public async Task<StudentProfileDto> GetStudentProfileAsync()
+        {
+
+            //Find the student by the current user
+            var student = await _studentRepository
+                .GetAll()
+                .Include(s => s.UserAccount)
+                .FirstOrDefaultAsync(s => s.UserAccount != null && s.UserAccount.Id == AbpSession.UserId.Value);
+
+
+            if (student == null)
+                throw new UserFriendlyException("Student not found");
+            return new StudentProfileDto
+            {
+                Id = student.Id,
+                Name = student.UserAccount?.Name,
+                Surname = student.UserAccount?.Surname,
+                UserName = student.UserAccount?.UserName,
+                Interests = student.Interests,
+                AcademicLevel = student.AcademicLevel
+            };
+        }
+
 
         public async Task<List<CourseDto>> GetStudentEnrolledCoursesAsync(Guid studentId)
         {

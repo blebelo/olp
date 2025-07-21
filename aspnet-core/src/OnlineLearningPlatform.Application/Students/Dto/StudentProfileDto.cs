@@ -1,20 +1,20 @@
 ﻿using Abp.Application.Services.Dto;
-using Abp.AutoMapper;
-using OnlineLearningPlatform.Courses.Dto;
-using OnlineLearningPlatform.Domain.Students;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace OnlineLearningPlatform.Students.Dto
 {
-    [AutoMap(typeof(Student))]
-    public class StudentDto : FullAuditedEntityDto<Guid>
+    public class StudentProfileDto: EntityDto<Guid>
     {
         public string Name { get; set; }
         public string Surname { get; set; }
         public string UserName { get; set; }
+        public string Email { get; set; }
         public string Interests { get; set; }
         public string AcademicLevel { get; set; }
-        public List<CourseDto> EnrolledCourses { get; set; }
+
     }
 }
