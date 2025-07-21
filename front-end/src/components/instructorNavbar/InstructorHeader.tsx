@@ -1,42 +1,67 @@
-import React, { useState } from "react";
-import type { MenuInfo } from "rc-menu/lib/interface";
-import { Menu, Layout } from "antd";
-import { useRouter } from "next/navigation";
-import { useStyles } from "./Style/styles";
+'use client';
 
-const InstructorHeader = () => {
-    const { styles } = useStyles();
-    const { Header } = Layout;
-    const [activeTab, setActiveTab] = useState("1");
-    const router = useRouter();
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { MenuOutlined } from '@ant-design/icons';
+import { Button, Drawer } from 'antd';
+import { useStyles } from './Style/styles';
+import { instructorNavbarItems } from '@/utils/instructor-navbar/navbarItems';
 
-    const menuItems = [
-        { key: "1", label: "Dashboard" },
-        { key: "2", label: "Profile" }
-    ];
+const InstructorNavbar = () => {
+  const { styles } = useStyles();
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
 
-    const handleMenuClick = (e: MenuInfo) => {
-        setActiveTab(e.key);
-        if (e.key === "1") {
-            router.push("/instructor");
-        } else if (e.key === "2") {
-            router.push("/instructor/profile");
-        }
-    };
+  const handleNavigate = (path: string) => {
+    if (path === '/logout') {
+      sessionStorage.clear()
+      router.push('/login')
+    } else {
+      router.push(path);
+    }
+    setOpen(false);
+  };
 
-    return (
-        <Header className={styles.Navbar}>
-            <div className={styles.NavTitle}>OLP</div>
-            <Menu
-                theme="dark"
-                mode="horizontal"
-                selectedKeys={[activeTab]}
-                onClick={handleMenuClick}
-                items={menuItems}
-                className={styles.Menu}
-            />
-        </Header>
-    );
-};
+  return (
+    <nav className={styles.navbar}>
+      <div className={styles.logo}>DevAcademy</div>
 
-export default InstructorHeader;
+      <div className={styles.navLinks}>
+        {instructorNavbarItems.map((item) => (
+          <button
+            key={item.label}
+            className={styles.navButton}
+            onClick={() => handleNavigate(item.path)}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+
+      <Button className={styles.menuButton} type="text" icon={<MenuOutlined />} onClick={() => setOpen(true)} />
+
+      <Drawer
+        placement="right"
+        closable
+        onClose={() => setOpen(false)}
+        open={open}
+        className={styles.drawer}
+        width={240}
+      >
+        <div className={styles.drawerContent}>
+          {instructorNavbarItems.map((item) => (
+            <button
+              key={item.label}
+              className={styles.drawerLink}
+              onClick={() => handleNavigate(item.path)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      </Drawer>
+    </nav>
+  );
+}
+
+export default InstructorNavbar;

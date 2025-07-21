@@ -3,13 +3,13 @@ import { createStyles, css } from 'antd-style';
 export const useStyles = createStyles({
   CustomModal: css`
     .ant-modal-content {
-      background-color: #4a5c6a;
+      background-color: #44a08d;
       border-radius: 12px;
       color: #ffffff;
     }
 
     .ant-modal-header {
-      background-color: #4a5c6a;
+      background-color: #44a08d;
       border-bottom: 0.1rem solid #ccd0cf;
     }
 
@@ -40,7 +40,7 @@ export const useStyles = createStyles({
     color: #000000;
 
     &:hover {
-      background-color: #11212d !important;
+      background-color: #219cd5ff !important;
       color: #ffffff !important;
     }
   `,
