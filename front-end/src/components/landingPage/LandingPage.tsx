@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import Image from 'next/image';
 import { Typography, Button, Row, Col, Space } from 'antd';
 import { SearchOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import styles from './LandingPage.module.css';
@@ -13,7 +14,7 @@ const LandingPage: React.FC = () => {
     <div className={styles.navbar}>
         <div className={styles.navContent}>
           <div className={styles.logo}>
-            <img src="/globe.svg" alt="Logo" className={styles.logoImage} />
+            <Image src="/globe.svg" alt="Logo" className={styles.logoImage} width={40} height={40} />
             <span className={styles.siteName}>DevAcademy</span>
           </div>
         </div>

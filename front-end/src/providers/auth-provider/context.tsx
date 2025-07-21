@@ -3,13 +3,11 @@ import { createContext } from "react";
 export interface IUser {
     name?: string,
     surname?: string,
-    username?: string,
+    userName?: string,
     email?: string,
     password?: string,
     bio?: string,
     profession?: string,
-    interests?: string,
-    academicLevel?: string,
     userNameOrEmailAddress?: string
 }
 
@@ -21,9 +19,9 @@ export interface IAuthStateContext {
 }
 
 export interface IAuthActionContext {
-    registerInstructor: (user: IUser) => void;
-    registerStudent : (user: IUser) => void;
-    loginUser: (user: IUser) => void;
+    registerInstructor: (user: IUser) => Promise<void>;
+    registerStudent : (user: IUser) => Promise<void>;
+    loginUser: (user: IUser) => Promise<void>;
 }
 
 export const INITIAL_STATE: IAuthStateContext = {
