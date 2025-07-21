@@ -8,7 +8,6 @@ using Abp.Domain.Repositories;
 using Abp.Runtime.Session;
 using Abp.UI;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
 using OnlineLearningPlatform.Authorization.Users;
 using OnlineLearningPlatform.Courses;
 using OnlineLearningPlatform.Domain.Courses;
@@ -46,46 +45,12 @@ namespace OnlineLearningPlatform.Services.StudentServices
                 Id = createStudent.Id,
                 Name = createStudent.Name,
                 Surname = createStudent.Surname,
-                UserName = createStudent.UserName,
                 Interests = createStudent.Interests,
                 AcademicLevel = createStudent.AcademicLevel,
-                EnrolledCoursesCount = 0, // Initially no courses are enrolled 
-
+                EnrolledCoursesCount = 0, // Initially no courses are enrolled
                 EnrolledCourses = new List<CourseDtos>()
             };
         }
-
-
-
-        public async Task<StudentProfileDto> GetStudentProfileAsync()
-        {
-
-            //Find the student by the current user
-            var student = await _studentRepository
-                .GetAll()
-                .Include(s => s.UserAccount)
-                .FirstOrDefaultAsync(s => s.UserAccount != null && s.UserAccount.Id == AbpSession.UserId.Value);
-
-
-            if (student == null)
-                throw new UserFriendlyException("Student not found");
-            return new StudentProfileDto
-            {
-                Id = student.Id,
-                Name = student.UserAccount?.Name,
-                Surname = student.UserAccount?.Surname,
-                UserName = student.UserAccount?.UserName,
-                Interests = student.Interests,
-                AcademicLevel = student.AcademicLevel
-            };
-        }
-
-
-
-
-
-
-
         //Enrollment
         public async Task EnrollStudentInCourseAsync(Guid studentId, Guid courseId)
         {
