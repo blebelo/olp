@@ -12,6 +12,7 @@ namespace OnlineLearningPlatform.Students.Dto
     {
         public string Name { get; set; }
         public string Surname { get; set; }
+        public string UserName { get; set; }
         public string Interests { get; set; }
         public string AcademicLevel { get; set; }
         public List<CourseDto> EnrolledCourses { get; set; }
