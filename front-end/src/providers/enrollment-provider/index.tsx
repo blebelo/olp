@@ -17,7 +17,7 @@ import {
 
 export const StudentEnrollmentProvider = ({children}: {children: React.ReactNode}) => {
     const [state, dispatch] = useReducer(StudentEnrollmentReducer, INITIAL_STATE);
-    const instance = axiosInstance();
+    const instance = axiosInstance;
 
     const enrollStudentInCourse = async (studentId: string, courseId: string) => {
         dispatch(enrollStudentInCoursePending());
