@@ -8,6 +8,8 @@ import { initialLessons } from '@/utils/sample-courses/lessons';
 import type { FieldConfig } from "@/components/modal/ReusableModalForm";
 import { UploadOutlined } from "@ant-design/icons";
 import ReusableModalForm from '@/components/modal/ReusableModalForm';
+import QuizModalForm from '@/components/modal/quiz-modal/QuizModalForm';
+import { QuizQuestion } from '@/components/modal/quiz-modal/QuizModalForm';
 const { Title, Paragraph } = Typography;
 
 const ManageCoursePage = () => {
@@ -16,6 +18,20 @@ const ManageCoursePage = () => {
     const [isAddLesson, setIsAddLesson] = useState(false);
     const [form] = Form.useForm();
     const lessons = initialLessons;
+    const [isAddQuiz, setIsAddQuiz] = useState(false);
+
+    const [quizQuestions, setQuizQuestions] = useState([
+        {
+            question: "",
+            options: ["", "", "", ""],
+            correctAnswer: 0,
+        },
+    ]);
+
+    const handleCreateQuiz = (questions: QuizQuestion[]) => {
+        console.log("Quiz submitted:", questions);
+        setIsAddQuiz(false);
+    }
 
     const lessonFields: FieldConfig[] = [
         {
@@ -68,7 +84,7 @@ const ManageCoursePage = () => {
         });
     };
 
-       const handleCancelAdd = () => {
+    const handleCancelAdd = () => {
         form.resetFields();
         setIsAddLesson(false);
     };
@@ -97,7 +113,7 @@ const ManageCoursePage = () => {
                         ))}
                     </div>
 
-   
+
                     <Button className={styles.quizButton} onClick={() => setIsAddLesson(true)}>Add Lesson</Button>
                     <ReusableModalForm
                         title="Add Lesson"
@@ -149,10 +165,17 @@ const ManageCoursePage = () => {
                     <Button
                         type="primary"
                         className={styles.completeButton}
-
+                        onClick={() => setIsAddQuiz(true)}
                     >
-                        Delete lesson
+                        Add Quiz
                     </Button>
+                    <QuizModalForm
+                        visible={isAddQuiz}
+                        onCancel={() => setIsAddQuiz(false)}
+                        onSubmit={handleCreateQuiz}
+                        questions={quizQuestions}
+                        setQuestions={setQuizQuestions}
+                    />
 
                     <Button
                         type="primary"
