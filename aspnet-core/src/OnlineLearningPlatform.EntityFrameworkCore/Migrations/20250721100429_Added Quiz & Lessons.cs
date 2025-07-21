@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace OnlineLearningPlatform.Migrations
 {
     /// <inheritdoc />
-    public partial class AddedStudentEntity : Migration
+    public partial class AddedQuizLessons : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -450,6 +450,31 @@ namespace OnlineLearningPlatform.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Quizzes",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Duration = table.Column<TimeSpan>(type: "interval", nullable: false),
+                    PassingScore = table.Column<decimal>(type: "numeric", nullable: false),
+                    Questions = table.Column<string[]>(type: "text[]", nullable: true),
+                    Memorandum = table.Column<string[]>(type: "text[]", nullable: true),
+                    AnswerOptions = table.Column<string[]>(type: "text[]", nullable: true),
+                    CreationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatorUserId = table.Column<long>(type: "bigint", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifierUserId = table.Column<long>(type: "bigint", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    DeleterUserId = table.Column<long>(type: "bigint", nullable: true),
+                    DeletionTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Quizzes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AbpDynamicEntityProperties",
                 columns: table => new
                 {
@@ -778,10 +803,8 @@ namespace OnlineLearningPlatform.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    StudentId = table.Column<string>(type: "text", nullable: true),
                     Interests = table.Column<string>(type: "text", nullable: true),
                     AcademicLevel = table.Column<string>(type: "text", nullable: true),
-                    EnrolledCourses = table.Column<string[]>(type: "text[]", nullable: true),
                     CreationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatorUserId = table.Column<long>(type: "bigint", nullable: true),
                     LastModificationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -941,10 +964,10 @@ namespace OnlineLearningPlatform.Migrations
                     Title = table.Column<string>(type: "text", nullable: true),
                     Topic = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
+                    Category = table.Column<string>(type: "text", nullable: true),
                     IsPublished = table.Column<bool>(type: "boolean", nullable: false),
-                    Instructor = table.Column<string>(type: "text", nullable: true),
-                    EnrolledStudents = table.Column<string[]>(type: "text[]", nullable: true),
                     InstructorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    QuizId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatorUserId = table.Column<long>(type: "bigint", nullable: true),
                     LastModificationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -961,6 +984,70 @@ namespace OnlineLearningPlatform.Migrations
                         column: x => x.InstructorId,
                         principalTable: "Instructors",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Courses_Quizzes_QuizId",
+                        column: x => x.QuizId,
+                        principalTable: "Quizzes",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "QuizAttempt",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    StudentId = table.Column<Guid>(type: "uuid", nullable: true),
+                    QuizId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Score = table.Column<decimal>(type: "numeric", nullable: false),
+                    Percentage = table.Column<decimal>(type: "numeric", nullable: false),
+                    IsPassed = table.Column<bool>(type: "boolean", nullable: false),
+                    IsCompleted = table.Column<bool>(type: "boolean", nullable: false),
+                    StudentAnswers = table.Column<string[]>(type: "text[]", nullable: true),
+                    CreationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatorUserId = table.Column<long>(type: "bigint", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifierUserId = table.Column<long>(type: "bigint", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    DeleterUserId = table.Column<long>(type: "bigint", nullable: true),
+                    DeletionTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QuizAttempt", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_QuizAttempt_Quizzes_QuizId",
+                        column: x => x.QuizId,
+                        principalTable: "Quizzes",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_QuizAttempt_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CourseStudent",
+                columns: table => new
+                {
+                    EnrolledCoursesId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EnrolledStudentsId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CourseStudent", x => new { x.EnrolledCoursesId, x.EnrolledStudentsId });
+                    table.ForeignKey(
+                        name: "FK_CourseStudent_Courses_EnrolledCoursesId",
+                        column: x => x.EnrolledCoursesId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CourseStudent_Students_EnrolledStudentsId",
+                        column: x => x.EnrolledStudentsId,
+                        principalTable: "Students",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -971,10 +1058,10 @@ namespace OnlineLearningPlatform.Migrations
                     Title = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     VideoLink = table.Column<string>(type: "text", nullable: true),
-                    Instructor = table.Column<string>(type: "text", nullable: true),
+                    CourseId = table.Column<Guid>(type: "uuid", nullable: true),
+                    InstructorId = table.Column<Guid>(type: "uuid", nullable: true),
                     IsCompleted = table.Column<bool>(type: "boolean", nullable: false),
                     StudyMaterialLinks = table.Column<string[]>(type: "text[]", nullable: true),
-                    CourseId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatorUserId = table.Column<long>(type: "bigint", nullable: true),
                     LastModificationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -990,6 +1077,11 @@ namespace OnlineLearningPlatform.Migrations
                         name: "FK_Lessons_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Lessons_Instructors_InstructorId",
+                        column: x => x.InstructorId,
+                        principalTable: "Instructors",
                         principalColumn: "Id");
                 });
 
@@ -1348,6 +1440,16 @@ namespace OnlineLearningPlatform.Migrations
                 column: "InstructorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Courses_QuizId",
+                table: "Courses",
+                column: "QuizId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseStudent_EnrolledStudentsId",
+                table: "CourseStudent",
+                column: "EnrolledStudentsId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Instructors_UserAccountId",
                 table: "Instructors",
                 column: "UserAccountId");
@@ -1356,6 +1458,21 @@ namespace OnlineLearningPlatform.Migrations
                 name: "IX_Lessons_CourseId",
                 table: "Lessons",
                 column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lessons_InstructorId",
+                table: "Lessons",
+                column: "InstructorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QuizAttempt_QuizId",
+                table: "QuizAttempt",
+                column: "QuizId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QuizAttempt_StudentId",
+                table: "QuizAttempt",
+                column: "StudentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Students_UserAccountId",
@@ -1448,10 +1565,13 @@ namespace OnlineLearningPlatform.Migrations
                 name: "AbpWebhookSubscriptions");
 
             migrationBuilder.DropTable(
+                name: "CourseStudent");
+
+            migrationBuilder.DropTable(
                 name: "Lessons");
 
             migrationBuilder.DropTable(
-                name: "Students");
+                name: "QuizAttempt");
 
             migrationBuilder.DropTable(
                 name: "AbpDynamicEntityProperties");
@@ -1472,6 +1592,9 @@ namespace OnlineLearningPlatform.Migrations
                 name: "Courses");
 
             migrationBuilder.DropTable(
+                name: "Students");
+
+            migrationBuilder.DropTable(
                 name: "AbpDynamicProperties");
 
             migrationBuilder.DropTable(
@@ -1479,6 +1602,9 @@ namespace OnlineLearningPlatform.Migrations
 
             migrationBuilder.DropTable(
                 name: "Instructors");
+
+            migrationBuilder.DropTable(
+                name: "Quizzes");
 
             migrationBuilder.DropTable(
                 name: "AbpUsers");

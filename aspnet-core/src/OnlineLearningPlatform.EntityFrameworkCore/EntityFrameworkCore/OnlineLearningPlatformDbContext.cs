@@ -1,16 +1,13 @@
 ﻿using Abp.Zero.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineLearningPlatform.Authorization.Roles;
 using OnlineLearningPlatform.Authorization.Users;
 using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Domain.Entities;
-using OnlineLearningPlatform.Domain.Students;
 using OnlineLearningPlatform.Domain.Instructors;
+using OnlineLearningPlatform.Domain.Quizzes;
+using OnlineLearningPlatform.Domain.Students;
 using OnlineLearningPlatform.MultiTenancy;
-using System;
-using System.Linq;
-using OnlineLearningPlatform.Domain.StudentCourses;
 
 namespace OnlineLearningPlatform.EntityFrameworkCore
 {
@@ -21,7 +18,7 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
         public DbSet<Course> Courses { get; set; }
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<Student> Students { get; set; }
-        public DbSet<StudentCourse> StudentCourses { get; set; }
+        public DbSet<Quiz> Quizzes { get; set; }
 
         public OnlineLearningPlatformDbContext(DbContextOptions<OnlineLearningPlatformDbContext> options)
             : base(options)

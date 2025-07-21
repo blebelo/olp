@@ -12,7 +12,6 @@ namespace OnlineLearningPlatform.Courses.Dto
         public string Topic { get; set; }
         public string Description { get; set; }
         public bool IsPublished { get; set; } = false;
-        public string Instructor { get; set; }
-
+        public Guid InstructorId { get; set; }
     }
 }

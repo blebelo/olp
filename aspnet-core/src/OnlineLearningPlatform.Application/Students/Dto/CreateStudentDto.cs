@@ -8,7 +8,7 @@ using Abp.Application.Services.Dto;
 using AutoMapper;
 using OnlineLearningPlatform.Domain.Students;
 
-namespace OnlineLearningPlatform.Services.StudentServices.Dto
+namespace OnlineLearningPlatform.Students.Dto
 {
     //[AutoMap(typeof(Student))]
     public class CreateStudentDto : EntityDto<Guid>

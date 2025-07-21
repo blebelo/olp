@@ -1,17 +1,13 @@
 ﻿using Abp.Domain.Repositories;
 using Abp.Domain.Services;
 using Abp.UI;
-using Microsoft.AspNetCore.Identity;
 using OnlineLearningPlatform.Authorization.Users;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OnlineLearningPlatform.Domain.Instructors
 {
-    public class InstructorManager: DomainService
+    public class InstructorManager : DomainService
     {
         private readonly IRepository<Instructor, Guid> _instructorRepository;
         private readonly UserManager _userManager;
