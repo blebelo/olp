@@ -3,7 +3,6 @@ using Abp.Domain.Entities;
 using Abp.Domain.Repositories;
 using Abp.UI;
 using OnlineLearningPlatform.Authorization.Users;
-using OnlineLearningPlatform.Courses;
 using OnlineLearningPlatform.Courses.Dto;
 using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Domain.Students;
@@ -31,7 +30,6 @@ namespace OnlineLearningPlatform.Students
         }
         public override async Task<StudentDto> CreateAsync(CreateStudentDto input)
         {
-            Logger.Info($"Creating a new student with input: {input}");
             try
             {
                 var newStudent = await _studentManager.CreateStudentAsync(
@@ -48,7 +46,6 @@ namespace OnlineLearningPlatform.Students
             }
             catch (Exception ex)
             {
-                Logger.Error("Failed to create student", ex);
                 throw new UserFriendlyException("An error occurred while creating the student. Please try again.");
             }
         }
@@ -77,7 +74,6 @@ namespace OnlineLearningPlatform.Students
             }
             catch (Exception ex)
             {
-                Logger.Error($"Failed to retrieve enrolled courses for student ID: {studentId}", ex);
                 throw new UserFriendlyException("An error occurred while retrieving enrolled courses.");
             }
         }

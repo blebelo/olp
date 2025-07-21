@@ -1,14 +1,16 @@
 ﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
-using Abp.Domain.Entities;
 using Abp.Domain.Repositories;
+using Abp.UI;
 using OnlineLearningPlatform.Courses.Dto;
 using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Domain.Entities;
 using OnlineLearningPlatform.Domain.Instructors;
+using OnlineLearningPlatform.Domain.Quizzes;
 using OnlineLearningPlatform.Domain.Students;
 using OnlineLearningPlatform.Instructors.Dto;
 using OnlineLearningPlatform.Lessons.Dto;
+using OnlineLearningPlatform.Quizzes.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,13 +22,15 @@ namespace OnlineLearningPlatform.Courses
         : AsyncCrudAppService<Course, CourseDto, Guid, PagedAndSortedResultRequestDto, CreateCourseDto, UpdateCourseDto>,
           ICourseAppService
     {
+        private readonly IRepository<Quiz, Guid> _quizRepository;
         private readonly IRepository<Course, Guid> _courseRepository;
         private readonly IRepository<Student, Guid> _studentRepository;
         private readonly IRepository<Instructor, Guid> _instructorRepository;
 
-        public CourseAppService(IRepository<Course, Guid> repository, IRepository<Student, Guid> students, IRepository<Instructor, Guid> instructorRepository)
+        public CourseAppService(IRepository<Quiz, Guid> quizRepository, IRepository<Course, Guid> repository, IRepository<Student, Guid> students, IRepository<Instructor, Guid> instructorRepository)
             : base(repository)
         {
+            _quizRepository = quizRepository;
             _courseRepository = repository;
             _studentRepository = students;
             _instructorRepository = instructorRepository;
@@ -121,5 +125,36 @@ namespace OnlineLearningPlatform.Courses
             }
         }
 
+        public async Task AddQuizAsync(Guid courseId, CreateQuizDto quizDto)
+        {
+            var course = await _courseRepository.GetAsync(courseId);
+
+            var quiz = ObjectMapper.Map<Quiz>(quizDto);
+            if (course.Quiz == null)
+            {
+                course.Quiz = quiz;
+                await _quizRepository.InsertAsync(ObjectMapper.Map<Quiz>(quizDto));
+                await _courseRepository.UpdateAsync(course);
+            }
+            else
+            {
+                throw new UserFriendlyException("This course already has a quiz.");
+            }
+        }
+
+        public async Task RemoveQuizAsync(Guid courseId, Guid quizId)
+        {
+            var course = await _courseRepository.GetAsync(courseId);
+            if (course.Quiz != null && course.Quiz.Id == quizId)
+            {
+                course.Quiz = null;
+                _quizRepository.Delete(quizId);
+                await _courseRepository.UpdateAsync(course);
+            }
+            else
+            {
+                throw new UserFriendlyException("The quiz you're trying to remove does not exist for this course.");
+            }
+        }
     }
 }

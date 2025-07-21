@@ -12,9 +12,11 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OnlineLearningPlatform.Core\OnlineLearningPlatform.Core.csproj" />
+    <Compile Remove="Services\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Services\**" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Services\" />
+    <ProjectReference Include="..\OnlineLearningPlatform.Core\OnlineLearningPlatform.Core.csproj" />
   </ItemGroup>
 </Project>

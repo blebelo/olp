@@ -1,0 +1,18 @@
+﻿using Abp.Application.Services.Dto;
+using System;
+using System.Collections.Generic;
+
+namespace OnlineLearningPlatform.Quizzes.Dto
+{
+    public class UpdateQuizDto : EntityDto<Guid>
+    {
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public TimeSpan? Duration { get; set; }
+        public decimal? PassingScore { get; set; }
+        public Guid? CourseId { get; set; }
+        public ICollection<string>? Questions { get; set; }
+        public ICollection<string>? Memorandum { get; set; }
+        public ICollection<string>? AnswerOptions { get; set; }
+    }
+}

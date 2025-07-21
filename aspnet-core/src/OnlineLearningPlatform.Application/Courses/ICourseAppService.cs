@@ -1,11 +1,11 @@
 ﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
-using System;
 using OnlineLearningPlatform.Courses.Dto;
-using System.Threading.Tasks;
-using OnlineLearningPlatform.Lessons.Dto;
 using OnlineLearningPlatform.Instructors.Dto;
-using OnlineLearningPlatform.Domain.Students;
+using OnlineLearningPlatform.Lessons.Dto;
+using OnlineLearningPlatform.Quizzes.Dto;
+using System;
+using System.Threading.Tasks;
 
 namespace OnlineLearningPlatform.Courses
 {
@@ -16,6 +16,7 @@ namespace OnlineLearningPlatform.Courses
         Task UnEnrollStudentAsync(Guid courseId, Guid studentId);
         Task AddLessonAsync(Guid courseId, LessonDto lesson);
         Task RemoveLessonAsync(Guid courseId, Guid lessonId);
-
+        Task AddQuizAsync(Guid courseId, CreateQuizDto quiz);
+        Task RemoveQuizAsync(Guid courseId, Guid quizId);
     }
 }

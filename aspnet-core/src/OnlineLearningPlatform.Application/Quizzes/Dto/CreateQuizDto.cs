@@ -1,22 +1,21 @@
-﻿using Abp.Domain.Entities.Auditing;
-using OnlineLearningPlatform.Domain.Courses;
-using OnlineLearningPlatform.Domain.Students;
+﻿using Abp.Application.Services.Dto;
+using Abp.AutoMapper;
+using OnlineLearningPlatform.Domain.Quizzes;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace OnlineLearningPlatform.Domain.Quizzes
+namespace OnlineLearningPlatform.Quizzes.Dto
 {
-    public class Quiz : FullAuditedEntity<Guid>
+    [AutoMap(typeof(Quiz))]
+    public class CreateQuizDto : EntityDto<Guid>
     {
         public string Name { get; set; }
         public string Description { get; set; }
         public TimeSpan Duration { get; set; }
         public decimal PassingScore { get; set; }
+        public Guid CourseId { get; set; }
         public ICollection<string> Questions { get; set; }
         public ICollection<string> Memorandum { get; set; }
         public ICollection<string> AnswerOptions { get; set; }
-        public ICollection<QuizAttempt> StudentAttempts { get; set; }
     }
-
 }
