@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { Card, Layout, Typography, Skeleton, Alert, Button, Form, notification } from "antd";
-import InstructorHeader from "@/components/instructorNavbar/InstructorHeader";
 import { useStyles } from "../style";
 import { useInstructorProfileState, useInstructorProfileActions } from "@/providers/instructorProvider";
 import ReusableModalForm, { FieldConfig } from "@/components/modal/ReusableModalForm";
@@ -69,7 +68,7 @@ if (profilePending) {
   content = (
     <>
       <Card
-        className={styles.CardContainer}
+        // className={styles.CardContainer}
         title={`${profile.name} ${profile.surname}`}
       >
         <Paragraph>
@@ -116,11 +115,16 @@ if (profilePending) {
 
   return (
     <Layout>
-      <InstructorHeader />
-      <Content className={styles.Container}>
-        <Title className={styles.Heading}>My Profile</Title>
+      <Content>
+        <Title>My Profile</Title>
         {content}
       </Content>
     </Layout>
+    // <Layout>
+    //   <Content className={styles.Container}>
+    //     <Title className={styles.Heading}>My Profile</Title>
+    //     {content}
+    //   </Content>
+    // </Layout>
   );
 }

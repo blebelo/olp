@@ -1,5 +1,6 @@
 "use client"
 import withAuth from "@/hoc/WithAuth";
+import InstructorNavbar from "@/components/instructorNavbar/InstructorHeader";
 
 
 const Trainer =({
@@ -9,6 +10,7 @@ const Trainer =({
 }>)=> {
     return (
         <>
+            <InstructorNavbar/>
             { children }
         </>
     );
