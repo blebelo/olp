@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnlineLearningPlatform.Services.StudentServices.Dto
+namespace OnlineLearningPlatform.Students.Dto
 {
     public class EnrollmentDto
     {

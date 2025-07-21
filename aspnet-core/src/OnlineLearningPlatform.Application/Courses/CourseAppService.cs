@@ -1,10 +1,12 @@
 ﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
+using Abp.Domain.Entities;
 using Abp.Domain.Repositories;
-using Microsoft.AspNetCore.Mvc;
 using OnlineLearningPlatform.Courses.Dto;
 using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Domain.Entities;
+using OnlineLearningPlatform.Domain.Instructors;
+using OnlineLearningPlatform.Domain.Students;
 using OnlineLearningPlatform.Instructors.Dto;
 using OnlineLearningPlatform.Lessons.Dto;
 using System;
@@ -19,17 +21,24 @@ namespace OnlineLearningPlatform.Courses
           ICourseAppService
     {
         private readonly IRepository<Course, Guid> _courseRepository;
+        private readonly IRepository<Student, Guid> _studentRepository;
+        private readonly IRepository<Instructor, Guid> _instructorRepository;
 
-        public CourseAppService(IRepository<Course, Guid> repository)
+        public CourseAppService(IRepository<Course, Guid> repository, IRepository<Student, Guid> students, IRepository<Instructor, Guid> instructorRepository)
             : base(repository)
         {
             _courseRepository = repository;
+            _studentRepository = students;
+            _instructorRepository = instructorRepository;
         }
 
         public override async Task<CourseDto> CreateAsync(CreateCourseDto input)
         {
+            Instructor instructor = await _instructorRepository.GetAsync(input.InstructorId);
+
             var course = ObjectMapper.Map<Course>(input);
-            course.EnrolledStudents = new List<string>();
+            course.Instructor = instructor;
+            course.EnrolledStudents = new List<Student>();
             course.Lessons = new List<Lesson>();
 
             await _courseRepository.InsertAsync(course);
@@ -41,6 +50,7 @@ namespace OnlineLearningPlatform.Courses
             var course = await _courseRepository.GetAsync(input.Id);
             return ObjectMapper.Map<CourseDto>(course);
         }
+
         public override async Task<PagedResultDto<CourseDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
         {
             var totalCount = await _courseRepository.CountAsync();
@@ -63,10 +73,10 @@ namespace OnlineLearningPlatform.Courses
             return ObjectMapper.Map<CourseDto>(course);
         }
 
-
-        public async Task EnrollStudentAsync(Guid courseId, string student)
+        public async Task EnrollStudentAsync(Guid courseId, Guid studentId)
         {
             var course = await _courseRepository.GetAsync(courseId);
+            Student student = await _studentRepository.GetAsync(studentId);
 
             if (!course.EnrolledStudents.Contains(student))
             {
@@ -75,9 +85,10 @@ namespace OnlineLearningPlatform.Courses
             }
         }
 
-        public async Task UnEnrollStudentAsync(Guid courseId, string student)
+        public async Task UnEnrollStudentAsync(Guid courseId, Guid studentId)
         {
             var course = await _courseRepository.GetAsync(courseId);
+            Student student = await _studentRepository.GetAsync(studentId);
 
             if (course.EnrolledStudents.Contains(student))
             {
@@ -109,7 +120,6 @@ namespace OnlineLearningPlatform.Courses
                 await _courseRepository.UpdateAsync(course);
             }
         }
-
 
     }
 }

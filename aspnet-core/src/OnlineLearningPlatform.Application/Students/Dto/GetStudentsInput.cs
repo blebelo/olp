@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 
-namespace OnlineLearningPlatform.Services.StudentServices.Dto
+namespace OnlineLearningPlatform.Students.Dto
 {
     public class GetStudentsInput : PagedAndSortedResultRequestDto
     {

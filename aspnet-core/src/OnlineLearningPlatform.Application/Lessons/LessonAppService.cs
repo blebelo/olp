@@ -1,45 +1,99 @@
 ﻿using Abp.Application.Services;
+using Abp.Application.Services.Dto;
+using Abp.Domain.Entities;
 using Abp.Domain.Repositories;
+using Abp.UI;
+using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Domain.Entities;
 using OnlineLearningPlatform.Lessons.Dto;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Abp.Application.Services.Dto;
 
 namespace OnlineLearningPlatform.Lessons
 {
     public class LessonAppService : ApplicationService, ILessonAppService
     {
+        private readonly IRepository<Course, Guid> _courseRepository;
         private readonly IRepository<Lesson, Guid> _lessonRepository;
 
-        public LessonAppService(IRepository<Lesson, Guid> lessonRepository)
+        public LessonAppService(IRepository<Lesson, Guid> lessonRepository, IRepository<Course, Guid> courseRepository)
         {
+            _courseRepository = courseRepository;
             _lessonRepository = lessonRepository;
         }
 
         public async Task<LessonDto> CreateAsync(CreateLessonDto input)
         {
-            var lesson = ObjectMapper.Map<Lesson>(input);
-            await _lessonRepository.InsertAsync(lesson);
-            return ObjectMapper.Map<LessonDto>(lesson);
+            try
+            {
+                var lesson = ObjectMapper.Map<Lesson>(input);
+                await _lessonRepository.InsertAsync(lesson);
+                return ObjectMapper.Map<LessonDto>(lesson);
+            }
+            catch (Exception)
+            {
+                throw new UserFriendlyException("Could not create the lesson. Please try again.");
+            }
         }
 
-        public async Task<LessonDto> GetAsync(EntityDto<Guid> input)
+        public async Task<LessonDto> GetAsync(Guid lessonId)
         {
-            var lesson = await _lessonRepository.GetAsync(input.Id);
-            return ObjectMapper.Map<LessonDto>(lesson);
+            try
+            {
+                var lesson = await _lessonRepository.GetAsync(lessonId);
+                return ObjectMapper.Map<LessonDto>(lesson);
+            }
+            catch (EntityNotFoundException)
+            {
+                throw new UserFriendlyException("The requested lesson was not found.");
+            }
+            catch (Exception)
+            {
+                throw new UserFriendlyException("An error occurred while retrieving the lesson.");
+            }
         }
 
-        public async Task DeleteAsync(EntityDto<Guid> input)
+        public async Task DeleteAsync(Guid lessonId)
         {
-            await _lessonRepository.DeleteAsync(input.Id);
+            try
+            {
+                await _lessonRepository.DeleteAsync(lessonId);
+            }
+            catch (EntityNotFoundException)
+            {
+                throw new UserFriendlyException("The lesson you're trying to delete doesn't exist.");
+            }
+            catch (Exception)
+            {
+                throw new UserFriendlyException("Failed to delete the lesson. Please try again.");
+            }
         }
 
-        public async Task<ListResultDto<LessonDto>> GetAllAsync()
+        public async Task<ListResultDto<LessonDto>> GetAllAsync(Guid courseId)
         {
-            var lessons = await _lessonRepository.GetAllListAsync();
-            return new ListResultDto<LessonDto>(ObjectMapper.Map<List<LessonDto>>(lessons));
+            try
+            {
+                var course = await _courseRepository.GetAsync(courseId);
+                var lessons = course.Lessons;
+
+                if (lessons == null || lessons.Count == 0)
+                {
+                    return new ListResultDto<LessonDto>(new List<LessonDto>());
+                }
+
+                return new ListResultDto<LessonDto>(
+                    ObjectMapper.Map<List<LessonDto>>(lessons)
+                );
+            }
+            catch (EntityNotFoundException)
+            {
+                throw new UserFriendlyException("The course was not found.");
+            }
+            catch (Exception)
+            {
+                throw new UserFriendlyException("Failed to load lessons for the course.");
+            }
         }
     }
 }

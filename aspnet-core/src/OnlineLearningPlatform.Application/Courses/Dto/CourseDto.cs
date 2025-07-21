@@ -1,10 +1,13 @@
 ﻿using Abp.Application.Services.Dto;
+using Abp.AutoMapper;
+using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Domain.Entities;
 using System;
 using System.Collections.Generic;
 
 namespace OnlineLearningPlatform.Courses.Dto
 {
+    [AutoMap(typeof(Course))]
     public class CourseDto: EntityDto<Guid>
     {
         public string Title { get; set; }

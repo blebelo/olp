@@ -12,8 +12,8 @@ using OnlineLearningPlatform.EntityFrameworkCore;
 namespace OnlineLearningPlatform.Migrations
 {
     [DbContext(typeof(OnlineLearningPlatformDbContext))]
-    [Migration("20250718084707_Added Student Entity")]
-    partial class AddedStudentEntity
+    [Migration("20250720084438_Separated")]
+    partial class Separated
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1380,6 +1380,21 @@ namespace OnlineLearningPlatform.Migrations
                     b.ToTable("AbpWebhookSubscriptions");
                 });
 
+            modelBuilder.Entity("CourseStudent", b =>
+                {
+                    b.Property<Guid>("EnrolledCoursesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EnrolledStudentsId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("EnrolledCoursesId", "EnrolledStudentsId");
+
+                    b.HasIndex("EnrolledStudentsId");
+
+                    b.ToTable("CourseStudent");
+                });
+
             modelBuilder.Entity("OnlineLearningPlatform.Authorization.Roles.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -1589,6 +1604,9 @@ namespace OnlineLearningPlatform.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Category")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -1602,12 +1620,6 @@ namespace OnlineLearningPlatform.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
-
-                    b.PrimitiveCollection<string[]>("EnrolledStudents")
-                        .HasColumnType("text[]");
-
-                    b.Property<string>("Instructor")
                         .HasColumnType("text");
 
                     b.Property<Guid?>("InstructorId")
@@ -1745,6 +1757,48 @@ namespace OnlineLearningPlatform.Migrations
                     b.ToTable("Instructors");
                 });
 
+            modelBuilder.Entity("OnlineLearningPlatform.Domain.StudentCourses.StudentCourse", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("StudentCourse");
+                });
+
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Students.Student", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1772,9 +1826,6 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("text");
 
-                    b.PrimitiveCollection<string[]>("EnrolledCourses")
-                        .HasColumnType("text[]");
-
                     b.Property<string>("Interests")
                         .HasColumnType("text");
 
@@ -1788,9 +1839,6 @@ namespace OnlineLearningPlatform.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("StudentId")
                         .HasColumnType("text");
 
                     b.Property<string>("Surname")
@@ -2046,6 +2094,21 @@ namespace OnlineLearningPlatform.Migrations
                     b.Navigation("WebhookEvent");
                 });
 
+            modelBuilder.Entity("CourseStudent", b =>
+                {
+                    b.HasOne("OnlineLearningPlatform.Domain.Courses.Course", null)
+                        .WithMany()
+                        .HasForeignKey("EnrolledCoursesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OnlineLearningPlatform.Domain.Students.Student", null)
+                        .WithMany()
+                        .HasForeignKey("EnrolledStudentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("OnlineLearningPlatform.Authorization.Roles.Role", b =>
                 {
                     b.HasOne("OnlineLearningPlatform.Authorization.Users.User", "CreatorUser")
@@ -2090,9 +2153,11 @@ namespace OnlineLearningPlatform.Migrations
 
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Courses.Course", b =>
                 {
-                    b.HasOne("OnlineLearningPlatform.Domain.Instructors.Instructor", null)
+                    b.HasOne("OnlineLearningPlatform.Domain.Instructors.Instructor", "Instructor")
                         .WithMany("CoursesCreated")
                         .HasForeignKey("InstructorId");
+
+                    b.Navigation("Instructor");
                 });
 
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Entities.Lesson", b =>
@@ -2109,6 +2174,25 @@ namespace OnlineLearningPlatform.Migrations
                         .HasForeignKey("UserAccountId");
 
                     b.Navigation("UserAccount");
+                });
+
+            modelBuilder.Entity("OnlineLearningPlatform.Domain.StudentCourses.StudentCourse", b =>
+                {
+                    b.HasOne("OnlineLearningPlatform.Domain.Courses.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OnlineLearningPlatform.Domain.Students.Student", "Student")
+                        .WithMany("StudentCourses")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Students.Student", b =>
@@ -2226,6 +2310,11 @@ namespace OnlineLearningPlatform.Migrations
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Instructors.Instructor", b =>
                 {
                     b.Navigation("CoursesCreated");
+                });
+
+            modelBuilder.Entity("OnlineLearningPlatform.Domain.Students.Student", b =>
+                {
+                    b.Navigation("StudentCourses");
                 });
 #pragma warning restore 612, 618
         }

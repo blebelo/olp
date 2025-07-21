@@ -9,8 +9,8 @@ namespace OnlineLearningPlatform.Lessons
     public interface ILessonAppService : IApplicationService
     {
         Task<LessonDto> CreateAsync(CreateLessonDto input);
-        Task<LessonDto> GetAsync(EntityDto<Guid> input);
-        Task DeleteAsync(EntityDto<Guid> input);
-        Task<ListResultDto<LessonDto>> GetAllAsync();
+        Task<LessonDto> GetAsync(Guid input);
+        Task DeleteAsync(Guid input);
+        Task<ListResultDto<LessonDto>> GetAllAsync(Guid courseId);
     }
 }
