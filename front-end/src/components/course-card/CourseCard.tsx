@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { useStyles } from './Styles/style';
 
 export interface CourseType {
-  id: number;
+  id: string;
   name: string;
   topic: string;
   description: string;
