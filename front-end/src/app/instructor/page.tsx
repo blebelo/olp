@@ -89,6 +89,7 @@ const Dashboard = () => {
                         onSubmit={handleCreateCourse}
                         fields={courseUpdateFields}
                         form={form}
+                        
                     />
                 </div>
 
