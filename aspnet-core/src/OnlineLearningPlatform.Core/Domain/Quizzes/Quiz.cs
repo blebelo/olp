@@ -1,9 +1,6 @@
 ﻿using Abp.Domain.Entities.Auditing;
-using OnlineLearningPlatform.Domain.Courses;
-using OnlineLearningPlatform.Domain.Students;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace OnlineLearningPlatform.Domain.Quizzes
 {

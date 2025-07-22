@@ -1,4 +1,5 @@
 ﻿using Abp.Domain.Entities.Auditing;
+using OnlineLearningPlatform.Domain.Results;
 using OnlineLearningPlatform.Domain.Students;
 using System;
 using System.Collections.Generic;
@@ -10,13 +11,12 @@ namespace OnlineLearningPlatform.Domain.Quizzes
     {
         public Student Student { get; set; }
         public Quiz Quiz { get; set; }
-
         public decimal Score { get; set; }
         public decimal Percentage { get; set; }
         public bool IsPassed { get; set; }
         public bool IsCompleted { get; set; }
         public ICollection<string> StudentAnswers { get; set; }
-
+        public ICollection<Result> Results { get; set; }
 
         public void CompleteAttempt()
         {

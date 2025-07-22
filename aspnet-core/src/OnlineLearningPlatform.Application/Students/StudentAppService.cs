@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using OnlineLearningPlatform.Authorization.Users;
 using OnlineLearningPlatform.Courses.Dto;
 using OnlineLearningPlatform.Domain.Courses;
+using OnlineLearningPlatform.Domain.Entities;
+using OnlineLearningPlatform.Domain.Quizzes;
+using OnlineLearningPlatform.Domain.StudentProgresses;
 using OnlineLearningPlatform.Domain.Students;
 using OnlineLearningPlatform.Students.Dto;
 using Sprache;
@@ -20,15 +23,22 @@ namespace OnlineLearningPlatform.Students
     {
         private readonly IRepository<Student, Guid> _studentRepository;
         private readonly IRepository<Course, Guid> _courseRepository;
+        private readonly IRepository<StudentProgress, Guid> _progressRepository;
         private readonly IRepository<User, long> _userRepository;
         private readonly StudentManager _studentManager;
 
-        public StudentAppService(IRepository<Student, Guid> studentRepository, StudentManager studentManager, UserManager userManager, IRepository<Course, Guid> courseRepository)
+        public StudentAppService(
+            IRepository<StudentProgress, Guid> progressRepository,
+            IRepository<Student, Guid> studentRepository, 
+            StudentManager studentManager, 
+            UserManager userManager, 
+            IRepository<Course, Guid> courseRepository)
             : base(studentRepository)
         {
             _studentRepository = studentRepository;
             _studentManager = studentManager;
             _courseRepository = courseRepository;
+            _progressRepository = progressRepository;
         }
         public override async Task<StudentDto> CreateAsync(CreateStudentDto input)
         {
@@ -43,6 +53,17 @@ namespace OnlineLearningPlatform.Students
                     input.Interests,
                     input.AcademicLevel
                 );
+
+                var studentProgress = new StudentProgress
+                {
+                    StudentName = input.Name,
+                    Student = newStudent,
+                    Courses = new List<Course>(),
+                    CompletedLessons = new List<Lesson>(),
+                    CompletedQuizzes = new List<QuizAttempt>(),
+                };
+
+                await _progressRepository.InsertAsync(studentProgress);
 
                 return ObjectMapper.Map<StudentDto>(newStudent);
             }
