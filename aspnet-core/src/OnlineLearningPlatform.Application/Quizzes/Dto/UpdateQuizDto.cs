@@ -16,6 +16,6 @@ namespace OnlineLearningPlatform.Quizzes.Dto
         public Guid? CourseId { get; set; }
         public ICollection<string>? Questions { get; set; }
         public ICollection<string>? Memorandum { get; set; }
-        public ICollection<string>? AnswerOptions { get; set; }
+        public ICollection<AnswerOptions>? AnswerOptions { get; set; }
     }
 }

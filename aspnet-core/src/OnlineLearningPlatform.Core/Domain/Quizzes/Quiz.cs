@@ -1,9 +1,6 @@
 ﻿using Abp.Domain.Entities.Auditing;
-using OnlineLearningPlatform.Domain.Courses;
-using OnlineLearningPlatform.Domain.Students;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace OnlineLearningPlatform.Domain.Quizzes
 {
@@ -15,8 +12,6 @@ namespace OnlineLearningPlatform.Domain.Quizzes
         public decimal PassingScore { get; set; }
         public ICollection<string> Questions { get; set; }
         public ICollection<string> Memorandum { get; set; }
-        public ICollection<string> AnswerOptions { get; set; }
-        public ICollection<QuizAttempt> StudentAttempts { get; set; }
+        public ICollection<AnswerOption> AnswerOptions { get; set; }
     }
-
 }
