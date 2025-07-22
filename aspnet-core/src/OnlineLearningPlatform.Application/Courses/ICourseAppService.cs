@@ -18,5 +18,8 @@ namespace OnlineLearningPlatform.Courses
         Task RemoveLessonAsync(Guid courseId, Guid lessonId);
         Task AddQuizAsync(Guid courseId, CreateQuizDto quiz);
         Task RemoveQuizAsync(Guid courseId, Guid quizId);
+        Task PublishAsync(Guid courseId);
+        Task UnublishAsync(Guid courseId);
+        Task<PagedResultDto<GetAllCoursesDto>> GetAllMinimalAsync(PagedAndSortedResultRequestDto input);
     }
 }
