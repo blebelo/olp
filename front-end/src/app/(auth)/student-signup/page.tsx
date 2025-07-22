@@ -25,7 +25,7 @@ const StudentSignUp: React.FC = () => {
             userName: values.userName,
             email: values.email,
             password: values.password,
-            interest: values.interest,
+            interests: values.interests, //changed to match backend
             academicLevel: values.academicLevel
 
         }
@@ -79,7 +79,7 @@ const StudentSignUp: React.FC = () => {
                         <Input.Password placeholder="Password" className={styles.Input} prefix={<LockOutlined />} />
                     </Form.Item>
                     <Form.Item<IUser>
-                        name="interest"
+                        name="interests" //changed to match backend
                         rules={[{ required: true, message: 'Please input your interests' }]}
                     >
                         <Input placeholder="interests" className={styles.Input} prefix={<FormOutlined />}/>
