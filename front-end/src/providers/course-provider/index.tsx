@@ -35,7 +35,7 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
     const getAllCourses = async() => {
         dispatch(getAllCoursesPending());
 
-        const endpoint:string = '/services/app/Course/GetAll';
+        const endpoint:string = '/services/app/Course/GetAllMinimal';
         await instance.get(endpoint)
         .then((response)=>{
             dispatch(getAllCoursesSuccess(response.data.result));
