@@ -5,6 +5,8 @@ import { useStyles } from "./style";
 import { instructorCourses } from "@/utils/sample-courses/instructorCourses";
 import CourseCard from "@/components/course-card/CourseCard";
 import ReusableModalForm from "@/components/modal/ReusableModalForm";
+import { useCourseActions, useCourseState } from "@/providers/course-provider";
+import { ICourse } from "@/providers/course-provider/context";
 import type { FieldConfig } from "@/components/modal/ReusableModalForm";
 
 const courseUpdateFields: FieldConfig[] = [
@@ -34,13 +36,32 @@ const Dashboard = () => {
     const { styles } = useStyles();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [form] = Form.useForm();
+    const { createCourse } = useCourseActions();
+    const { isError } = useCourseState();
 
-    const handleUpdateCourse = () => {
+    const handleCreateCourse = () => {
         form.validateFields().then((values) => {
-            console.log("Course updated:", values);
+
+            const id = sessionStorage.getItem('userId');
+
+            if (!id) {
+                throw new Error("Instructor not found");
+            }
+            const newCourse: ICourse = {
+                title: values.title,
+                topic: values.topic,
+                description: values.description,
+                instructorId: id
+            }
+            createCourse(newCourse);
+            console.log("Course created:", values);
             form.resetFields();
             setIsModalVisible(false);
         });
+
+        if (isError) {
+            return (<div>Error creating course</div>)
+        }
     };
 
     const handleCancel = () => {
@@ -65,7 +86,7 @@ const Dashboard = () => {
                         title="Create Course"
                         isVisible={isModalVisible}
                         onCancel={handleCancel}
-                        onSubmit={handleUpdateCourse}
+                        onSubmit={handleCreateCourse}
                         fields={courseUpdateFields}
                         form={form}
                     />

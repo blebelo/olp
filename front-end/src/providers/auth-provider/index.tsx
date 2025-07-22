@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         await instance.post(endpoint, user)
             .then((response) => {
                 dispatch(registerInstructorSuccess(response.data))
-                router.push('/instructor/dashboard')
+                router.push('/login')
             }).catch(() => {
                 dispatch(registerInstructorError())
             })
@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         await instance.post(endpoint, user)
             .then((response) => {
                 dispatch(registerStudentSuccess(response.data))
-                router.push('/student')
+                router.push('/login')
             }).catch(() => {
                 dispatch(registerStudentError())
             })
@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 sessionStorage.setItem("role", userRole);
 
                 dispatch(loginUserSuccess(token));
-                router.push('/instructor/dashboard');
+                router.push('/instructor');
             })
             .catch((error) => {
                 console.error(error)

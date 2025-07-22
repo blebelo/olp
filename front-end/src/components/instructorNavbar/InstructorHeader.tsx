@@ -14,7 +14,8 @@ const InstructorNavbar = () => {
 
   const handleNavigate = (path: string) => {
     if (path === '/logout') {
-      sessionStorage.clear()
+      sessionStorage.clear();
+      sessionStorage.removeItem('userId');
       router.push('/login')
     } else {
       router.push(path);
