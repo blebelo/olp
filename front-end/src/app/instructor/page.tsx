@@ -99,8 +99,8 @@ const Dashboard = () => {
                         </Typography.Title>
                         <Row gutter={[16, 16]}>
                             {category.courses.slice(0, 5).map((course) => (
-                                <Col xs={24} sm={12} md={8} lg={6} key={course.id}>
-                                    <CourseCard course={course} />
+                                <Col xs={24} sm={12} md={8} lg={6} key={course.id.toString()}>
+                                    <CourseCard course={{ ...course, id: course.id.toString() }} />
                                 </Col>
                             ))}
                         </Row>

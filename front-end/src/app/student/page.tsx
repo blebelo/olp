@@ -8,7 +8,7 @@ import { ICourse } from "@/providers/course-provider/context";
 const HomePage = () => {
     const { styles } = useStyles();
     const { getAllCourses } = useCourseActions();
-    const { isError, courses } = useCourseState();
+    const {  courses } = useCourseState();
 
     useEffect(() => {
         getAllCourses();

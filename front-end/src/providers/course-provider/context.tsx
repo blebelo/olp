@@ -6,7 +6,7 @@ export interface ICourse {
     topic?: string,
     description?: string,
     isPublished?: boolean,
-    instructor?: string
+    instructorId?: string
 }
 
 export interface Lesson{
@@ -20,6 +20,7 @@ export interface ICourseStateContext {
     course?: ICourse;
     courses?: ICourse[];
     totalCount?: number;
+   
 }
 
 export interface ICourseActionContext {
