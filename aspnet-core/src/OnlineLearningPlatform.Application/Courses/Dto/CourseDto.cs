@@ -2,6 +2,7 @@
 using Abp.AutoMapper;
 using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Lessons.Dto;
+using OnlineLearningPlatform.Quizzes.Dto;
 using System;
 using System.Collections.Generic;
 
@@ -17,6 +18,7 @@ namespace OnlineLearningPlatform.Courses.Dto
         public string Instructor { get; set; }
         public ICollection<string> EnrolledStudents { get; set; }
         public ICollection<LessonDto> Lessons { get; set; }
+        public QuizDto Quiz { get; set; } 
         
     }
 }
