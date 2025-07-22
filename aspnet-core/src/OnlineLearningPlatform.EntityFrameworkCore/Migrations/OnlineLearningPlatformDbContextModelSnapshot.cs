@@ -1604,6 +1604,9 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<string>("Category")
                         .HasColumnType("text");
 
+                    b.Property<string>("CoverImageUrl")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -1762,9 +1765,6 @@ namespace OnlineLearningPlatform.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.PrimitiveCollection<string[]>("AnswerOptions")
-                        .HasColumnType("text[]");
-
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -1863,7 +1863,7 @@ namespace OnlineLearningPlatform.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("QuizAttempt");
+                    b.ToTable("QuizAttempts");
                 });
 
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Students.Student", b =>
@@ -2249,10 +2249,40 @@ namespace OnlineLearningPlatform.Migrations
                     b.Navigation("UserAccount");
                 });
 
+            modelBuilder.Entity("OnlineLearningPlatform.Domain.Quizzes.Quiz", b =>
+                {
+                    b.OwnsMany("OnlineLearningPlatform.Domain.Quizzes.AnswerOption", "AnswerOptions", b1 =>
+                        {
+                            b1.Property<Guid>("QuizId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer");
+
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
+
+                            b1.PrimitiveCollection<string[]>("Options")
+                                .HasColumnType("text[]");
+
+                            b1.Property<int>("QuestionIndex")
+                                .HasColumnType("integer");
+
+                            b1.HasKey("QuizId", "Id");
+
+                            b1.ToTable("AnswerOption");
+
+                            b1.WithOwner()
+                                .HasForeignKey("QuizId");
+                        });
+
+                    b.Navigation("AnswerOptions");
+                });
+
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Quizzes.QuizAttempt", b =>
                 {
                     b.HasOne("OnlineLearningPlatform.Domain.Quizzes.Quiz", "Quiz")
-                        .WithMany("StudentAttempts")
+                        .WithMany()
                         .HasForeignKey("QuizId");
 
                     b.HasOne("OnlineLearningPlatform.Domain.Students.Student", "Student")
@@ -2379,11 +2409,6 @@ namespace OnlineLearningPlatform.Migrations
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Instructors.Instructor", b =>
                 {
                     b.Navigation("CoursesCreated");
-                });
-
-            modelBuilder.Entity("OnlineLearningPlatform.Domain.Quizzes.Quiz", b =>
-                {
-                    b.Navigation("StudentAttempts");
                 });
 #pragma warning restore 612, 618
         }
