@@ -18,7 +18,6 @@ const StudentProfilePage: React.FC = () => {
 
   useEffect(() => {
     getProfile?.();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
@@ -33,7 +32,12 @@ const StudentProfilePage: React.FC = () => {
     );
   }
 
-  const handleEdit = () => setEditMode(true);
+  const handleEdit = () => {
+    if (profile) {
+      form.setFieldsValue(profile);
+    }
+    setEditMode(true);
+  };
   const handleCancel = () => {
     setEditMode(false);
   };
@@ -41,7 +45,6 @@ const StudentProfilePage: React.FC = () => {
   const handleSave = async (values: Partial<IStudent>) => {
     setSaving(true);
     try {
-      // Ensure the id is included in the update payload
       const payload = { ...values, id: profile?.id };
       await updateProfile?.(payload);
       await getProfile?.();
@@ -79,6 +82,7 @@ const StudentProfilePage: React.FC = () => {
             <Form
               form={form}
               layout="vertical"
+              initialValues={profile ?? {}}
               onFinish={handleSave}
               disabled={isPending || saving}
             >

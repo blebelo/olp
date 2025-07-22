@@ -51,7 +51,7 @@ export const StudentProfileProvider = ({ children }: StudentProfileProviderProps
         dispatch(updateProfileError("Failed to update profile"));
       }
     }
-  }, [state.profile]);
+  }, []);
 
   const setProfile = useCallback((profile: IStudent | null) => {
     dispatch(getProfileSuccess(profile as IStudent));

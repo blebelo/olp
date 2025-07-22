@@ -104,13 +104,14 @@ export const getAllCoursesPending = createAction<ICourseStateContext>(
     )
 )
 
-export const getAllCoursesSuccess = createAction<ICourseStateContext, ICourse>(
-    CourseActionEnum.getAllCoursesSuccess, (course: ICourse) => (
+export const getAllCoursesSuccess = createAction<ICourseStateContext, { items: ICourse[]; totalCount: number }>(
+    CourseActionEnum.getAllCoursesSuccess, ({ items, totalCount }) => (
         {
             isPending: false,
             isSuccess: true,
             isError: false,
-            course
+            courses:items,
+            totalCount
         }
     )
 )
