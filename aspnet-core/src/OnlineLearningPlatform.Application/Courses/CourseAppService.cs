@@ -14,6 +14,7 @@ using OnlineLearningPlatform.Quizzes.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace OnlineLearningPlatform.Courses
@@ -24,16 +25,18 @@ namespace OnlineLearningPlatform.Courses
     {
         private readonly IRepository<Quiz, Guid> _quizRepository;
         private readonly IRepository<Course, Guid> _courseRepository;
+        private readonly IRepository<Lesson, Guid> _lessonRepository;
         private readonly IRepository<Student, Guid> _studentRepository;
         private readonly IRepository<Instructor, Guid> _instructorRepository;
 
-        public CourseAppService(IRepository<Quiz, Guid> quizRepository, IRepository<Course, Guid> repository, IRepository<Student, Guid> students, IRepository<Instructor, Guid> instructorRepository)
+        public CourseAppService(IRepository<Quiz, Guid> quizRepository, IRepository<Course, Guid> repository, IRepository<Student, Guid> students, IRepository<Instructor, Guid> instructorRepository, IRepository<Lesson, Guid> lessonRepository)
             : base(repository)
         {
             _quizRepository = quizRepository;
             _courseRepository = repository;
             _studentRepository = students;
             _instructorRepository = instructorRepository;
+            _lessonRepository = lessonRepository;
         }
 
         public override async Task<CourseDto> CreateAsync(CreateCourseDto input)
@@ -46,7 +49,17 @@ namespace OnlineLearningPlatform.Courses
             course.Lessons = new List<Lesson>();
 
             await _courseRepository.InsertAsync(course);
-            return ObjectMapper.Map<CourseDto>(course);
+            return new CourseDto 
+            {
+                Id = course.Id,
+                Title = course.Title,
+                Topic = course.Topic,
+                Description = course.Description,
+                IsPublished = course.IsPublished,
+                Instructor = course.Instructor.Name + " " + course.Instructor.Surname,
+                EnrolledStudents = course.EnrolledStudents.Select(s => s.Name + " " + s.Surname).ToList(),
+                Lessons = ObjectMapper.Map<List<LessonDto>>(course.Lessons)
+            };
         }
 
         public override async Task<CourseDto> GetAsync(EntityDto<Guid> input)
@@ -59,10 +72,26 @@ namespace OnlineLearningPlatform.Courses
         {
             var totalCount = await _courseRepository.CountAsync();
             var items = await _courseRepository.GetAllListAsync();
+            var listOutput = new List<CourseDto>();
 
+            foreach (var item in items)
+            {
+                var output = new CourseDto
+                {
+                    Title = item.Title,
+                    Topic = item.Topic,
+                    Description = item.Description,
+                    IsPublished = item.IsPublished,
+                    Instructor = item.Instructor.Name + " " + item.Instructor.Surname,
+                    EnrolledStudents = item.EnrolledStudents.Select(s => s.Name + " " + s.Surname).ToList(),
+                    Lessons = ObjectMapper.Map<List<LessonDto>>(item.Lessons),
+                };
+
+                listOutput.Add(output);
+            }
             return new PagedResultDto<CourseDto>(
                 totalCount,
-                ObjectMapper.Map<List<CourseDto>>(items)
+                listOutput
             );
         }
 
@@ -103,16 +132,33 @@ namespace OnlineLearningPlatform.Courses
 
         public async Task AddLessonAsync(Guid courseId, LessonDto lessonDto)
         {
-            var course = await _courseRepository.GetAsync(courseId);
-
-            var lesson = ObjectMapper.Map<Lesson>(lessonDto);
-
-            if (!course.Lessons.Any(l => l.Title == lesson.Title))
+            try
             {
+                var course = await _courseRepository.GetAsync(courseId);
+                if (course == null)
+                {
+                    throw new Exception($"Course with ID {courseId} not found.");
+                }
+
+                if (course.Lessons == null)
+                {
+                    course.Lessons = new List<Lesson>();
+                }
+
+                var lesson = ObjectMapper.Map<Lesson>(lessonDto);
+                lesson.Id = Guid.NewGuid();
+
+                await _lessonRepository.InsertAsync(lesson);
                 course.Lessons.Add(lesson);
+
                 await _courseRepository.UpdateAsync(course);
             }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to add lesson to course {courseId}: {ex.Message}", ex);
+            }
         }
+
 
         public async Task RemoveLessonAsync(Guid courseId, Guid lessonId)
         {
@@ -156,5 +202,32 @@ namespace OnlineLearningPlatform.Courses
                 throw new UserFriendlyException("The quiz you're trying to remove does not exist for this course.");
             }
         }
+
+        public async Task PublishAsync(Guid courseId)
+        {
+            var course = await _courseRepository.GetAsync(courseId);
+            course.IsPublished = true;
+            await _courseRepository.UpdateAsync(course);
+        }
+
+        public async Task UnublishAsync(Guid courseId)
+        {
+            var course = await _courseRepository.GetAsync(courseId);
+            course.IsPublished = false;
+            await _courseRepository.UpdateAsync(course);
+        }
+
+        public async Task<PagedResultDto<GetAllCoursesDto>> GetAllMinimalAsync(PagedAndSortedResultRequestDto input)
+        {
+            var totalCount = await _courseRepository.CountAsync();
+            var items = await _courseRepository.GetAllListAsync();
+
+            return new PagedResultDto<GetAllCoursesDto>(
+                totalCount,
+                ObjectMapper.Map<List<GetAllCoursesDto>>(items)
+            );
+        }
+
+
     }
 }

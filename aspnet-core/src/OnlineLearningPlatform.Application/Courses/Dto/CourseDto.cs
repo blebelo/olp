@@ -1,7 +1,7 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.AutoMapper;
 using OnlineLearningPlatform.Domain.Courses;
-using OnlineLearningPlatform.Domain.Entities;
+using OnlineLearningPlatform.Lessons.Dto;
 using System;
 using System.Collections.Generic;
 
@@ -16,6 +16,7 @@ namespace OnlineLearningPlatform.Courses.Dto
         public bool IsPublished { get; set; }
         public string Instructor { get; set; }
         public ICollection<string> EnrolledStudents { get; set; }
-        public ICollection<Lesson> Lessons { get; set; }
+        public ICollection<LessonDto> Lessons { get; set; }
+        
     }
 }
