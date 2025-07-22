@@ -12,7 +12,7 @@ using OnlineLearningPlatform.EntityFrameworkCore;
 namespace OnlineLearningPlatform.Migrations
 {
     [DbContext(typeof(OnlineLearningPlatformDbContext))]
-    [Migration("20250722134732_InitialCreate")]
+    [Migration("20250722142729_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
