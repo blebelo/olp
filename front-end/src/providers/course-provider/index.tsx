@@ -22,7 +22,7 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
         await instance.post(endpoint, course)
         .then((response) => {
             dispatch(createCourseSuccess(response.data))
-            router.push('/instructor/dashboard');
+            router.push('/instructor');
         }).catch((error) =>{
             dispatch(createCourseError());
             console.error(error)

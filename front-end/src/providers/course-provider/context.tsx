@@ -1,7 +1,7 @@
 import { createContext } from "react";
 
 export interface ICourse {
-    id?: string,
+    instructorId?: string,
     title?: string,
     topic?: string,
     description?: string,

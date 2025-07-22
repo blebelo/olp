@@ -5,14 +5,21 @@ import { Button, Form, Input, Typography } from 'antd';
 import { useStyles } from "./Style/style";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import { useAuthActions, useAuthState } from "@/providers/auth-provider";
+import { useInstructorProfileState } from "@/providers/instructorProvider";
 import { IUser } from "@/providers/auth-provider/context";
 import Link from "next/link";
 
 const Login: React.FC = () => {
 
     const { styles } = useStyles();
+    const { profile } = useInstructorProfileState();
     const { loginUser } = useAuthActions();
     const { isError } = useAuthState();
+
+
+    if (profile?.id) {
+        sessionStorage.setItem('userId', profile.id);
+    }
 
     if (isError) {
         return (<div>Login Error</div>)
@@ -20,10 +27,13 @@ const Login: React.FC = () => {
 
     const onFinish: FormProps<IUser>['onFinish'] = (values) => {
         const newUser: IUser = {
-            userNameOrEmailAddress:values.userNameOrEmailAddress,
+            userNameOrEmailAddress: values.userNameOrEmailAddress,
             password: values.password
         }
         loginUser(newUser);
+        if (profile?.id) {
+            sessionStorage.setItem('userId', profile.id);
+        }
     };
 
     const onFinishFailed: FormProps<IUser>['onFinishFailed'] = (errorInfo) => {

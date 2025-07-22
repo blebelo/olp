@@ -1,15 +1,12 @@
 'use client';
-
 import { useState } from 'react';
 import { Button, Typography, Form, Upload } from 'antd';
-import { CheckCircleFilled, FileTextOutlined } from '@ant-design/icons';
+import { CheckCircleFilled, FileTextOutlined, UploadOutlined } from '@ant-design/icons';
 import { useStyles } from './Style/style';
 import { initialLessons } from '@/utils/sample-courses/lessons';
 import type { FieldConfig } from "@/components/modal/ReusableModalForm";
-import { UploadOutlined } from "@ant-design/icons";
 import ReusableModalForm from '@/components/modal/ReusableModalForm';
-import QuizModalForm from '@/components/modal/quiz-modal/QuizModalForm';
-import { QuizQuestion } from '@/components/modal/quiz-modal/QuizModalForm';
+import QuizModalForm, { QuizQuestion } from '@/components/modal/quiz-modal/QuizModalForm';
 const { Title, Paragraph } = Typography;
 
 const ManageCoursePage = () => {
@@ -161,7 +158,6 @@ const ManageCoursePage = () => {
                     >
                         Edit Lesson
                     </Button>
-
                     <Button
                         type="primary"
                         className={styles.completeButton}
@@ -176,7 +172,6 @@ const ManageCoursePage = () => {
                         questions={quizQuestions}
                         setQuestions={setQuizQuestions}
                     />
-
                     <Button
                         type="primary"
                         className={styles.completeButton}
@@ -184,7 +179,6 @@ const ManageCoursePage = () => {
                     >
                         Publish Course
                     </Button>
-
                 </main>
             </div>
         </div>
