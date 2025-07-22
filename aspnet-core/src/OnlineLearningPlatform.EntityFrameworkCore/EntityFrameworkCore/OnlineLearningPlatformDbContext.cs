@@ -31,6 +31,16 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<StudentProgress>(b =>
+            {
+                b.Ignore(x => x.Student);
+                b.Ignore(x => x.EnrolledCourses);
+                b.Ignore(x => x.UnenrolledCourses);
+                b.Ignore(x => x.CompletedCourses);
+                b.Ignore(x => x.CompletedLessons);
+                b.Ignore(x => x.CompletedQuizzes);
+            });
         }
     }
 }

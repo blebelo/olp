@@ -1,4 +1,5 @@
-﻿using Abp.Domain.Entities.Auditing;
+﻿using Abp.Domain.Entities;
+using Abp.Domain.Entities.Auditing;
 using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Domain.Entities;
 using OnlineLearningPlatform.Domain.Quizzes;
@@ -8,7 +9,7 @@ using System.Collections.Generic;
 
 namespace OnlineLearningPlatform.Domain.StudentProgresses
 {
-    public class StudentProgress: FullAuditedEntity<Guid>
+    public class StudentProgress: AggregateRoot<Guid>
     {
         public string StudentName { get; set; }
         public Student Student { get; set; }

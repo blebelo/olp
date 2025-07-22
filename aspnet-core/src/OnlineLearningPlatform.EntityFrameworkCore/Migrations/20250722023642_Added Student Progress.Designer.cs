@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OnlineLearningPlatform.EntityFrameworkCore;
@@ -11,9 +12,11 @@ using OnlineLearningPlatform.EntityFrameworkCore;
 namespace OnlineLearningPlatform.Migrations
 {
     [DbContext(typeof(OnlineLearningPlatformDbContext))]
-    partial class OnlineLearningPlatformDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250722023642_Added Student Progress")]
+    partial class AddedStudentProgress
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1637,6 +1640,15 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<Guid?>("QuizId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("StudentProgressId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("StudentProgressId1")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("StudentProgressId2")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
@@ -1648,6 +1660,12 @@ namespace OnlineLearningPlatform.Migrations
                     b.HasIndex("InstructorId");
 
                     b.HasIndex("QuizId");
+
+                    b.HasIndex("StudentProgressId");
+
+                    b.HasIndex("StudentProgressId1");
+
+                    b.HasIndex("StudentProgressId2");
 
                     b.ToTable("Courses");
                 });
@@ -1691,6 +1709,9 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<long?>("LastModifierUserId")
                         .HasColumnType("bigint");
 
+                    b.Property<Guid?>("StudentProgressId")
+                        .HasColumnType("uuid");
+
                     b.PrimitiveCollection<string[]>("StudyMaterialLinks")
                         .HasColumnType("text[]");
 
@@ -1705,6 +1726,8 @@ namespace OnlineLearningPlatform.Migrations
                     b.HasIndex("CourseId");
 
                     b.HasIndex("InstructorId");
+
+                    b.HasIndex("StudentProgressId");
 
                     b.ToTable("Lessons");
                 });
@@ -1862,11 +1885,16 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<Guid?>("StudentId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("StudentProgressId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("QuizId");
 
                     b.HasIndex("StudentId");
+
+                    b.HasIndex("StudentProgressId");
 
                     b.ToTable("QuizAttempts");
                 });
@@ -1923,10 +1951,36 @@ namespace OnlineLearningPlatform.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid?>("StudentId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("StudentName")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
 
                     b.ToTable("StudentProgresses");
                 });
@@ -2293,6 +2347,18 @@ namespace OnlineLearningPlatform.Migrations
                         .WithMany()
                         .HasForeignKey("QuizId");
 
+                    b.HasOne("OnlineLearningPlatform.Domain.StudentProgresses.StudentProgress", null)
+                        .WithMany("CompletedCourses")
+                        .HasForeignKey("StudentProgressId");
+
+                    b.HasOne("OnlineLearningPlatform.Domain.StudentProgresses.StudentProgress", null)
+                        .WithMany("EnrolledCourses")
+                        .HasForeignKey("StudentProgressId1");
+
+                    b.HasOne("OnlineLearningPlatform.Domain.StudentProgresses.StudentProgress", null)
+                        .WithMany("UnenrolledCourses")
+                        .HasForeignKey("StudentProgressId2");
+
                     b.Navigation("Instructor");
 
                     b.Navigation("Quiz");
@@ -2307,6 +2373,10 @@ namespace OnlineLearningPlatform.Migrations
                     b.HasOne("OnlineLearningPlatform.Domain.Instructors.Instructor", "Instructor")
                         .WithMany()
                         .HasForeignKey("InstructorId");
+
+                    b.HasOne("OnlineLearningPlatform.Domain.StudentProgresses.StudentProgress", null)
+                        .WithMany("CompletedLessons")
+                        .HasForeignKey("StudentProgressId");
 
                     b.Navigation("Course");
 
@@ -2332,6 +2402,10 @@ namespace OnlineLearningPlatform.Migrations
                         .WithMany()
                         .HasForeignKey("StudentId");
 
+                    b.HasOne("OnlineLearningPlatform.Domain.StudentProgresses.StudentProgress", null)
+                        .WithMany("CompletedQuizzes")
+                        .HasForeignKey("StudentProgressId");
+
                     b.Navigation("Quiz");
 
                     b.Navigation("Student");
@@ -2342,6 +2416,15 @@ namespace OnlineLearningPlatform.Migrations
                     b.HasOne("OnlineLearningPlatform.Domain.Quizzes.QuizAttempt", null)
                         .WithMany("Results")
                         .HasForeignKey("QuizAttemptId");
+                });
+
+            modelBuilder.Entity("OnlineLearningPlatform.Domain.StudentProgresses.StudentProgress", b =>
+                {
+                    b.HasOne("OnlineLearningPlatform.Domain.Students.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Students.Student", b =>
@@ -2469,6 +2552,19 @@ namespace OnlineLearningPlatform.Migrations
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Quizzes.QuizAttempt", b =>
                 {
                     b.Navigation("Results");
+                });
+
+            modelBuilder.Entity("OnlineLearningPlatform.Domain.StudentProgresses.StudentProgress", b =>
+                {
+                    b.Navigation("CompletedCourses");
+
+                    b.Navigation("CompletedLessons");
+
+                    b.Navigation("CompletedQuizzes");
+
+                    b.Navigation("EnrolledCourses");
+
+                    b.Navigation("UnenrolledCourses");
                 });
 #pragma warning restore 612, 618
         }
