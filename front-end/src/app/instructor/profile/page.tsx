@@ -1,128 +1,123 @@
 "use client";
-import React, { useState } from "react";
-import { Card, Layout, Typography, Skeleton, Alert, Button, Form, notification } from "antd";
+import React, { useEffect, useState } from "react";
+import { Spin, Card, Typography, Button, Input, Form, message } from "antd";
+import { useStyles } from "../style";
 import { useInstructorProfileState, useInstructorProfileActions } from "@/providers/instructorProvider";
-import ReusableModalForm, { FieldConfig } from "@/components/modal/ReusableModalForm";
-
-const { Content } = Layout;
-const { Title, Paragraph } = Typography;
-
 
 export default function InstructorProfilePage() {
-  const { profile, isPending: profilePending, error: profileError } = useInstructorProfileState();
-  const { updateProfile } = useInstructorProfileActions();
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [editForm] = Form.useForm();
-  const [editLoading, setEditLoading] = useState(false);
-  const [editError, setEditError] = useState<string | null>(null);
-  
-  console.log('Instructor profile:', profile);
+  const { styles } = useStyles();
+  const { profile, isPending, isError } = useInstructorProfileState();
+  const { updateProfile, getProfile } = useInstructorProfileActions();
+  const [editMode, setEditMode] = useState(false);
+  const [form] = Form.useForm();
+  const [saving, setSaving] = useState(false);
 
-  const editProfileFields: FieldConfig[] = [
-    { label: "Name", name: "name", rules: [{ required: true, message: "Enter name" }], type: "input" },
-    { label: "Surname", name: "surname", rules: [{ required: true, message: "Enter surname" }], type: "input" },
-    { label: "Bio", name: "bio", type: "textarea" },
-    { label: "Profession", name: "profession", type: "input" }
-  ];
+  useEffect(() => {
+    getProfile?.();
+  }, []);
 
-  const handleUpdateProfile = async () => {
-    setEditError(null);
-    setEditLoading(true);
+  if (isError) {
+    return (
+      <div className={styles.heroContainer}>
+        <Typography.Title level={3} style={{ color: 'white' }}>Failed to load profile</Typography.Title>
+      </div>
+    );
+  }
+
+  const handleEdit = () => {
+    if (profile) {
+      form.setFieldsValue(profile);
+    }
+    setEditMode(true);
+  };
+  const handleCancel = () => {
+    setEditMode(false);
+  };
+
+  const handleSave = async (values: Partial<{ name: string; surname: string; userName: string; profession: string; bio: string }>) => {
+    setSaving(true);
     try {
-      const values = await editForm.validateFields();
-      if (!profile) {
-        setEditLoading(false);
-        setEditError("Profile data not loaded.");
-        return;
-      }
-      
-      const payload = {
-        id: profile.id,
-        name: values.name,
-        surname: values.surname,
-        userName: profile.userName,
-        bio: values.bio,
-        profession: values.profession,
-        email: profile.email
-      };
-      await updateProfile(payload);
-      setIsEditModalVisible(false);
-      notification.success({ message: "Profile updated successfully!" });
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Failed to update profile.";
-      setEditError(msg);
-      notification.error({ message: msg });
+      const payload = { ...values, id: profile?.id };
+      await updateProfile?.(payload);
+      await getProfile?.();
+      message.success("Profile updated successfully");
+      setEditMode(false);
+    } catch {
+      message.error("Failed to update profile");
     } finally {
-      setEditLoading(false);
+      setSaving(false);
     }
   };
 
-  const handleCancelEdit = () => setIsEditModalVisible(false);
-
-let content;
-if (profilePending) {
-  content = <Skeleton active paragraph={{ rows: 4 }} title />;
-} else if (profile) {
-  content = (
-    <>
-      <Card
-        // className={styles.CardContainer}
-        title={`${profile.name} ${profile.surname}`}
-      >
-        <Paragraph>
-          <strong>Username:</strong> {profile.userName}
-        </Paragraph>
-        <Paragraph>
-          <strong>Email:</strong> {profile.email}
-        </Paragraph>
-        <Paragraph>
-          <strong>Profession:</strong> {profile.profession}
-        </Paragraph>
-        <Paragraph>
-          <strong>Bio:</strong> {profile.bio}
-        </Paragraph>
-      </Card>
-      <Button
-        type="default"
-        onClick={() => setIsEditModalVisible(true)}
-        style={{ marginTop: 16 }}
-        disabled={profilePending || editLoading}
-      >
-        Edit My Profile
-      </Button>
-      {isEditModalVisible && (
-        <ReusableModalForm
-          title="Edit Profile"
-          isVisible={isEditModalVisible}
-          onCancel={handleCancelEdit}
-          onSubmit={handleUpdateProfile}
-          fields={editProfileFields}
-          form={editForm}
-          initialValues={profile}
-        />
-      )}
-      {editError && <Alert type="error" message={editError} showIcon style={{ marginTop: 8 }} />}
-      {profileError && <Alert type="error" message={profileError} showIcon style={{ marginTop: 8 }} />}
-    </>
-  );
-} else if (profileError) {
-  content = <Alert type="error" message={profileError} />;
-} else {
-  content = <Alert type="info" message="No profile data found." />;
-}
-
   return (
-    <Layout>
-      <Content>
-        <Title>My Profile</Title>
-        {content}
-      </Content>
-    </Layout>
-    // <Layout>
-    //   <Content className={styles.Container}>
-    //     <Title className={styles.Heading}>My Profile</Title>
-    //     {content}
-    //   </Content>
-    // </Layout>
+    <div className={styles.heroContainer}>
+      <div className={styles.contentRow}>
+        <Card className={styles.courseCard} style={{ maxWidth: 500, margin: '0 auto', background: 'rgba(252, 252, 252, 0.95)', position: 'relative' }}>
+          {(isPending || saving) && (
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              background: 'rgba(255,255,255,0.7)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 10
+            }}>
+              <Spin size="large" />
+            </div>
+          )}
+          <Typography.Title level={2} style={{ color: '#44a08d', textAlign: 'center' }}>Instructor Profile</Typography.Title>
+          {editMode ? (
+            <Form
+              form={form}
+              layout="vertical"
+              initialValues={profile ?? {}}
+              onFinish={handleSave}
+              disabled={isPending || saving}
+            >
+              {[
+                { label: "Name", name: "name", rules: [{ required: true, message: 'Please input your name' }] },
+                { label: "Surname", name: "surname", rules: [{ required: true, message: 'Please input your surname' }] },
+                { label: "Username", name: "userName", rules: [{ required: true, message: 'Please input your username' }] },
+                { label: "Profession", name: "profession" },
+                { label: "Bio", name: "bio" }
+              ].map(field => (
+                <Form.Item
+                  key={field.name}
+                  label={field.label}
+                  name={field.name}
+                  rules={field.rules}
+                >
+                  <Input id={field.name} />
+                </Form.Item>
+              ))}
+              <Form.Item>
+                <Button type="primary" htmlType="submit" style={{ marginRight: 8 }}>Save</Button>
+                <Button onClick={handleCancel}>Cancel</Button>
+              </Form.Item>
+            </Form>
+          ) : (
+            <>
+              <Typography.Paragraph><b>Name:</b> {profile?.name}</Typography.Paragraph>
+              <Typography.Paragraph><b>Surname:</b> {profile?.surname}</Typography.Paragraph>
+              <Typography.Paragraph><b>Username:</b> {profile?.userName}</Typography.Paragraph>
+              <Typography.Paragraph><b>Email:</b> {profile?.email}</Typography.Paragraph>
+              <Typography.Paragraph><b>Profession:</b> {profile?.profession}</Typography.Paragraph>
+              <Typography.Paragraph><b>Bio:</b> {profile?.bio}</Typography.Paragraph>
+              <Button type="primary" onClick={handleEdit} style={{ marginTop: 16 }}>Edit</Button>
+            </>
+          )}
+        </Card>
+      </div>
+      {/* Decorative elements */}
+      <div className={styles.decorativeCircleLarge}></div>
+      <div className={styles.decorativeCircleSmall}></div>
+      <div className={styles.decorativeCircleMedium}></div>
+      <div className={styles.decorativeSquareLarge}></div>
+      <div className={styles.decorativeSquareSmall}></div>
+    </div>
   );
 }
