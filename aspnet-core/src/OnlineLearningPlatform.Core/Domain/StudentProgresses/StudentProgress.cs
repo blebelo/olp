@@ -12,7 +12,9 @@ namespace OnlineLearningPlatform.Domain.StudentProgresses
     {
         public string StudentName { get; set; }
         public Student Student { get; set; }
-        public ICollection<Course> Courses { get; set; }
+        public ICollection<Course> EnrolledCourses { get; set; }
+        public ICollection<Course> UnenrolledCourses { get; set; }
+        public ICollection<Course> CompletedCourses { get; set; }
         public ICollection<Lesson> CompletedLessons { get; set; }
         public ICollection<QuizAttempt> CompletedQuizzes { get; set; }
     }

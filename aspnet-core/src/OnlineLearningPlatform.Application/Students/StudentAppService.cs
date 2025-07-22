@@ -58,7 +58,7 @@ namespace OnlineLearningPlatform.Students
                 {
                     StudentName = input.Name,
                     Student = newStudent,
-                    Courses = new List<Course>(),
+                    EnrolledCourses = new List<Course>(),
                     CompletedLessons = new List<Lesson>(),
                     CompletedQuizzes = new List<QuizAttempt>(),
                 };
