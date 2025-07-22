@@ -7,6 +7,7 @@ using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Domain.Entities;
 using OnlineLearningPlatform.Domain.Instructors;
 using OnlineLearningPlatform.Domain.Quizzes;
+using OnlineLearningPlatform.Domain.StudentProgresses;
 using OnlineLearningPlatform.Domain.Students;
 using OnlineLearningPlatform.Instructors.Dto;
 using OnlineLearningPlatform.Lessons.Dto;
@@ -26,14 +27,21 @@ namespace OnlineLearningPlatform.Courses
         private readonly IRepository<Course, Guid> _courseRepository;
         private readonly IRepository<Student, Guid> _studentRepository;
         private readonly IRepository<Instructor, Guid> _instructorRepository;
+        private readonly IRepository<StudentProgress, Guid> _progressRepository;
 
-        public CourseAppService(IRepository<Quiz, Guid> quizRepository, IRepository<Course, Guid> repository, IRepository<Student, Guid> students, IRepository<Instructor, Guid> instructorRepository)
+        public CourseAppService(
+            IRepository<StudentProgress, Guid> progressRepository,
+            IRepository<Quiz, Guid> quizRepository, 
+            IRepository<Course, Guid> repository, 
+            IRepository<Student, Guid> students, 
+            IRepository<Instructor, Guid> instructorRepository)
             : base(repository)
         {
             _quizRepository = quizRepository;
             _courseRepository = repository;
             _studentRepository = students;
             _instructorRepository = instructorRepository;
+            _progressRepository = progressRepository;
         }
 
         public override async Task<CourseDto> CreateAsync(CreateCourseDto input)
@@ -80,23 +88,29 @@ namespace OnlineLearningPlatform.Courses
         public async Task EnrollStudentAsync(Guid courseId, Guid studentId)
         {
             var course = await _courseRepository.GetAsync(courseId);
-            Student student = await _studentRepository.GetAsync(studentId);
+            var student = await _studentRepository.GetAsync(studentId);
+            var progress = await _progressRepository.FirstOrDefaultAsync(p => p.Student.Id == studentId);
 
             if (!course.EnrolledStudents.Contains(student))
             {
                 course.EnrolledStudents.Add(student);
+                progress.Courses.Add(course);
                 await _courseRepository.UpdateAsync(course);
+                await _progressRepository.UpdateAsync(progress);
             }
         }
 
         public async Task UnEnrollStudentAsync(Guid courseId, Guid studentId)
         {
             var course = await _courseRepository.GetAsync(courseId);
-            Student student = await _studentRepository.GetAsync(studentId);
+            var student = await _studentRepository.GetAsync(studentId);
+            var progress = await _progressRepository.FirstOrDefaultAsync(p => p.Student.Id == studentId);
 
             if (course.EnrolledStudents.Contains(student))
             {
+                progress.Courses.Remove(course);
                 course.EnrolledStudents.Remove(student);
+                await _progressRepository.UpdateAsync(progress);
                 await _courseRepository.UpdateAsync(course);
             }
         }

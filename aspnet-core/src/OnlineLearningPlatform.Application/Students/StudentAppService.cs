@@ -73,7 +73,6 @@ namespace OnlineLearningPlatform.Students
             }
         }
 
-
         public async Task<StudentProfileDto> GetStudentProfileAsync()
         {
 
@@ -96,7 +95,6 @@ namespace OnlineLearningPlatform.Students
                 AcademicLevel = student.AcademicLevel
             };
         }
-
 
         public async Task<StudentProfileDto> UpdateStudentProfileAsync(UpdateStudentDto input)
         {
@@ -131,7 +129,6 @@ namespace OnlineLearningPlatform.Students
             };
 
         }
-
 
         public async Task<List<CourseDto>> GetStudentEnrolledCoursesAsync(Guid studentId)
         {

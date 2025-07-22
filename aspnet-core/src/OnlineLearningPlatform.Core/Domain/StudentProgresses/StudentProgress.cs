@@ -11,9 +11,8 @@ namespace OnlineLearningPlatform.Domain.StudentProgresses
     public class StudentProgress: FullAuditedEntity<Guid>
     {
         public string StudentName { get; set; }
-        public string CourseTitle { get; set; }
         public Student Student { get; set; }
-        public ICollection<Course> Course { get; set; }
+        public ICollection<Course> Courses { get; set; }
         public ICollection<Lesson> CompletedLessons { get; set; }
         public ICollection<QuizAttempt> CompletedQuizzes { get; set; }
     }
