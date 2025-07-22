@@ -1,18 +1,50 @@
 'use client';
-import { useEffect } from "react";
-import { Typography, Button, Row, Col } from "antd";
+import { useEffect, useState } from "react";
+import { Typography, Button, Row, Col, message } from "antd";
 import { useStyles } from "./Styles/style";
 import CourseCard, { CourseType } from "@/components/course-card/CourseCard";
 import { useCourseActions, useCourseState } from "@/providers/course-provider";
 import { ICourse } from "@/providers/course-provider/context";
+import CourseModal, { Course } from "@/components/modal/course-modal/CourseModal";
+import { axiosInstance } from "@/utils/axiosInstance";
+
 const HomePage = () => {
     const { styles } = useStyles();
     const { getAllCourses } = useCourseActions();
     const {  courses } = useCourseState();
 
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+
     useEffect(() => {
         getAllCourses();
     }, []);
+    
+    const handleCourseClick = (course: CourseType) => {
+        setSelectedCourse({
+            id: course.id,
+            title: course.name,
+            topic: course.topic,
+            description: course.description,
+            instructorName: "N/A", // Optional
+            lessons: [], // Optional
+        });
+        setIsModalVisible(true);
+        };
+        
+    const handleCancelModal = () => {
+        setIsModalVisible(false);
+        setSelectedCourse(null);
+    };
+    const handleEnroll = async (courseId: string) => {
+        try{
+            await axiosInstance.post(`/api/app/student/enroll?courseId=${courseId}`);
+            message.success("Enrolled successfully!");
+            setIsModalVisible(false);
+        }catch (error: unknown) {
+            console.error(error);
+    }
+    };
 
     const mappedCourses: CourseType[] = (courses || []).map((course: ICourse) => ({
         id: course.id ?? 'unknown-id',
@@ -47,12 +79,14 @@ const HomePage = () => {
                 <Row gutter={[16, 16]}>
                     {mappedCourses.slice(0, 5).map((course) => (
                         <Col xs={24} sm={12} md={8} lg={6} key={course.id}>
-                            <CourseCard course={course} />
+                            <CourseCard course={course} onClick={handleCourseClick}/>
                         </Col>
                     ))}
                 </Row>
             </div>
+        <CourseModal visible={isModalVisible} course={selectedCourse} onCancel={handleCancelModal} onEnroll={handleEnroll} />
         </div>
+
     );
 };
 

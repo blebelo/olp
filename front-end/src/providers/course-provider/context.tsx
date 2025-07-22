@@ -32,6 +32,7 @@ export const INITIAL_STATE: ICourseStateContext = {
     isPending: false,
     isSuccess: false,
     isError: false,
+    courses: [], //just added now
 }
 
 export const CourseStateContext = createContext<ICourseStateContext>(INITIAL_STATE);
