@@ -7,7 +7,10 @@ import { useRouter } from "next/navigation";
 import { 
     createCoursePending,
     createCourseSuccess,
-    createCourseError
+    createCourseError,
+    getAllCoursesPending,
+    getAllCoursesSuccess,
+    getAllCoursesError
 } from "./actions";
 
 export const CourseProvider = ({children}: {children: React.ReactNode}) => {
@@ -28,10 +31,24 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
             console.error(error)
         })
     }
+
+    const getAllCourses = async() => {
+        dispatch(getAllCoursesPending());
+
+        const endpoint:string = '/services/app/Course/GetAll';
+        await instance.get(endpoint)
+        .then((response)=>{
+            dispatch(getAllCoursesSuccess(response.data.result));
+            console.log("Courses:", response.data);
+        }).catch((error)=>{
+            dispatch(getAllCoursesError());
+            console.error(error)
+        })
+    }
     
     return (
         <CourseStateContext.Provider value={state}>
-            <CourseActionContext.Provider value={{createCourse}}>
+            <CourseActionContext.Provider value={{createCourse, getAllCourses}}>
                 {children}
             </CourseActionContext.Provider>
         </CourseStateContext.Provider>
