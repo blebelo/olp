@@ -4,9 +4,11 @@ using Abp.Domain.Repositories;
 using Abp.UI;
 using Microsoft.EntityFrameworkCore;
 using OnlineLearningPlatform.Authorization.Users;
+using OnlineLearningPlatform.Courses.Dto;
 using OnlineLearningPlatform.Domain.Instructors;
 using OnlineLearningPlatform.Instructors.Dto;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace OnlineLearningPlatform.Instructors
@@ -70,8 +72,6 @@ namespace OnlineLearningPlatform.Instructors
                 Profession = instructor.Profession
             };
         }
-
-
         public async Task<InstructorProfileDto> UpdateMyProfileAsync(UpdateInstructorProfileDto input)
         {
             if (!AbpSession.UserId.HasValue)
@@ -119,6 +119,23 @@ namespace OnlineLearningPlatform.Instructors
             };
         }
 
+        [AbpAuthorize]
+        public async Task<ICollection<CourseDto>> GetCoursesAsync(long userId)
+        {
+            
+            var instructor = await _instructorRepository.GetAll().Include(x => x.UserAccount)
+            .FirstOrDefaultAsync(x => x.UserAccount != null && x.UserAccount.Id == userId);
+
+            var courses = instructor.CoursesCreated;
+
+            if (courses == null || courses.Count == 0)
+            {
+                throw new UserFriendlyException("No courses found for this instructor.");
+            }
+            var listOfCourses = ObjectMapper.Map<List<CourseDto>>(courses);
+
+            return listOfCourses;
+        }
     }
 
 }
