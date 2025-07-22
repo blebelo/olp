@@ -1,5 +1,4 @@
 ﻿using Abp.Domain.Entities;
-using Abp.Domain.Entities.Auditing;
 using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Domain.Entities;
 using OnlineLearningPlatform.Domain.Quizzes;
