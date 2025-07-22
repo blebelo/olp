@@ -1,40 +1,27 @@
-"use client";
-import React, {useState} from "react";
-import { Row, Col, Typography, Button, message } from "antd";
+'use client';
+import { useEffect } from "react";
+import { Typography, Button, Row, Col } from "antd";
 import { useStyles } from "./Styles/style";
-import { sampleCourses } from "@/utils/sample-courses/sampleCourse";
-import CourseCard from "@/components/course-card/CourseCard";
-import CourseModal, {Course} from "@/components/modal/course-modal/CourseModal";
-import { axiosInstance } from "@/utils/axiosInstance";
-
+import CourseCard, { CourseType } from "@/components/course-card/CourseCard";
+import { useCourseActions, useCourseState } from "@/providers/course-provider";
+import { ICourse } from "@/providers/course-provider/context";
 const HomePage = () => {
     const { styles } = useStyles();
-    const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-    const [isModalVisible, setIsModalVisible] = useState(false);
+    const { getAllCourses } = useCourseActions();
+    const {  courses } = useCourseState();
 
-    const handleCourseClick = (course: Course) => {
-        setSelectedCourse(course);
-        setIsModalVisible(true);
-    };
+    useEffect(() => {
+        getAllCourses();
+    }, []);
 
-    const handleCancelModal = () => {
-        setSelectedCourse(null);
-        setIsModalVisible(false);
-    };
+    const mappedCourses: CourseType[] = (courses || []).map((course: ICourse) => ({
+        id: course.id ?? 'unknown-id',
+        name: course.title ?? 'Untitled Course',
+        topic: course.topic ?? 'General',
+        description: course.description ?? 'No description provided.',
+        thumbnail: "/images/image2.jpg",
+    }));
 
-    const handleEnroll = async (courseId: string) => {
-        try{
-            await axiosInstance.post(`/api/app/student/enroll?courseId=${courseId}`);
-            message.success("Enrolled successfully!");
-            setIsModalVisible(false);
-        }catch(error: unknown){
-            if(error instanceof Error){
-                message.error(error.message); 
-            } else{
-                message.error("Enrollment failed");
-            }
-        };
-    }
     return (
         <div className={styles.heroContainer}>
             <div className={styles.decorativeCircleLarge} />
@@ -53,37 +40,18 @@ const HomePage = () => {
                     <Button className={styles.primaryButton}>Browse All Courses</Button>
                 </div>
 
-                {sampleCourses.map((category) => (
-                    <div key={category.category}>
-                        <Typography.Title level={3} className={styles.sectionTitle}>
-                            {category.category}
-                        </Typography.Title>
-                        <Row gutter={[16, 16]}>
-                            {category.courses.slice(0, 5).map((course) => (
-                                <Col xs={24} sm={12} md={8} lg={6} key={course.id} onClick={() => 
-                                handleCourseClick({
-                                    id: course.id.toString(),
-                                    title: course.name,
-                                    topic: course.topic,
-                                    description: course.description,
-                                    instructorName: "N/A",
-                                    lessons: [],
-                                })}>
-                                    <CourseCard course={course} />
-                                </Col>
-                            ))}
-                        </Row>
-                        <Button
-                            type="default"
-                            ghost
-                            className={styles.viewMoreBtn}
-                        >
-                            View More
-                        </Button>
-                    </div>
-                ))}
+                <Typography.Title level={3} className={styles.sectionTitle}>
+                    All Courses
+                </Typography.Title>
+
+                <Row gutter={[16, 16]}>
+                    {mappedCourses.slice(0, 5).map((course) => (
+                        <Col xs={24} sm={12} md={8} lg={6} key={course.id}>
+                            <CourseCard course={course} />
+                        </Col>
+                    ))}
+                </Row>
             </div>
-            <CourseModal visible={isModalVisible} course={selectedCourse} onCancel={handleCancelModal} onEnroll={handleEnroll}/>
         </div>
     );
 };
