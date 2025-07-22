@@ -32,7 +32,8 @@ namespace OnlineLearningPlatform.Students
             IRepository<Student, Guid> studentRepository, 
             StudentManager studentManager, 
             UserManager userManager, 
-            IRepository<Course, Guid> courseRepository)
+            IRepository<Course, Guid> courseRepository
+            )
             : base(studentRepository)
         {
             _studentRepository = studentRepository;

@@ -5,6 +5,7 @@ using Abp.Domain.Repositories;
 using Abp.UI;
 using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Domain.Entities;
+using OnlineLearningPlatform.Domain.StudentProgresses;
 using OnlineLearningPlatform.Lessons.Dto;
 using System;
 using System.Collections.Generic;
@@ -16,11 +17,16 @@ namespace OnlineLearningPlatform.Lessons
     {
         private readonly IRepository<Course, Guid> _courseRepository;
         private readonly IRepository<Lesson, Guid> _lessonRepository;
+        private readonly IRepository<StudentProgress, Guid> _progressRepository;
 
-        public LessonAppService(IRepository<Lesson, Guid> lessonRepository, IRepository<Course, Guid> courseRepository)
+        public LessonAppService(
+            IRepository<Lesson, Guid> lessonRepository, 
+            IRepository<Course, Guid> courseRepository,
+            IRepository<StudentProgress, Guid> progressRepository)
         {
             _courseRepository = courseRepository;
             _lessonRepository = lessonRepository;
+            _progressRepository = progressRepository;
         }
 
         public async Task<LessonDto> CreateAsync(CreateLessonDto input)
@@ -95,5 +101,25 @@ namespace OnlineLearningPlatform.Lessons
                 throw new UserFriendlyException("Failed to load lessons for the course.");
             }
         }
+
+        public async Task MarkComplete(Guid lessonId, Guid studentId)
+        {
+            try
+            {
+                var lesson = await _lessonRepository.GetAsync(lessonId);
+                var progress = await _progressRepository.FirstOrDefaultAsync(p => p.Student.Id == studentId);
+                progress.CompletedLessons.Add(lesson);
+                lesson.IsCompleted = true;
+            }
+            catch (EntityNotFoundException)
+            {
+                throw new UserFriendlyException("The lesson or student was not found.");
+            }
+            catch (Exception ex)
+            {
+                throw new UserFriendlyException("Could not mark lesson as complete.");
+            }
+        }
+
     }
 }

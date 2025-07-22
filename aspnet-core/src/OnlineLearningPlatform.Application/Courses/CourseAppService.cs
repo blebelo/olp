@@ -34,7 +34,8 @@ namespace OnlineLearningPlatform.Courses
             IRepository<Quiz, Guid> quizRepository, 
             IRepository<Course, Guid> repository, 
             IRepository<Student, Guid> students, 
-            IRepository<Instructor, Guid> instructorRepository)
+            IRepository<Instructor, Guid> instructorRepository
+            )
             : base(repository)
         {
             _quizRepository = quizRepository;
@@ -173,3 +174,4 @@ namespace OnlineLearningPlatform.Courses
         }
     }
 }
+ 
