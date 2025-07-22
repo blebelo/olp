@@ -11,7 +11,7 @@ export interface FieldConfig {
   component?: React.ReactNode;
 }
 
-import type { IInstructor } from "@/providers/instructorProvider/context";
+import type { IInstructor } from "@/providers/types";
 
 interface ReusableModalFormProps {
   title: string;

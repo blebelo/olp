@@ -5,8 +5,8 @@ import {
   InstructorProfileStateContext,
   InstructorProfileActionContext,
   INSTRUCTOR_PROFILE_INITIAL_STATE,
-  IInstructor,
 } from "./context";
+import { IInstructor } from "../types";
 import { InstructorProfileReducer } from "./reducer";
 import {
   getProfilePending,

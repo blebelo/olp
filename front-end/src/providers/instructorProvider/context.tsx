@@ -1,16 +1,7 @@
 "use client";
 import { createContext } from "react";
 
-// Profile type
-export interface IInstructor {
-  id?: string;
-  name?: string;
-  surname?: string; 
-  userName?: string;
-  email?: string;
-  bio?: string;
-  profession?: string;
-}
+import { IInstructor } from "../types";
 
 // State context for instructor profile
 export interface IInstructorStateContext {
