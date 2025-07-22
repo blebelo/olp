@@ -102,12 +102,13 @@ namespace OnlineLearningPlatform.Lessons
             }
         }
 
-        public async Task MarkComplete(Guid lessonId, Guid studentId)
+        public async Task MarkComplete(CompleteLessonDto input)
         {
             try
             {
-                var lesson = await _lessonRepository.GetAsync(lessonId);
-                var progress = await _progressRepository.FirstOrDefaultAsync(p => p.Student.Id == studentId);
+                var lesson = await _lessonRepository.GetAsync(input.lessonId
+                    );
+                var progress = await _progressRepository.FirstOrDefaultAsync(p => p.Student.Id == input.studentId);
                 progress.CompletedLessons.Add(lesson);
                 lesson.IsCompleted = true;
             }

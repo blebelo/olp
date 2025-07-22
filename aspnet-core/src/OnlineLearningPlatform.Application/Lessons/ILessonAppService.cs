@@ -12,6 +12,6 @@ namespace OnlineLearningPlatform.Lessons
         Task<LessonDto> GetAsync(Guid input);
         Task DeleteAsync(Guid input);
         Task<ListResultDto<LessonDto>> GetAllAsync(Guid courseId);
-        Task MarkComplete(Guid lessonId, Guid studentId);
+        Task MarkComplete(CompleteLessonDto input);
     }
 }
