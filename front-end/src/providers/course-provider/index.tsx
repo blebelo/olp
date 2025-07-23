@@ -71,10 +71,10 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
         
     }
     
-     const createLesson = async(lesson: ILesson) => {
+     const createLesson = async(lesson: ILesson, courseId: string) => {
         dispatch(createLessonPending());
 
-        const endpoint : string = '/services/app/Course/AddLesson';
+        const endpoint : string = `/services/app/Course/AddLesson?courseId=${courseId}`;
 
         await instance.post(endpoint, lesson)
         .then((response) => {
@@ -89,7 +89,7 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
     const getCourse = async(courseId: string) => {
         dispatch(getCoursePending());
 
-        const endpoint : string = '/services/app/Course/Get';
+        const endpoint : string = `/services/app/Course/Get?courseId=${courseId}`;
 
         await instance.post(endpoint, courseId)
         .then((response) => {
