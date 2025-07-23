@@ -78,10 +78,10 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
 
         await instance.post(endpoint, lesson)
         .then((response) => {
-            dispatch(getCourseSuccess(response.data))
+            dispatch(createLessonSuccess(response.data))
             console.log(response.data)
         }).catch((error)=>{
-            dispatch(getCourseError());
+            dispatch(createLessonError());
             console.error(error)
         })
     }
@@ -89,14 +89,14 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
     const getCourse = async(courseId: string) => {
         dispatch(getCoursePending());
 
-        const endpoint : string = `/services/app/Course/Get?courseId=${courseId}`;
+        const endpoint : string = `/services/app/Course/Get?Id=${courseId}`;
 
-        await instance.post(endpoint, courseId)
+        await instance.get(endpoint)
         .then((response) => {
-            dispatch(createLessonSuccess(response.data))
+            dispatch(getCourseSuccess(response.data.result))
             console.log(response.data)
         }).catch((error)=>{
-            dispatch(createLessonError());
+            dispatch(getCourseError());
             console.error(error)
         })
 

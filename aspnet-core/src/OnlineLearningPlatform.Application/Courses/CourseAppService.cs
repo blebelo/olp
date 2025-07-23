@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
+using Abp.AutoMapper;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
 using Abp.UI;
@@ -66,15 +67,35 @@ namespace OnlineLearningPlatform.Courses
 
         public override async Task<CourseDto> GetAsync(EntityDto<Guid> input)
         {
-            var course = await _courseRepository.GetAsync(input.Id);
-            return ObjectMapper.Map<CourseDto>(course);
+            var item = await _courseRepository
+                .GetAllIncluding(c => c.Instructor, c => c.EnrolledStudents, c => c.Lessons)
+                .FirstOrDefaultAsync(c => c.Id == input.Id);
+
+            var dto = new CourseDto
+            {
+                Id = item.Id,
+                Title = item.Title,
+                Topic = item.Topic,
+                Description = item.Description,
+                IsPublished = item.IsPublished,
+                Instructor = item.Instructor != null
+                    ? $"{item.Instructor.Name} {item.Instructor.Surname}"
+                    : "No Instructor",
+                EnrolledStudents = item.EnrolledStudents != null
+                    ? item.EnrolledStudents.Select(s => $"{s.Name} {s.Surname}").ToList()
+                    : new List<string>(),
+                Lessons = item.Lessons != null
+                    ? ObjectMapper.Map<List<LessonDto>>(item.Lessons)
+                    : new List<LessonDto>()
+            };
+
+            return dto;
         }
 
         public override async Task<PagedResultDto<CourseDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
         {
             var query = _courseRepository
                 .GetAllIncluding(c => c.Instructor, c => c.EnrolledStudents, c => c.Lessons);
-
 
             var totalCount = await query.CountAsync();
 
