@@ -1,12 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace OnlineLearningPlatform.QuizAttempts.Dto
 {
-    public interface QuizSubmissionDto
+    public class QuizSubmissionDto
     {
         public Guid QuizId { get; set; }
         public Guid StudentId { get; set; }
-
-        public 
+        public ICollection<string> StudentAnswers { get; set; }
     }
 }

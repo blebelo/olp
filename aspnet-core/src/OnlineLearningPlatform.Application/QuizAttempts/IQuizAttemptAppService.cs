@@ -6,6 +6,6 @@ namespace OnlineLearningPlatform.QuizAttempts
 {
     public interface IQuizAttemptAppService: IApplicationService
     {
-        public Task<QuizAttemptDto> SubmitQuizAsync(QuizSubmissionDto input);
+        public Task<QuizAttemptDto> SubmitQuizAsync(QuizAttemptDto quizAttempt);
     }
 }

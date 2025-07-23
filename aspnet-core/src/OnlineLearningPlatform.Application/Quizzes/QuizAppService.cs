@@ -93,7 +93,7 @@ namespace OnlineLearningPlatform.Quizzes
                 quiz.Description = input.Description;
                 quiz.Duration = input.Duration;
                 quiz.PassingScore = input.PassingScore;
-                quiz.AnswerOptions = input.AnswerOptions;
+                quiz.AnswerOptions = ObjectMapper.Map<List<AnswerOption>>(input.AnswerOptions);
                 quiz.Questions = input.Questions;
 
                 await _quizRepository.UpdateAsync(quiz);
