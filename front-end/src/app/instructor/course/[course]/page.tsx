@@ -48,12 +48,18 @@ const ManageCoursePage = () => {
         setIsAddQuiz(false);
     };
 
+    const getEmbedUrl =(url: string) => {
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/);
+  return match ? `https://www.youtube.com/embed/${match[1]}` : url;
+}
+
+
     const handleAddLesson = () => {
         form.validateFields().then((values) => {
             const newLesson: ILesson = {
                 title: values.lessonName,
                 description: values.description,
-                videoLink: values.tempVideo,
+                videoLink: getEmbedUrl(values.tempVideo),
                 studyMaterial: values.tempMaterial,
                 isCompleted: false
             };
