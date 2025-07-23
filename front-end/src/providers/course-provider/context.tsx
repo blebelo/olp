@@ -26,6 +26,7 @@ export interface ICourseStateContext {
 export interface ICourseActionContext {
     createCourse: (course: ICourse) => void;
     getAllCourses: () => void;
+    updateCourse: (course: ICourse) => void;
 }
 
 export const INITIAL_STATE: ICourseStateContext = {
