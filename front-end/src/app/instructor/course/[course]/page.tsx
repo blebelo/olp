@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, Typography, Form } from 'antd';
 import { CheckCircleFilled, FileTextOutlined } from '@ant-design/icons';
 // import { Button, Typography, Form, Upload } from 'antd';
@@ -17,8 +17,8 @@ const { Title, Paragraph } = Typography;
 const ManageCoursePage = () => {
     const { styles } = useStyles();
     const [activeLesson, setActiveLesson] = useState(initialLessons[0]);
-    const {isError} = useCourseState();
-    const {createLesson} = useCourseActions();
+    const {isError, course} = useCourseState();
+    const {createLesson, getCourse} = useCourseActions();
     const [isAddLesson, setIsAddLesson] = useState(false);
     const [form] = Form.useForm();
     const lessons = initialLessons;
@@ -28,6 +28,11 @@ const ManageCoursePage = () => {
     const courseId = params?.course as string;
     console.log(courseId);
 
+    useEffect(() => {
+        getCourse(courseId)
+    }, [])
+
+    console.log("course: ",course)
     const [quizQuestions, setQuizQuestions] = useState([
         {
             question: "",
@@ -140,7 +145,6 @@ const ManageCoursePage = () => {
                             </Button>
                         ))}
                     </div>
-
 
                     <Button className={styles.quizButton} onClick={() => setIsAddLesson(true)}>Add Lesson</Button>
                     <ReusableModalForm
