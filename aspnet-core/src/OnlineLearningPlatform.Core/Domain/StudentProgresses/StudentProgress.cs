@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace OnlineLearningPlatform.Domain.StudentProgresses
 {
-    public class StudentProgress : AggregateRoot<Guid>
+    public class StudentProgress : Entity<Guid>
     {
         public Guid StudentId { get; set; }
         public Student Student { get; set; }

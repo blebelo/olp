@@ -15,7 +15,6 @@ namespace OnlineLearningPlatform.Domain.Persons
         public string Email { get; set; }
         [NotMapped]
         public string Password { get; set; }
-        public string Bio { get; set; }
         public virtual User UserAccount { get; set; }
     }
 }
