@@ -1,7 +1,9 @@
 'use client';
 import { useState } from 'react';
-import { Button, Typography, Form, Upload } from 'antd';
-import { CheckCircleFilled, FileTextOutlined, UploadOutlined } from '@ant-design/icons';
+import { Button, Typography, Form } from 'antd';
+import { CheckCircleFilled, FileTextOutlined } from '@ant-design/icons';
+// import { Button, Typography, Form, Upload } from 'antd';
+// import { CheckCircleFilled, FileTextOutlined, UploadOutlined } from '@ant-design/icons';
 import { useStyles } from './Style/style';
 import { initialLessons } from '@/utils/sample-courses/lessons';
 import type { FieldConfig } from "@/components/modal/ReusableModalForm";
