@@ -10,9 +10,7 @@ namespace OnlineLearningPlatform.Quizzes.Dto
         public string? Description { get; set; }
         public TimeSpan? Duration { get; set; }
         public decimal? PassingScore { get; set; }
-        public Guid? CourseId { get; set; }
         public ICollection<string>? Questions { get; set; }
-        public ICollection<string>? Memorandum { get; set; }
-        public ICollection<string>? AnswerOptions { get; set; }
+        public ICollection<AnswerOptionDto>? AnswerOptions { get; set; }
     }
 }

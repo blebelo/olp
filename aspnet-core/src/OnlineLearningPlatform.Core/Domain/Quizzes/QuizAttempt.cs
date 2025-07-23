@@ -9,12 +9,11 @@ namespace OnlineLearningPlatform.Domain.Quizzes
     public class QuizAttempt : FullAuditedEntity<Guid>
     {
         public Student Student { get; set; }
-        public Quiz Quiz { get; set; }
         public decimal Percentage { get; set; }
         public bool IsPassed { get; set; }
         public bool IsCompleted { get; set; }
         public Result Results { get; set; }
         public ICollection<string> StudentAnswers { get; set; }
-
+        public Quiz Quiz { get; set; }
     }
 }
