@@ -85,5 +85,17 @@ export const CourseReducer = handleActions<ICourseStateContext, ICourseStateCont
      [CourseActionEnum.getInstructorCoursesError]: (state, action) => ({
         ...state,
         ...action.payload,
+    }),
+    [CourseActionEnum.getCourseByIdPending]: (state, action) => ({
+        ...state,
+        ...action.payload,
+    }),
+    [CourseActionEnum.getCourseByIdSuccess]: (state, action) => ({
+        ...state,
+        ...action.payload,
+    }),
+    [CourseActionEnum.getCourseByIdError]: (state, action) => ({
+        ...state,
+        ...action.payload,
     })
 }, INITIAL_STATE)

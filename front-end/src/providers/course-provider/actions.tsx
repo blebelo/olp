@@ -35,6 +35,11 @@ export enum CourseActionEnum {
     getInstructorCoursesPending = "GET_INSTRUCTOR_COURSES_PENDING",
     getInstructorCoursesSuccess = "GET_INSTRUCTOR_COURSES_SUCCESS",
     getInstructorCoursesError = "GET_INSTRUCTOR_COURSES_ERROR",
+
+    //GET COURSE BY ID
+    getCourseByIdPending = "GET_COURSE_BY_ID_PENDING",
+    getCourseByIdSuccess = "GET_COURSE_BY_ID_SUCCESS",
+    getCourseByIdError = "GET_COURSE_BY_ID_ERROR",
 }
 
 
@@ -258,6 +263,38 @@ export const getInstructorCoursesError = createAction<ICourseStateContext>(
             isSuccess: false,
             isError: true,
 
+        }
+    )
+)
+
+//Get Course by Id
+export const getCourseByIdPending = createAction<ICourseStateContext>(
+    CourseActionEnum.getCourseByIdPending, () => (
+        {
+            isPending: true,
+            isSuccess: false,
+            isError: false,
+        }
+    )
+)
+
+export const getCourseByIdSuccess = createAction<ICourseStateContext, ICourse>(
+    CourseActionEnum.getCourseByIdSuccess, (course: ICourse) => (
+        {
+            isPending: false,
+            isSuccess: true,
+            isError: false,
+            course
+        }
+    )
+)
+
+export const getCourseByIdError = createAction<ICourseStateContext>(
+    CourseActionEnum.getCourseByIdError, () => (
+        {
+            isPending: false,
+            isSuccess: false,
+            isError: true,
         }
     )
 )
