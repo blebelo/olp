@@ -95,7 +95,6 @@ namespace OnlineLearningPlatform.Quizzes
                 quiz.PassingScore = input.PassingScore;
                 quiz.AnswerOptions = input.AnswerOptions;
                 quiz.Questions = input.Questions;
-                quiz.Memorandum = input.Memorandum;
 
                 await _quizRepository.UpdateAsync(quiz);
 

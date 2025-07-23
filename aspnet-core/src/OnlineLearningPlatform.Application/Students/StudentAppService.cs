@@ -23,12 +23,10 @@ namespace OnlineLearningPlatform.Students
     {
         private readonly IRepository<Student, Guid> _studentRepository;
         private readonly IRepository<Course, Guid> _courseRepository;
-        private readonly IRepository<StudentProgress, Guid> _progressRepository;
         private readonly IRepository<User, long> _userRepository;
         private readonly StudentManager _studentManager;
 
         public StudentAppService(
-            IRepository<StudentProgress, Guid> progressRepository,
             IRepository<Student, Guid> studentRepository, 
             StudentManager studentManager, 
             UserManager userManager, 
@@ -39,7 +37,6 @@ namespace OnlineLearningPlatform.Students
             _studentRepository = studentRepository;
             _studentManager = studentManager;
             _courseRepository = courseRepository;
-            _progressRepository = progressRepository;
         }
         public override async Task<StudentDto> CreateAsync(CreateStudentDto input)
         {
@@ -55,16 +52,6 @@ namespace OnlineLearningPlatform.Students
                     input.AcademicLevel
                 );
 
-                var studentProgress = new StudentProgress
-                {
-                    StudentName = input.Name,
-                    Student = newStudent,
-                    EnrolledCourses = new List<Course>(),
-                    CompletedLessons = new List<Lesson>(),
-                    CompletedQuizzes = new List<QuizAttempt>(),
-                };
-
-                await _progressRepository.InsertAsync(studentProgress);
 
                 return ObjectMapper.Map<StudentDto>(newStudent);
             }
@@ -76,8 +63,6 @@ namespace OnlineLearningPlatform.Students
 
         public async Task<StudentProfileDto> GetStudentProfileAsync()
         {
-
-            //Find the student by the current user
             var student = await _studentRepository
                 .GetAll()
                 .Include(s => s.UserAccount)

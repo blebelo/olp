@@ -2,7 +2,6 @@
 using OnlineLearningPlatform.Domain.Persons;
 using OnlineLearningPlatform.Domain.StudentProgresses;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace OnlineLearningPlatform.Domain.Students
 {

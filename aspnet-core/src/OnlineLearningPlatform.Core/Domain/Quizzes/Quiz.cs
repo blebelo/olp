@@ -11,8 +11,7 @@ namespace OnlineLearningPlatform.Domain.Quizzes
         public TimeSpan Duration { get; set; }
         public decimal PassingScore { get; set; }
         public ICollection<string> Questions { get; set; } = new List<string>();
-        public ICollection<string> Memorandum { get; set; } = new List<string>();
-        public ICollection<AnswerOptions> AnswerOptions { get; set; } = new List<AnswerOptions>();
+        public ICollection<AnswerOption> AnswerOptions { get; set; } = new List<AnswerOption>();
     }
 
 }

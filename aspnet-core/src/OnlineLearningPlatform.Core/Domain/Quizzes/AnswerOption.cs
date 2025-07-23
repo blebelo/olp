@@ -4,9 +4,9 @@ using System.Collections.Generic;
 namespace OnlineLearningPlatform.Domain.Quizzes
 {
     [Owned]
-    public class AnswerOptions
+    public class AnswerOption
     {
-        public int QuestionIndex { get; set; }
+        public string CorrectAnswer { get; set; }
         public ICollection<string> PossibleAnswers { get; set; } = new List<string>();
     }
 }

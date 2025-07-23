@@ -46,6 +46,9 @@ namespace OnlineLearningPlatform.Domain.Students
 
             var student = new Student
             {
+                Name = name,
+                Surname = surname,
+                Email = email,
                 UserAccount = newUser,
                 Interests = interests,
                 AcademicLevel = academicLevel

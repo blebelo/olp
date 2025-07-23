@@ -90,14 +90,11 @@ namespace OnlineLearningPlatform.Courses
         {
             var course = await _courseRepository.GetAsync(courseId);
             var student = await _studentRepository.GetAsync(studentId);
-            var progress = await _progressRepository.FirstOrDefaultAsync(p => p.Student.Id == studentId);
 
             if (!course.EnrolledStudents.Contains(student))
             {
                 course.EnrolledStudents.Add(student);
-                progress.EnrolledCourses.Add(course);
                 await _courseRepository.UpdateAsync(course);
-                await _progressRepository.UpdateAsync(progress);
             }
         }
 
@@ -109,10 +106,7 @@ namespace OnlineLearningPlatform.Courses
 
             if (course.EnrolledStudents.Contains(student))
             {
-                progress.EnrolledCourses.Remove(course);
-                progress.UnenrolledCourses.Add(course);
                 course.EnrolledStudents.Remove(student);
-                await _progressRepository.UpdateAsync(progress);
                 await _courseRepository.UpdateAsync(course);
             }
         }
