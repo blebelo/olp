@@ -15,12 +15,14 @@ interface CourseCardProps {
   onClick?: (course: CourseType) => void;
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({ course}) => {
+const CourseCard: React.FC<CourseCardProps> = ({ course, onClick }) => {
   const { styles } = useStyles();
 
   return (
-      <Card
+      <Card 
         className={styles.courseCard}
+        hoverable 
+        onClick={() => onClick?.(course)}
         cover={
           <div style={{ position: 'relative', width: '100%', height: '10rem' }}>
             <Image
@@ -32,7 +34,6 @@ const CourseCard: React.FC<CourseCardProps> = ({ course}) => {
             />
           </div>
         }
-        hoverable
       >
         <Card.Meta
           title={course.name}

@@ -1,9 +1,12 @@
 ﻿using Abp.Application.Services.Dto;
+using Abp.AutoMapper;
+using OnlineLearningPlatform.Domain.Quizzes;
 using System;
 using System.Collections.Generic;
 
 namespace OnlineLearningPlatform.Quizzes.Dto
 {
+    [AutoMap(typeof(Quiz))]
     public class UpdateQuizDto : EntityDto<Guid>
     {
         public string? Name { get; set; }
@@ -13,6 +16,6 @@ namespace OnlineLearningPlatform.Quizzes.Dto
         public Guid? CourseId { get; set; }
         public ICollection<string>? Questions { get; set; }
         public ICollection<string>? Memorandum { get; set; }
-        public ICollection<string>? AnswerOptions { get; set; }
+        public ICollection<AnswerOptions>? AnswerOptions { get; set; }
     }
 }

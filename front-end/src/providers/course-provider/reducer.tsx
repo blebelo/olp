@@ -50,7 +50,11 @@ export const CourseReducer = handleActions<ICourseStateContext, ICourseStateCont
     [CourseActionEnum.deleteCourseError]: (state, action) => ({
         ...state,
         ...action.payload,
+    }),[CourseActionEnum.updateCoursePending]: (state, action) => ({
+    ...state,
+    ...action.payload,
     }),
+
     [CourseActionEnum.createLessonPending]: (state, action) => ({
         ...state,
         ...action.payload,
@@ -75,5 +79,12 @@ export const CourseReducer = handleActions<ICourseStateContext, ICourseStateCont
         ...state,
         ...action.payload,
     })
-
+    [CourseActionEnum.updateCourseSuccess]: (state, action) => ({
+        ...state,
+        ...action.payload,
+    }),
+    [CourseActionEnum.updateCourseError]: (state, action) => ({
+        ...state,
+        ...action.payload,
+})
 }, INITIAL_STATE)

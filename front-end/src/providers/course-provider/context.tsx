@@ -31,15 +31,19 @@ export interface ICourseStateContext {
 export interface ICourseActionContext {
     createCourse: (course: ICourse) => void;
     getAllCourses: () => void;
+
     createLesson: (lesson: ILesson) => void;
     // getInstructorCourses: () => void;
     getCourse: (id: string) => void;
+    updateCourse: (course: ICourse) => void;
+
 }
 
 export const INITIAL_STATE: ICourseStateContext = {
     isPending: false,
     isSuccess: false,
     isError: false,
+    courses: [], //just added now
 }
 
 export const CourseStateContext = createContext<ICourseStateContext>(INITIAL_STATE);

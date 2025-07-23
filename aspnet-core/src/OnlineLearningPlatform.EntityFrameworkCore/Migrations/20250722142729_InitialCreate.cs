@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace OnlineLearningPlatform.Migrations
 {
     /// <inheritdoc />
-    public partial class AddedQuizLessons : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -460,7 +460,6 @@ namespace OnlineLearningPlatform.Migrations
                     PassingScore = table.Column<decimal>(type: "numeric", nullable: false),
                     Questions = table.Column<string[]>(type: "text[]", nullable: true),
                     Memorandum = table.Column<string[]>(type: "text[]", nullable: true),
-                    AnswerOptions = table.Column<string[]>(type: "text[]", nullable: true),
                     CreationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatorUserId = table.Column<long>(type: "bigint", nullable: true),
                     LastModificationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -853,6 +852,27 @@ namespace OnlineLearningPlatform.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AnswerOption",
+                columns: table => new
+                {
+                    QuizId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    QuestionIndex = table.Column<int>(type: "integer", nullable: false),
+                    Options = table.Column<string[]>(type: "text[]", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AnswerOption", x => new { x.QuizId, x.Id });
+                    table.ForeignKey(
+                        name: "FK_AnswerOption_Quizzes_QuizId",
+                        column: x => x.QuizId,
+                        principalTable: "Quizzes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AbpDynamicEntityPropertyValues",
                 columns: table => new
                 {
@@ -965,6 +985,7 @@ namespace OnlineLearningPlatform.Migrations
                     Topic = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     Category = table.Column<string>(type: "text", nullable: true),
+                    CoverImageUrl = table.Column<string>(type: "text", nullable: true),
                     IsPublished = table.Column<bool>(type: "boolean", nullable: false),
                     InstructorId = table.Column<Guid>(type: "uuid", nullable: true),
                     QuizId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -992,7 +1013,7 @@ namespace OnlineLearningPlatform.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "QuizAttempt",
+                name: "QuizAttempts",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -1013,14 +1034,14 @@ namespace OnlineLearningPlatform.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_QuizAttempt", x => x.Id);
+                    table.PrimaryKey("PK_QuizAttempts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_QuizAttempt_Quizzes_QuizId",
+                        name: "FK_QuizAttempts_Quizzes_QuizId",
                         column: x => x.QuizId,
                         principalTable: "Quizzes",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_QuizAttempt_Students_StudentId",
+                        name: "FK_QuizAttempts_Students_StudentId",
                         column: x => x.StudentId,
                         principalTable: "Students",
                         principalColumn: "Id");
@@ -1058,10 +1079,9 @@ namespace OnlineLearningPlatform.Migrations
                     Title = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     VideoLink = table.Column<string>(type: "text", nullable: true),
-                    CourseId = table.Column<Guid>(type: "uuid", nullable: true),
-                    InstructorId = table.Column<Guid>(type: "uuid", nullable: true),
                     IsCompleted = table.Column<bool>(type: "boolean", nullable: false),
                     StudyMaterialLinks = table.Column<string[]>(type: "text[]", nullable: true),
+                    CourseId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatorUserId = table.Column<long>(type: "bigint", nullable: true),
                     LastModificationTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -1077,11 +1097,6 @@ namespace OnlineLearningPlatform.Migrations
                         name: "FK_Lessons_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Lessons_Instructors_InstructorId",
-                        column: x => x.InstructorId,
-                        principalTable: "Instructors",
                         principalColumn: "Id");
                 });
 
@@ -1460,18 +1475,13 @@ namespace OnlineLearningPlatform.Migrations
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Lessons_InstructorId",
-                table: "Lessons",
-                column: "InstructorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_QuizAttempt_QuizId",
-                table: "QuizAttempt",
+                name: "IX_QuizAttempts_QuizId",
+                table: "QuizAttempts",
                 column: "QuizId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_QuizAttempt_StudentId",
-                table: "QuizAttempt",
+                name: "IX_QuizAttempts_StudentId",
+                table: "QuizAttempts",
                 column: "StudentId");
 
             migrationBuilder.CreateIndex(
@@ -1565,13 +1575,16 @@ namespace OnlineLearningPlatform.Migrations
                 name: "AbpWebhookSubscriptions");
 
             migrationBuilder.DropTable(
+                name: "AnswerOption");
+
+            migrationBuilder.DropTable(
                 name: "CourseStudent");
 
             migrationBuilder.DropTable(
                 name: "Lessons");
 
             migrationBuilder.DropTable(
-                name: "QuizAttempt");
+                name: "QuizAttempts");
 
             migrationBuilder.DropTable(
                 name: "AbpDynamicEntityProperties");

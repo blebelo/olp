@@ -11,18 +11,36 @@ import {
     getAllCoursesPending,
     getAllCoursesSuccess,
     getAllCoursesError,
+
     createLessonPending,
     createLessonSuccess,
     createLessonError,
     getCoursePending,
     getCourseSuccess,
     getCourseError
+    updateCoursePending,
+    updateCourseSuccess,
+    updateCourseError
 } from "./actions";
 
 export const CourseProvider = ({children}: {children: React.ReactNode}) => {
     const [state, dispatch] = useReducer(CourseReducer, INITIAL_STATE);
     const instance = axiosInstance;
     const router = useRouter();
+
+    const updateCourse = async (course: ICourse) => {
+    dispatch(updateCoursePending());
+    const endpoint: string = '/services/app/Course/Update';
+    await instance.put(endpoint, course)
+        .then(() => {
+            dispatch(updateCourseSuccess());
+            router.push('/instructor');
+        })
+        .catch((error) => {
+            dispatch(updateCourseError());
+            console.error(error);
+        });
+}
 
     const createCourse = async (course: ICourse) => {
         dispatch(createCoursePending());
@@ -41,7 +59,7 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
     const getAllCourses = async() => {
         dispatch(getAllCoursesPending());
 
-        const endpoint:string = '/services/app/Course/GetAll';
+        const endpoint:string = '/services/app/Course/GetAllMinimal';
         await instance.get(endpoint)
         .then((response)=>{
             dispatch(getAllCoursesSuccess(response.data.result));
@@ -85,7 +103,8 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
     
     return (
         <CourseStateContext.Provider value={state}>
-            <CourseActionContext.Provider value={{createCourse, getAllCourses, createLesson, getCourse}}>
+
+            <CourseActionContext.Provider value={{createCourse, getAllCourses, updateCourse, createLesson, getCourse}}>
                 {children}
             </CourseActionContext.Provider>
         </CourseStateContext.Provider>

@@ -19,6 +19,7 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Quiz> Quizzes { get; set; }
+        public DbSet<QuizAttempt> QuizAttempts { get; set; }
 
         public OnlineLearningPlatformDbContext(DbContextOptions<OnlineLearningPlatformDbContext> options)
             : base(options)

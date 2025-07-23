@@ -135,6 +135,37 @@ export const getAllCoursesError = createAction<ICourseStateContext>(
     )
 )
 
+//Update courses
+export const updateCoursePending = createAction<ICourseStateContext>(
+    CourseActionEnum.updateCoursePending, () => (
+        {
+           isPending: true,
+            isSuccess: false,
+            isError: false, 
+        }
+    )
+)
+
+export const updateCourseSuccess = createAction<ICourseStateContext>(
+    CourseActionEnum.updateCourseSuccess, () => (
+        {
+           isPending: false,
+            isSuccess: true,
+            isError: false, 
+        }
+    )
+)
+
+export const updateCourseError = createAction<ICourseStateContext>(
+    CourseActionEnum.updateCourseError, () => (
+        {
+           isPending: false,
+            isSuccess: false,
+            isError: true, 
+        }
+    )
+)
+
 //Delete Course
 
 export const deleteCoursePending = createAction<ICourseStateContext>(
