@@ -1,39 +1,26 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Button, Typography, Form } from 'antd';
+import { Button, Typography, Form, Spin } from 'antd';
 import { CheckCircleFilled, FileTextOutlined } from '@ant-design/icons';
-// import { Button, Typography, Form, Upload } from 'antd';
-// import { CheckCircleFilled, FileTextOutlined, UploadOutlined } from '@ant-design/icons';
 import { useStyles } from './Style/style';
-import { initialLessons } from '@/utils/sample-courses/lessons';
 import type { FieldConfig } from "@/components/modal/ReusableModalForm";
 import ReusableModalForm from '@/components/modal/ReusableModalForm';
 import QuizModalForm, { QuizQuestion } from '@/components/modal/quiz-modal/QuizModalForm';
 import { useParams } from 'next/navigation';
 import { useCourseActions, useCourseState } from '@/providers/course-provider';
 import { ILesson } from '@/providers/course-provider/context';
+
 const { Title, Paragraph } = Typography;
 
 const ManageCoursePage = () => {
     const { styles } = useStyles();
-    const [activeLesson, setActiveLesson] = useState(initialLessons[0]);
-    const {isError, course} = useCourseState();
-    const {createLesson, getCourse} = useCourseActions();
+    const { isError, course, isPending } = useCourseState();
+    const { getCourse, createLesson } = useCourseActions();
     const [isAddLesson, setIsAddLesson] = useState(false);
     const [form] = Form.useForm();
-    const lessons = initialLessons;
     const [isAddQuiz, setIsAddQuiz] = useState(false);
-
-    const params = useParams();
-    const courseId = params?.course as string;
-    console.log(courseId);
-
-    useEffect(() => {
-        getCourse(courseId)
-    }, [])
-
-    console.log("course: ",course)
-    const [quizQuestions, setQuizQuestions] = useState([
+    const [activeLesson, setActiveLesson] = useState<ILesson | null>(null);
+    const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([
         {
             question: "",
             options: ["", "", "", ""],
@@ -41,10 +28,44 @@ const ManageCoursePage = () => {
         },
     ]);
 
+    const params = useParams();
+    const courseId = params?.course as string;
+
+    useEffect(() => {
+        if (courseId) {
+            getCourse(courseId);
+        }
+    }, [courseId]);
+
+    useEffect(() => {
+        if (course?.lessons?.length) {
+            setActiveLesson(course.lessons[0]);
+        }
+    }, [course]);
+
     const handleCreateQuiz = (questions: QuizQuestion[]) => {
         console.log("Quiz submitted:", questions);
         setIsAddQuiz(false);
-    }
+    };
+
+    const handleAddLesson = () => {
+        form.validateFields().then((values) => {
+            const newLesson: ILesson = {
+                title: values.lessonName,
+                description: values.description,
+                videoLink: values.tempVideo,
+                studyMaterial: values.tempMaterial,
+                isCompleted: false
+            };
+            createLesson(newLesson, courseId);
+            setIsAddLesson(false);
+        });
+    };
+
+    const handleCancelAdd = () => {
+        form.resetFields();
+        setIsAddLesson(false);
+    };
 
     const lessonFields: FieldConfig[] = [
         {
@@ -59,85 +80,43 @@ const ManageCoursePage = () => {
             rules: [{ required: true, message: "Please enter description" }],
             type: "textarea",
         },
-         {
+        {
             label: "Video",
             name: "tempVideo",
-            rules: [{ required: true, message: "Please enter description" }],
+            rules: [{ required: true, message: "Please enter video link" }],
             type: "textarea",
         },
-         {
+        {
             label: "Material",
             name: "tempMaterial",
-            rules: [{ required: true, message: "Please enter description" }],
+            rules: [{ required: true, message: "Please enter material" }],
             type: "textarea",
         },
-        // {
-        //     label: "Video Upload",
-        //     name: "video",
-        //     type: "custom",
-        //     component: (
-        //         <Upload
-        //             name="video"
-        //             maxCount={1}
-        //             beforeUpload={() => false}
-        //         >
-        //             <Button icon={<UploadOutlined />}>Upload Video</Button>
-        //         </Upload>
-        //     ),
-        // },
-        // {
-        //     label: "Additional Content",
-        //     name: "additionalContent",
-        //     type: "custom",
-        //     component: (
-        //         <Upload
-        //             name="documents"
-        //             multiple
-        //             beforeUpload={() => false}
-        //         >
-        //             <Button icon={<UploadOutlined />}>Upload Documents</Button>
-        //         </Upload>
-        //     ),
-        // },
     ];
 
-    const handleAddLesson = () => {
-        form.validateFields().then((values) => {
-          const newLesson: ILesson = {
-                title: values.title,
-                description: values.description,
-                videoLink: values.tempVideo,
-                studyMaterial: values.tempMaterial,
-                isCompleted: false
-          }
-          createLesson(newLesson, courseId);
-            setIsAddLesson(false);
-        });
-    };
+    if (isPending || !course) {
+        return <Spin fullscreen />;
+    }
 
-    const handleCancelAdd = () => {
-        form.resetFields();
-        setIsAddLesson(false);
-    };
-
-    if(isError){return<>Error adding lesson</>}
+    if (isError) {
+        return <>Error fetching course</>;
+    }
 
     return (
         <div className={styles.pageContainer}>
             <div className={styles.decorativeCircle} />
             <div className={styles.decorativeSquare} />
             <h2 className={styles.header}>Manage Course</h2>
-            <h1 className={styles.secondary}>Course Name: React Fundamentals</h1>
+            <h1 className={styles.secondary}>Course Name: {course.title}</h1>
 
             <div className={styles.content}>
                 <aside className={styles.sidebar}>
                     <div>
-                        {lessons.map((lesson) => (
+                        {course.lessons?.map((lesson) => (
                             <Button
                                 key={lesson.id}
                                 type="primary"
-                                className={`${styles.lessonItem} ${activeLesson.id === lesson.id ? styles.activeLesson : ''
-                                    }`}
+                                className={`${styles.lessonItem} ${activeLesson?.id === lesson.id ? styles.activeLesson : ''}`}
                                 onClick={() => setActiveLesson(lesson)}
                             >
                                 <span>{lesson.title}</span>
@@ -147,6 +126,7 @@ const ManageCoursePage = () => {
                     </div>
 
                     <Button className={styles.quizButton} onClick={() => setIsAddLesson(true)}>Add Lesson</Button>
+
                     <ReusableModalForm
                         title="Add Lesson"
                         isVisible={isAddLesson}
@@ -158,38 +138,46 @@ const ManageCoursePage = () => {
                 </aside>
 
                 <main className={styles.mainContent}>
-                    <Title level={3} className={styles.lessonTitle}>
-                        {activeLesson.title}
-                    </Title>
-                    <Paragraph className={styles.lessonDescription}>
-                        {activeLesson.description}
-                    </Paragraph>
+                    {activeLesson ? (
+                        <>
+                            <Title level={3} className={styles.lessonTitle}>
+                                {activeLesson.title}
+                            </Title>
+                            <Paragraph className={styles.lessonDescription}>
+                                {activeLesson.description}
+                            </Paragraph>
 
-                    <div className={styles.videoWrapper}>
-                        <iframe
-                            src={activeLesson.videoUrl}
-                            style={{ border: 'none' }}
-                            allow="autoplay; encrypted-media"
-                            allowFullScreen
-                            title="video"
-                        />
-                    </div>
+                            <div className={styles.videoWrapper}>
+                                <iframe
+                                    src={activeLesson.videoLink || ""}
+                                    style={{ border: 'none' }}
+                                    allow="autoplay; encrypted-media"
+                                    allowFullScreen
+                                    title="video"
+                                />
+                            </div>
 
-                    <div className={styles.materialWrapper}>
-                        <strong>Materials:</strong>
-                        <div className={styles.materialLink}>
-                            {activeLesson.materials.map((material, i) => (
-                                <a key={i} href="https://olp-six.vercel.app/" className={styles.materialLink}>
-                                    <FileTextOutlined />
-                                    {material}
-                                </a>
-                            ))}
-                        </div>
-                    </div>
+                            <div className={styles.materialWrapper}>
+                                <strong>Materials:</strong>
+                                <div className={styles.materialLink}>
+                                    {Array.isArray(activeLesson.studyMaterial)
+                                        ? activeLesson.studyMaterial.map((material, i) => (
+                                            <a key={i} href={material} target="_blank" rel="noopener noreferrer" className={styles.materialLink}>
+                                                <FileTextOutlined /> {material}
+                                            </a>
+                                        ))
+                                        : <span>No materials</span>
+                                    }
+                                </div>
+                            </div>
+                        </>
+                    ) : (
+                        <Paragraph>No lesson selected</Paragraph>
+                    )}
+
                     <Button
                         type="primary"
                         className={styles.completeButton}
-
                     >
                         Edit Lesson
                     </Button>
@@ -200,6 +188,7 @@ const ManageCoursePage = () => {
                     >
                         Add Quiz
                     </Button>
+
                     <QuizModalForm
                         visible={isAddQuiz}
                         onCancel={() => setIsAddQuiz(false)}
@@ -207,17 +196,14 @@ const ManageCoursePage = () => {
                         questions={quizQuestions}
                         setQuestions={setQuizQuestions}
                     />
-                    <Button
-                        type="primary"
-                        className={styles.completeButton}
 
-                    >
+                    <Button type="primary" className={styles.completeButton}>
                         Publish Course
                     </Button>
                 </main>
             </div>
         </div>
     );
-}
+};
 
 export default ManageCoursePage;

@@ -11,6 +11,7 @@ export interface ICourse {
 }
 
 export interface ILesson{
+    id?: string,
     title?: string,
     description?: string,
     videoLink?: string,
