@@ -10,13 +10,30 @@ import {
     createCourseError,
     getAllCoursesPending,
     getAllCoursesSuccess,
-    getAllCoursesError
+    getAllCoursesError,
+    updateCoursePending,
+    updateCourseSuccess,
+    updateCourseError
 } from "./actions";
 
 export const CourseProvider = ({children}: {children: React.ReactNode}) => {
     const [state, dispatch] = useReducer(CourseReducer, INITIAL_STATE);
     const instance = axiosInstance;
     const router = useRouter();
+
+    const updateCourse = async (course: ICourse) => {
+    dispatch(updateCoursePending());
+    const endpoint: string = '/services/app/Course/Update';
+    await instance.put(endpoint, course)
+        .then(() => {
+            dispatch(updateCourseSuccess());
+            router.push('/instructor');
+        })
+        .catch((error) => {
+            dispatch(updateCourseError());
+            console.error(error);
+        });
+}
 
     const createCourse = async (course: ICourse) => {
         dispatch(createCoursePending());
@@ -48,7 +65,7 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
     
     return (
         <CourseStateContext.Provider value={state}>
-            <CourseActionContext.Provider value={{createCourse, getAllCourses}}>
+            <CourseActionContext.Provider value={{createCourse, getAllCourses, updateCourse}}>
                 {children}
             </CourseActionContext.Provider>
         </CourseStateContext.Provider>
