@@ -10,10 +10,9 @@ namespace OnlineLearningPlatform.Domain.Quizzes
         public string Description { get; set; }
         public TimeSpan Duration { get; set; }
         public decimal PassingScore { get; set; }
-        public ICollection<string> Questions { get; set; }
-        public ICollection<string> Memorandum { get; set; }
-        public ICollection<string> AnswerOptions { get; set; }
-        public ICollection<QuizAttempt> StudentAttempts { get; set; }
+        public ICollection<string> Questions { get; set; } = new List<string>();
+        public ICollection<string> Memorandum { get; set; } = new List<string>();
+        public ICollection<AnswerOptions> AnswerOptions { get; set; } = new List<AnswerOptions>();
     }
 
 }

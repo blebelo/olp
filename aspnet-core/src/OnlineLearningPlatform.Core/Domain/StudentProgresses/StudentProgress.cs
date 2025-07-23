@@ -8,14 +8,18 @@ using System.Collections.Generic;
 
 namespace OnlineLearningPlatform.Domain.StudentProgresses
 {
-    public class StudentProgress: AggregateRoot<Guid>
+    public class StudentProgress : AggregateRoot<Guid>
     {
-        public string StudentName { get; set; }
+        public Guid StudentId { get; set; }
         public Student Student { get; set; }
-        public ICollection<Course> EnrolledCourses { get; set; }
-        public ICollection<Course> UnenrolledCourses { get; set; }
-        public ICollection<Course> CompletedCourses { get; set; }
-        public ICollection<Lesson> CompletedLessons { get; set; }
-        public ICollection<QuizAttempt> CompletedQuizzes { get; set; }
+
+        public Guid CourseId { get; set; }
+        public Course Course { get; set; }
+        public ICollection<Lesson> CompletedLessons { get; set; } = new List<Lesson>();
+        public ICollection<QuizAttempt> CompletedQuizzes { get; set; } = new List<QuizAttempt>();
+
+        public DateTime LastAccessed { get; set; }
+        public bool IsCompleted { get; set; }
+        public double CompletionPercentage { get; set; }
     }
 }

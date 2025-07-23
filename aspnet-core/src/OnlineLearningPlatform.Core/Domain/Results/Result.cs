@@ -1,10 +1,10 @@
-﻿using Abp.Domain.Entities.Auditing;
-using System;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
 namespace OnlineLearningPlatform.Domain.Results
 {
-    public class Result : FullAuditedEntity<Guid>
+    [Owned]
+    public class Result 
     {
         public int Score { get; set; }
         public ICollection<string> CorrectAnswers { get; set; } = new List<string>();
