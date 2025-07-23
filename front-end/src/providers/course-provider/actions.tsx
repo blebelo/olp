@@ -1,5 +1,5 @@
 import { createAction } from "redux-actions";
-import { ICourse, ICourseStateContext } from "./context";
+import { ICourse, ILesson, ICourseStateContext } from "./context";
 
 export enum CourseActionEnum {
     //Create Course
@@ -26,8 +26,17 @@ export enum CourseActionEnum {
     deleteCoursePending = "DELETE_COURSE_PENDING",
     deleteCourseSuccess = "DELETE_COURSE-SUCCESS",
     deleteCourseError = "DELETE_COURSE_ERROR",
-}
 
+    //Add Lesson
+    createLessonPending = "CREATE_LESSON_PENDING",
+    createLessonSuccess = "CREATE_LESSON_SUCCESS",
+    createLessonError = "CREATE_LESSON_ERROR",
+
+    //GET INSTRUCTOR COURSES
+    getInstructorCoursesPending = "GET_INSTRUCTOR_COURSES_PENDING",
+    getInstructorCoursesSuccess = "GET_INSTRUCTOR_COURSES_SUCCESS",
+    getInstructorCoursesError = "GET_INSTRUCTOR_COURSES_ERROR",
+}
 
 //Create Course
 export const createCoursePending = createAction<ICourseStateContext>(
@@ -110,7 +119,7 @@ export const getAllCoursesSuccess = createAction<ICourseStateContext, { items: I
             isPending: false,
             isSuccess: true,
             isError: false,
-            courses:items,
+            courses: items,
             totalCount
         }
     )
@@ -156,6 +165,68 @@ export const deleteCourseError = createAction<ICourseStateContext>(
             isPending: false,
             isSuccess: false,
             isError: true,
+        }
+    )
+)
+
+export const createLessonPending = createAction<ICourseStateContext>(
+    CourseActionEnum.createLessonPending, () => (
+        {
+            isPending: true,
+            isSuccess: false,
+            isError: false,
+        }
+    )
+)
+
+export const createLessonSuccess = createAction<ICourseStateContext, ILesson>(
+    CourseActionEnum.createLessonSuccess, (lesson: ILesson) => (
+        {
+            isPending: false,
+            isSuccess: true,
+            isError: false,
+            lesson
+        }
+    )
+)
+
+export const createLessonError = createAction<ICourseStateContext>(
+    CourseActionEnum.createLessonError, () => (
+        {
+            isPending: false,
+            isSuccess: false,
+            isError: true,
+        }
+    )
+)
+
+export const getInstructorCoursesPending = createAction<ICourseStateContext>(
+    CourseActionEnum.getInstructorCoursesPending, () => (
+        {
+            isPending: true,
+            isSuccess: false,
+            isError: false,
+        }
+    )
+)
+
+export const getInstructorCoursesSuccess = createAction<ICourseStateContext, ILesson>(
+    CourseActionEnum.getInstructorCoursesSuccess, (lesson: ILesson) => (
+        {
+            isPending: false,
+            isSuccess: true,
+            isError: false,
+            lesson
+        }
+    )
+)
+export const getInstructorCoursesError = createAction<ICourseStateContext>(
+    CourseActionEnum.getInstructorCoursesError, () => (
+        {
+            isPending: false,
+            isSuccess: false,
+            isError: true,
+            
         }
     )
 )

@@ -6,7 +6,9 @@ import { useStyles } from './Style/style';
 import { initialLessons } from '@/utils/sample-courses/lessons';
 import type { FieldConfig } from "@/components/modal/ReusableModalForm";
 import ReusableModalForm from '@/components/modal/ReusableModalForm';
+import { useCourseActions} from '@/providers/course-provider';
 import QuizModalForm, { QuizQuestion } from '@/components/modal/quiz-modal/QuizModalForm';
+import { ILesson } from '@/providers/course-provider/context';
 const { Title, Paragraph } = Typography;
 
 const ManageCoursePage = () => {
@@ -16,6 +18,9 @@ const ManageCoursePage = () => {
     const [form] = Form.useForm();
     const lessons = initialLessons;
     const [isAddQuiz, setIsAddQuiz] = useState(false);
+
+    const {createLesson} = useCourseActions();
+    // const {isError} = useCourseState();
 
     const [quizQuestions, setQuizQuestions] = useState([
         {
@@ -75,6 +80,16 @@ const ManageCoursePage = () => {
 
     const handleAddLesson = () => {
         form.validateFields().then((values) => {
+
+            const newLesson: ILesson = {
+                title: values.title,
+                description: values.description,
+                videoLink: values.video,
+                isCompleted: false,
+                studyMaterial: values.additionalContent
+            }
+            createLesson(newLesson);
+
             console.log("Lesson Added:", values);
             form.resetFields();
             setIsAddLesson(false);

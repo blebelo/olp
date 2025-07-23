@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { AuthProvider } from "@/providers/auth-provider";
 import { CourseProvider } from "@/providers/course-provider";
+import { InstructorProvider } from "@/providers/instructorProvider";
 import "./globals.css";
 
 
@@ -16,13 +17,15 @@ export default function RootLayout({
 }>) {
   return (
     <AuthProvider>
-      <CourseProvider>
-        <html lang="en">
-          <body>
-            {children}
-          </body>
-        </html>
-      </CourseProvider>
+      <InstructorProvider>
+        <CourseProvider>
+          <html lang="en">
+            <body>
+              {children}
+            </body>
+          </html>
+        </CourseProvider>
+      </InstructorProvider>
     </AuthProvider>
   );
 }

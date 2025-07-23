@@ -12,6 +12,7 @@ export interface CourseType {
 
 interface CourseCardProps {
   course: CourseType;
+  onClick?: (course: CourseType) => void;
 }
 
 const CourseCard: React.FC<CourseCardProps> = ({ course}) => {

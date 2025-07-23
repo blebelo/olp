@@ -6,11 +6,16 @@ export interface ICourse {
     topic?: string,
     description?: string,
     isPublished?: boolean,
-    instructorId?: string
+    instructorId?: string,
+    lessons?: ILesson[]
 }
 
-export interface Lesson{
-    name?: string,
+export interface ILesson{
+    title?: string,
+    description?: string,
+    videoLink?: string,
+    isCompleted?: boolean,
+    studyMaterial?: string[]
 }
 
 export interface ICourseStateContext {
@@ -26,6 +31,9 @@ export interface ICourseStateContext {
 export interface ICourseActionContext {
     createCourse: (course: ICourse) => void;
     getAllCourses: () => void;
+    createLesson: (lesson: ILesson) => void;
+    // getInstructorCourses: () => void;
+    getCourse: (id: string) => void;
 }
 
 export const INITIAL_STATE: ICourseStateContext = {

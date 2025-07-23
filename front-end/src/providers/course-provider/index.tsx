@@ -1,7 +1,7 @@
 "use client"
 import { useContext, useReducer } from "react";
 import { axiosInstance } from "@/utils/axiosInstance";
-import { INITIAL_STATE, ICourse, CourseActionContext, CourseStateContext} from "./context";
+import { INITIAL_STATE, ICourse, CourseActionContext, CourseStateContext, ILesson} from "./context";
 import { CourseReducer } from "./reducer";
 import { useRouter } from "next/navigation";
 import { 
@@ -10,7 +10,13 @@ import {
     createCourseError,
     getAllCoursesPending,
     getAllCoursesSuccess,
-    getAllCoursesError
+    getAllCoursesError,
+    createLessonPending,
+    createLessonSuccess,
+    createLessonError,
+    getCoursePending,
+    getCourseSuccess,
+    getCourseError
 } from "./actions";
 
 export const CourseProvider = ({children}: {children: React.ReactNode}) => {
@@ -42,13 +48,44 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
             console.log("Courses:", response.data);
         }).catch((error)=>{
             dispatch(getAllCoursesError());
+            console.error(error);
+        })
+    }
+
+    const createLesson = async(lesson: ILesson) => {
+        dispatch(createLessonPending());
+
+        const endpoint : string = '/services/app/Course/AddLesson';
+
+        await instance.post(endpoint, lesson)
+        .then((response) => {
+            dispatch(getCourseSuccess(response.data))
+            console.log(response.data)
+        }).catch((error)=>{
+            dispatch(getCourseError());
             console.error(error)
         })
+    }
+
+    const getCourse = async(courseId: string) => {
+        dispatch(getCoursePending());
+
+        const endpoint : string = '/services/app/Course/Get';
+
+        await instance.post(endpoint, courseId)
+        .then((response) => {
+            dispatch(createLessonSuccess(response.data))
+            console.log(response.data)
+        }).catch((error)=>{
+            dispatch(createLessonError());
+            console.error(error)
+        })
+
     }
     
     return (
         <CourseStateContext.Provider value={state}>
-            <CourseActionContext.Provider value={{createCourse, getAllCourses}}>
+            <CourseActionContext.Provider value={{createCourse, getAllCourses, createLesson, getCourse}}>
                 {children}
             </CourseActionContext.Provider>
         </CourseStateContext.Provider>
