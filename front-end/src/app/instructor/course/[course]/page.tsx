@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Button, Typography, Form, Spin } from 'antd';
+import { Button, Typography, Form, Spin, message } from 'antd';
 import { CheckCircleFilled, FileTextOutlined } from '@ant-design/icons';
 import { useStyles } from './Style/style';
 import type { FieldConfig } from "@/components/modal/ReusableModalForm";
@@ -8,14 +8,15 @@ import ReusableModalForm from '@/components/modal/ReusableModalForm';
 import QuizModalForm, { QuizQuestion } from '@/components/modal/quiz-modal/QuizModalForm';
 import { useParams } from 'next/navigation';
 import { useCourseActions, useCourseState } from '@/providers/course-provider';
-import { ILesson } from '@/providers/course-provider/context';
+import { ICourse, ILesson } from '@/providers/course-provider/context';
+import EditCourseModal from '@/components/modal/course-modal/EditCourseModal';
 
 const { Title, Paragraph } = Typography;
 
 const ManageCoursePage = () => {
     const { styles } = useStyles();
     const { isError, course, isPending } = useCourseState();
-    const { getCourse, createLesson } = useCourseActions();
+    const { getCourse, createLesson, getCourseById, updateCourse } = useCourseActions();
     const [isAddLesson, setIsAddLesson] = useState(false);
     const [form] = Form.useForm();
     const [isAddQuiz, setIsAddQuiz] = useState(false);
@@ -31,9 +32,17 @@ const ManageCoursePage = () => {
     const params = useParams();
     const courseId = params?.course as string;
 
+    const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+
     useEffect(() => {
         if (courseId) {
             getCourse(courseId);
+        }
+    }, [courseId]);
+
+    useEffect(() => {
+        if (courseId) {
+            getCourseById(courseId as string);
         }
     }, [courseId]);
 
@@ -42,6 +51,18 @@ const ManageCoursePage = () => {
             setActiveLesson(course.lessons[0]);
         }
     }, [course]);
+
+    const handleSaveChanges = async (updatedCourse: ICourse) => {
+    try {
+      await updateCourse({ ...updatedCourse, id: courseId });
+      message.success('Course updated successfully');
+      setIsEditModalVisible(false);
+      getCourseById(courseId as string); // Refresh UI
+    } catch (error) {
+        console.error(error);
+      message.error('Failed to update course');
+    }
+  };
 
     const handleCreateQuiz = (questions: QuizQuestion[]) => {
         console.log("Quiz submitted:", questions);
@@ -200,6 +221,16 @@ const ManageCoursePage = () => {
                     <Button type="primary" className={styles.completeButton}>
                         Publish Course
                     </Button>
+                     <Button type="primary" onClick={() => setIsEditModalVisible(true)} style={{ marginTop: 20 }}>
+                        Edit Course
+                    </Button>
+
+                    <EditCourseModal
+                        visible={isEditModalVisible}
+                        course={course}
+                        onCancel={() => setIsEditModalVisible(false)}
+                        onSubmit={handleSaveChanges}
+                    />
                 </main>
             </div>
         </div>

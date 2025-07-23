@@ -19,7 +19,10 @@ import {
     createLessonError,
     getCoursePending,
     getCourseSuccess,
-    getCourseError
+    getCourseError,
+    getCourseByIdError,
+    getCourseByIdPending,
+    getCourseByIdSuccess
 } from "./actions";
 
 export const CourseProvider = ({children}: {children: React.ReactNode}) => {
@@ -98,12 +101,25 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
         }).catch((error)=>{
             dispatch(getCourseError());
             console.error(error)
-        })
+        }) }
 
+    const getCourseById = async (courseId: string) => {
+        dispatch(getCourseByIdPending());
+        
+        const endpoint: string = `/services/app/Course/Get?Id=${courseId}`;
+
+        await instance.get(endpoint)
+        .then((response) => {
+            dispatch(getCourseByIdSuccess(response?.data.result))
+            console.log(response?.data)
+        }).catch((error) => {
+            dispatch(getCourseByIdError());
+            console.error(error);
+        })
     }
     return (
         <CourseStateContext.Provider value={state}>
-            <CourseActionContext.Provider value={{createCourse, getAllCourses, updateCourse, createLesson, getCourse}}>
+            <CourseActionContext.Provider value={{createCourse, getAllCourses, updateCourse, createLesson, getCourse, getCourseById}}>
                 {children}
             </CourseActionContext.Provider>
         </CourseStateContext.Provider>

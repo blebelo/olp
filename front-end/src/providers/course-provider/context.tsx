@@ -36,7 +36,7 @@ export interface ICourseActionContext {
     // getInstructorCourses: () => void;
     getCourse: (id: string) => void;
     updateCourse: (course: ICourse) => void;
-    
+    getCourseById: (courseId: string) => void;
 }
 
 export const INITIAL_STATE: ICourseStateContext = {
