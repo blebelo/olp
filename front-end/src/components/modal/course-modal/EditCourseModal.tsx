@@ -26,7 +26,11 @@ const EditCourseModal: React.FC<EditCourseModalProps> = ({
   useEffect(() => {
     if (course) {
       setInitialValues(course);
-      form.setFieldsValue(course);
+      form.setFieldsValue({
+        title: course.title,
+        topic: course.topic,
+        description: course.description,
+      });
     }
   }, [course, form]);
 
