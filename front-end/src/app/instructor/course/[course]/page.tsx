@@ -1,21 +1,32 @@
 'use client';
 import { useState } from 'react';
-import { Button, Typography, Form, Upload } from 'antd';
-import { CheckCircleFilled, FileTextOutlined, UploadOutlined } from '@ant-design/icons';
+import { Button, Typography, Form } from 'antd';
+import { CheckCircleFilled, FileTextOutlined } from '@ant-design/icons';
+// import { Button, Typography, Form, Upload } from 'antd';
+// import { CheckCircleFilled, FileTextOutlined, UploadOutlined } from '@ant-design/icons';
 import { useStyles } from './Style/style';
 import { initialLessons } from '@/utils/sample-courses/lessons';
 import type { FieldConfig } from "@/components/modal/ReusableModalForm";
 import ReusableModalForm from '@/components/modal/ReusableModalForm';
 import QuizModalForm, { QuizQuestion } from '@/components/modal/quiz-modal/QuizModalForm';
+import { useParams } from 'next/navigation';
+import { useCourseActions, useCourseState } from '@/providers/course-provider';
+import { ILesson } from '@/providers/course-provider/context';
 const { Title, Paragraph } = Typography;
 
 const ManageCoursePage = () => {
     const { styles } = useStyles();
     const [activeLesson, setActiveLesson] = useState(initialLessons[0]);
+    const {isError} = useCourseState();
+    const {createLesson} = useCourseActions();
     const [isAddLesson, setIsAddLesson] = useState(false);
     const [form] = Form.useForm();
     const lessons = initialLessons;
     const [isAddQuiz, setIsAddQuiz] = useState(false);
+
+    const params = useParams();
+    const courseId = params?.course as string;
+    console.log(courseId);
 
     const [quizQuestions, setQuizQuestions] = useState([
         {
@@ -43,40 +54,58 @@ const ManageCoursePage = () => {
             rules: [{ required: true, message: "Please enter description" }],
             type: "textarea",
         },
-        {
-            label: "Video Upload",
-            name: "video",
-            type: "custom",
-            component: (
-                <Upload
-                    name="video"
-                    maxCount={1}
-                    beforeUpload={() => false}
-                >
-                    <Button icon={<UploadOutlined />}>Upload Video</Button>
-                </Upload>
-            ),
+         {
+            label: "Video",
+            name: "tempVideo",
+            rules: [{ required: true, message: "Please enter description" }],
+            type: "textarea",
         },
-        {
-            label: "Additional Content",
-            name: "additionalContent",
-            type: "custom",
-            component: (
-                <Upload
-                    name="documents"
-                    multiple
-                    beforeUpload={() => false}
-                >
-                    <Button icon={<UploadOutlined />}>Upload Documents</Button>
-                </Upload>
-            ),
+         {
+            label: "Material",
+            name: "tempMaterial",
+            rules: [{ required: true, message: "Please enter description" }],
+            type: "textarea",
         },
+        // {
+        //     label: "Video Upload",
+        //     name: "video",
+        //     type: "custom",
+        //     component: (
+        //         <Upload
+        //             name="video"
+        //             maxCount={1}
+        //             beforeUpload={() => false}
+        //         >
+        //             <Button icon={<UploadOutlined />}>Upload Video</Button>
+        //         </Upload>
+        //     ),
+        // },
+        // {
+        //     label: "Additional Content",
+        //     name: "additionalContent",
+        //     type: "custom",
+        //     component: (
+        //         <Upload
+        //             name="documents"
+        //             multiple
+        //             beforeUpload={() => false}
+        //         >
+        //             <Button icon={<UploadOutlined />}>Upload Documents</Button>
+        //         </Upload>
+        //     ),
+        // },
     ];
 
     const handleAddLesson = () => {
         form.validateFields().then((values) => {
-            console.log("Lesson Added:", values);
-            form.resetFields();
+          const newLesson: ILesson = {
+                title: values.title,
+                description: values.description,
+                videoLink: values.tempVideo,
+                studyMaterial: values.tempMaterial,
+                isCompleted: false
+          }
+          createLesson(newLesson, courseId);
             setIsAddLesson(false);
         });
     };
@@ -85,6 +114,8 @@ const ManageCoursePage = () => {
         form.resetFields();
         setIsAddLesson(false);
     };
+
+    if(isError){return<>Error adding lesson</>}
 
     return (
         <div className={styles.pageContainer}>
