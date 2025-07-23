@@ -119,7 +119,6 @@ namespace OnlineLearningPlatform.Instructors
             };
         }
 
-        [AbpAuthorize]
         public async Task<ICollection<CourseDto>> GetCoursesAsync(long userId)
         {
             

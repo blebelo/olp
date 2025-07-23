@@ -2,6 +2,10 @@
 using Abp.AspNetCore.Mvc.Antiforgery;
 using Abp.AspNetCore.SignalR.Hubs;
 using Abp.Castle.Logging.Log4Net;
+using Amazon;
+using Amazon.Extensions.NETCore.Setup;
+using Amazon.Runtime;
+using Amazon.S3;
 using Castle.Facilities.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -25,7 +29,7 @@ namespace OnlineLearningPlatform.Web.Host.Startup
         private const string _defaultCorsPolicyName = "localhost";
 
         private const string _apiVersion = "v1";
-        
+
         private readonly IConfigurationRoot _appConfiguration;
         private readonly IWebHostEnvironment _hostingEnvironment;
 
@@ -48,6 +52,19 @@ namespace OnlineLearningPlatform.Web.Host.Startup
 
             services.AddSignalR();
 
+            //AWS Service
+            services.AddDefaultAWSOptions(new AWSOptions
+            {
+                Region = RegionEndpoint.GetBySystemName(Environment.GetEnvironmentVariable("AWS__Region")),
+                Credentials = new BasicAWSCredentials(
+                Environment.GetEnvironmentVariable("AWS__AccessKey"),
+                Environment.GetEnvironmentVariable("AWS__SecretKey")
+            )
+            });
+            
+            services.AddAWSService<Amazon.S3.IAmazonS3>();
+
+
             // Swagger - Enable this line and the related lines in Configure method to enable swagger UI
             ConfigureSwagger(services);
 
@@ -61,12 +78,12 @@ namespace OnlineLearningPlatform.Web.Host.Startup
                     )
                 )
             );
-            
+
             //Disable HTTPS
             services.Configure<HttpsRedirectionOptions>(options =>
             {
                 options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
-                options.HttpsPort = null; 
+                options.HttpsPort = null;
             });
 
             //CORS Service
@@ -75,7 +92,7 @@ namespace OnlineLearningPlatform.Web.Host.Startup
                 options.AddPolicy("AllowAll", builder =>
                 {
                     builder
-                        .AllowAnyOrigin() 
+                        .AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader();
                 });
