@@ -1,4 +1,6 @@
 ﻿using Abp.Domain.Entities.Auditing;
+using OnlineLearningPlatform.Domain.Courses;
+using OnlineLearningPlatform.Domain.Instructors;
 using System;
 using System.Collections.Generic;
 
