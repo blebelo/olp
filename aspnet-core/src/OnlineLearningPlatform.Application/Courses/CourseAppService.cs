@@ -119,7 +119,6 @@ namespace OnlineLearningPlatform.Courses
 
             var listOutput = new List<CourseDto>();
 
-
             foreach (var course in courses)
             {
                 try
@@ -144,7 +143,7 @@ namespace OnlineLearningPlatform.Courses
                             : new List<LessonDto>(),
                         Quiz = course.Quiz != null
                             ? ObjectMapper.Map<QuizDto>(course.Quiz)
-                            : new QuizDto { }
+                            : null
                     };
 
                     listOutput.Add(dto);

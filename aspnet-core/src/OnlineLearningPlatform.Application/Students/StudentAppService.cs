@@ -124,7 +124,6 @@ namespace OnlineLearningPlatform.Students
                 .GetAllIncluding(s => s.UserAccount, s => s.EnrolledCourses)
                 .FirstOrDefaultAsync(s => s.UserAccount != null && s.UserAccount.Id == userId);
 
-
             var courses = student.EnrolledCourses;
 
             if (courses == null || courses.Count == 0)

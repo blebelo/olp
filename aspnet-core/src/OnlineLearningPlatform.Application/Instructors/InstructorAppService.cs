@@ -129,7 +129,6 @@ namespace OnlineLearningPlatform.Instructors
                 .GetAllIncluding(i => i.UserAccount, i => i.CoursesCreated)
                 .FirstOrDefaultAsync(i => i.UserAccount != null && i.UserAccount.Id == userId);
 
-
             var courses = instructor.CoursesCreated;
 
             if (courses == null || courses.Count == 0)
