@@ -14,10 +14,6 @@ namespace OnlineLearningPlatform.Students
 
         Task<StudentProfileDto> UpdateStudentProfileAsync(UpdateStudentDto input);
 
-        Task<List<CourseDto>> GetStudentEnrolledCoursesAsync(Guid studentId);
-
-        Task EnrollStudentInCourseAsync(Guid studentId, Guid courseId);
-
-        Task UnenrollStudentFromCourseAsync(Guid studentId, Guid courseId);
+        public Task<ICollection<CourseDto>> GetCoursesAsync(long userId);
     }
 }
