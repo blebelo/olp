@@ -38,6 +38,7 @@ export interface ICourseActionContext {
     updateCourse: (course: ICourse) => void;
     setCoursePublished: (courseId: string, isPublished: boolean) => Promise<unknown>;
     getCourseById: (courseId: string) => void;
+    getStudentCourses: (id: number) => void;
 }
 
 export const INITIAL_STATE: ICourseStateContext = {

@@ -1,12 +1,31 @@
 'use client';
 import { useStyles } from './Style/style';
-import { Button, Progress, Typography } from 'antd';
-import { courses } from '@/utils/sample-courses/courses';
+import { Button, Typography } from 'antd';
+// import { courses } from '@/utils/sample-courses/courses';
+import { useCourseActions, useCourseState } from '@/providers/course-provider';
+// import { ICourse } from '@/providers/course-provider/context';
+import { useEffect } from 'react';
+import Link from 'next/link';
 
-
-export default function StudentProgressPage() {
+const StudentProgressPage = () => {
     const { styles } = useStyles();
     const { Title, Paragraph } = Typography;
+
+    const { getStudentCourses, getCourse } = useCourseActions();
+    const { courses } = useCourseState();
+
+
+    useEffect(() => {
+        const storedId = sessionStorage.getItem("Id");
+        if (storedId !== null) {
+            const numericId = parseInt(storedId, 10);
+            if (!isNaN(numericId)) {
+                getStudentCourses(numericId);
+            }
+        }
+    }, []);
+
+
     return (
         <div className={styles.pageContainer}>
             <div className={styles.decorativeCircle} />
@@ -14,28 +33,34 @@ export default function StudentProgressPage() {
             <Title className={styles.pageTitle}>My Course Progress</Title>
 
             <div className={styles.courseList}>
-                {courses.map((course) => (
+                {courses?.map((course) => (
                     <div key={course.id} className={styles.courseCard}>
                         <div className={styles.courseDetails}>
                             <Title level={4} className={styles.courseTitle}>{course.title}</Title>
                             <Paragraph className={styles.courseDescription}>{course.description}</Paragraph>
 
                             <div className={styles.progressContainer}>
-                                <Progress
+                                {/* <Progress
                                     percent={course.completion}
                                     status={course.completion === 100 ? 'success' : 'active'}
                                     className={styles.progressBar}
-                                />
-                                <span className={styles.completionText}>
+                                /> */}
+                                {/* <span className={styles.completionText}>
                                     {course.completion === 100 && <span className={styles.completed}>Completed</span>}
-                                </span>
+                                </span> */}
                             </div>
                         </div>
 
                         <div className={styles.actionSection}>
-                            <Button type="primary" className={styles.actionButton}>
-                                {course.completion === 100 ? 'View Course' : 'Continue Learning'}
+                            
+                            <Link href={`/student/enrolled-course/${course.id}`} style={{ display: 'block' }}>
+                                <Button type="primary" className={styles.actionButton} onClick={() => {
+                                if (course?.id) getCourse(course.id);
+                            }}>
+                                {/* {course.completion === 100 ? 'View Course' : 'Continue Learning'} */}
+                                Continue Learning
                             </Button>
+                            </Link>
                         </div>
                     </div>
                 ))}
@@ -43,3 +68,4 @@ export default function StudentProgressPage() {
         </div>
     );
 }
+export default StudentProgressPage;

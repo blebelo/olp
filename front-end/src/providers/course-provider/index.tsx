@@ -22,7 +22,10 @@ import {
     getCourseError,
     getCourseByIdError,
     getCourseByIdPending,
-    getCourseByIdSuccess
+    getCourseByIdSuccess,
+    getStudentCoursesPending,
+    getStudentCoursesSuccess,
+    getStudentCoursesError
 } from "./actions";
 
 export const CourseProvider = ({children}: {children: React.ReactNode}) => {
@@ -123,6 +126,22 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
             })
     }, [dispatch, instance]);
 
+    const getStudentCourses = useCallback(async (id?: number) => {
+
+        dispatch(getStudentCoursesPending());
+        const endpoint: string = `/services/app/Student/GetCourses?userId=${id}`;
+
+        await instance.get(endpoint)
+        .then((response)=>{
+            dispatch(getStudentCoursesSuccess(response.data));
+            console.log(response.data.result);
+        }).catch((error)=> {
+            dispatch(getStudentCoursesError());
+            console.error(error);
+        })
+
+    }, [dispatch, instance])
+
     const actions = useMemo(() => ({
         createCourse,
         getAllCourses,
@@ -130,8 +149,9 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
         createLesson,
         getCourse,
         setCoursePublished,
-        getCourseById
-    }), [createCourse, getAllCourses, updateCourse, createLesson, getCourse, setCoursePublished, getCourseById]);
+        getCourseById,
+        getStudentCourses
+    }), [createCourse, getAllCourses, updateCourse, createLesson, getCourse, setCoursePublished, getCourseById, getStudentCourses]);
 
     return (
         <CourseStateContext.Provider value={state}>

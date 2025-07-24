@@ -13,8 +13,8 @@ const HomePage = () => {
     const { styles } = useStyles();
     const { getAllCourses, getCourse } = useCourseActions();
     const { courses, course } = useCourseState();
-    const {profile} = useContext(StudentProfileStateContext);
-    const {getProfile} = useContext(StudentProfileActionContext)|| {};
+    const { profile } = useContext(StudentProfileStateContext);
+    const { getProfile } = useContext(StudentProfileActionContext) || {};
     const { enrollStudentInCourse } = useStudentEnrollmentActions();
     const studentId = sessionStorage.getItem("userId") ?? '';
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -28,11 +28,13 @@ const HomePage = () => {
         getProfile?.();
     }, [])
 
-  if (profile?.id) {
-    sessionStorage.setItem("userId", profile.id);
-  }
+    if (profile?.id) {
+        sessionStorage.setItem("userId", profile.id);
+    }
 
-  const handleCourseClick = (course: CourseType) => {
+
+
+    const handleCourseClick = (course: CourseType) => {
 
         setSelectedCourse({
             id: course.id,
@@ -40,23 +42,23 @@ const HomePage = () => {
             topic: course.topic,
             description: course.description,
             instructorName: "N/A",
-            lessons: [], 
+            lessons: [],
         });
         getCourse(course.id);
         setIsModalVisible(true);
-        };
-        
+    };
+
     const handleCancelModal = () => {
         setIsModalVisible(false);
         setSelectedCourse(null);
     };
-    
+
     const handleEnroll = (courseId: string) => {
-            console.log("courseId front: ", courseId);
-            console.log("StudentId front: ", studentId);
-           enrollStudentInCourse(studentId, course?.id);
-           message.success("Enrolled successfully!");
-      
+        console.log("courseId front: ", courseId);
+        console.log("StudentId front: ", studentId);
+        enrollStudentInCourse(studentId, course?.id);
+        message.success("Enrolled successfully!");
+
     };
 
     const mappedCourses: CourseType[] = (courses || [])
@@ -69,18 +71,18 @@ const HomePage = () => {
             thumbnail: "/images/image2.jpg",
         }));
 
-const modalCourse: Course | null = course && selectedCourse?.id === course.id
-  ? {
-      id: course.id ?? '',
-      title: course.title ?? '',
-      topic: course.topic ?? '',
-      description: course.description ?? '',
-      instructorName: course.instructorId ?? 'N/A', 
-      lessons: (course.lessons ?? []).map(lesson => ({
-        title: lesson.title ?? 'Untitled Lesson',
-      })),
-    }
-  : null;
+    const modalCourse: Course | null = course && selectedCourse?.id === course.id
+        ? {
+            id: course.id ?? '',
+            title: course.title ?? '',
+            topic: course.topic ?? '',
+            description: course.description ?? '',
+            instructorName: course.instructorId ?? 'N/A',
+            lessons: (course.lessons ?? []).map(lesson => ({
+                title: lesson.title ?? 'Untitled Lesson',
+            })),
+        }
+        : null;
 
     return (
         <div className={styles.heroContainer}>
@@ -107,12 +109,12 @@ const modalCourse: Course | null = course && selectedCourse?.id === course.id
                 <Row gutter={[16, 16]}>
                     {mappedCourses.slice(0, 5).map((course) => (
                         <Col xs={24} sm={12} md={8} lg={6} key={course.id}>
-                            <CourseCard course={course} onClick={handleCourseClick}/>
+                            <CourseCard course={course} onClick={handleCourseClick} />
                         </Col>
                     ))}
                 </Row>
             </div>
-        <CourseModal visible={isModalVisible} course={modalCourse} onCancel={handleCancelModal} onEnroll={handleEnroll} />
+            <CourseModal visible={isModalVisible} course={modalCourse} onCancel={handleCancelModal} onEnroll={handleEnroll} />
         </div>
     );
 };

@@ -42,8 +42,12 @@ export enum CourseActionEnum {
     getCourseByIdPending = "GET_COURSE_BY_ID_PENDING",
     getCourseByIdSuccess = "GET_COURSE_BY_ID_SUCCESS",
     getCourseByIdError = "GET_COURSE_BY_ID_ERROR",
-}
 
+    //Get Student Courses
+    getStudentCoursesPending = "GET_STUDENT_COURSES_PENDING",
+    getStudentCoursesSuccess = "GET_STUDENT_COURSES_SUCCESS",
+    getStudentCoursesError = "GET_STUDENT_COURSES_ERROR"
+}
 
 //Create Course
 export const createCoursePending = createAction<ICourseStateContext>(
@@ -293,6 +297,38 @@ export const getCourseByIdSuccess = createAction<ICourseStateContext, ICourse>(
 
 export const getCourseByIdError = createAction<ICourseStateContext>(
     CourseActionEnum.getCourseByIdError, () => (
+        {
+            isPending: false,
+            isSuccess: false,
+            isError: true,
+        }
+    )
+)
+
+export const getStudentCoursesPending = createAction<ICourseStateContext>(
+    CourseActionEnum.getStudentCoursesPending, () => (
+        {
+            isPending: true,
+            isSuccess: false,
+            isError: false,
+        }
+    )
+)
+
+export const getStudentCoursesSuccess = createAction<ICourseStateContext, { items: ICourse[]; totalCount: number }>(
+    CourseActionEnum.getStudentCoursesSuccess, ({ items, totalCount }) => (
+        {
+            isPending: false,
+            isSuccess: true,
+            isError: false,
+            courses: items,
+            totalCount
+        }
+    )
+)
+
+export const getStudentCoursesError = createAction<ICourseStateContext>(
+    CourseActionEnum.getStudentCoursesError, () => (
         {
             isPending: false,
             isSuccess: false,
