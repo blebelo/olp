@@ -59,9 +59,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
                 const decoded = decodeToken(token);
                 const userRole = decoded[AbpTokenProperies.role];
+                const userId = decoded[AbpTokenProperies.nameidentifier]
 
                 sessionStorage.setItem("token", token);
                 sessionStorage.setItem("role", userRole);
+                sessionStorage.setItem("Id", userId );
 
                 dispatch(loginUserSuccess(token));
                 router.push('/instructor');
