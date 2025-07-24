@@ -21,7 +21,7 @@ export interface IStudentEnrollmentStateContext {
 export interface IStudentEnrollmentActionContext{
     enrollStudentInCourse: (studentId?: string, courseId?: string) => void;
     unenrollStudentFromCourse: (studentId: string, courseId: string) => void;
-    getStudentEnrolledCourses: (studentId: string) => void;
+    getStudentEnrolledCourses: (userId: number) => void;
 }
 export const INITIAL_STATE: IStudentEnrollmentStateContext = {
     isPending: false,

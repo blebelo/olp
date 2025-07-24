@@ -23,7 +23,7 @@ export const StudentEnrollmentProvider = ({children}: {children: React.ReactNode
         dispatch(enrollStudentInCoursePending());
 
         //matching endpoints with frontend
-        const endpoint: string = `/services/app/Student/EnrollStudentInCourse?studentId=${studentId}&courseId=${courseId}`;
+        const endpoint: string = `/services/app/Course/EnrollStudent?courseId=${courseId}&studentId=${studentId}`;
         
         await instance.post(endpoint)
         .then((response) => {
@@ -37,7 +37,7 @@ export const StudentEnrollmentProvider = ({children}: {children: React.ReactNode
      const unenrollStudentFromCourse = async (studentId: string, courseId: string) => {
         dispatch(unenrollStudentFromCoursePending());
 
-        const endpoint: string = `/services/app/Student/UnenrollStudentFromCourse?studentId=${studentId}&courseId=${courseId}`;
+        const endpoint: string = `/services/app/Course/UnEnrollStudent?courseId=${courseId}&studentId=${studentId}`;
         await instance.post(endpoint)
         .then((response) => {
             dispatch(unenrollStudentFromCourseSuccess());
@@ -47,10 +47,10 @@ export const StudentEnrollmentProvider = ({children}: {children: React.ReactNode
             console.error('Unenrollment failed:', error);
         })
     }
-      const getStudentEnrolledCourses = async (studentId: string) => {
+      const getStudentEnrolledCourses = async (userId: number) => {
         dispatch(getStudentEnrolledCoursesPending());
 
-        const endpoint: string = `/services/app/Student/GetStudentEnrolledCourses?studentId=${studentId}`;
+        const endpoint: string = `/services/app/Student/GetCourses?userId=${userId}`;
         await instance.get(endpoint)
         .then((response) => {
             dispatch(getStudentEnrolledCoursesSuccess(response.data.result || response.data));
