@@ -1,6 +1,5 @@
 ﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
-using Abp.AutoMapper;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
 using Abp.UI;
@@ -18,7 +17,6 @@ using OnlineLearningPlatform.Quizzes.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace OnlineLearningPlatform.Courses
@@ -78,28 +76,30 @@ namespace OnlineLearningPlatform.Courses
 
         public override async Task<CourseDto> GetAsync(EntityDto<Guid> input)
         {
-            var item = await _courseRepository
+            var course = await _courseRepository
                 .GetAllIncluding(c => c.Instructor, c => c.EnrolledStudents, c => c.Lessons, c => c.Quiz)
                 .FirstOrDefaultAsync(c => c.Id == input.Id);
 
             var dto = new CourseDto
             {
-                Id = item.Id,
-                Title = item.Title,
-                Topic = item.Topic,
-                Description = item.Description,
-                IsPublished = item.IsPublished,
-                Instructor = item.Instructor != null
-                    ? $"{item.Instructor.Name} {item.Instructor.Surname}"
+                Id = course.Id,
+                Title = course.Title,
+                Topic = course.Topic,
+                CoverImageUrl = course.CoverImageUrl,
+                Category = course.Category,
+                Description = course.Description,
+                IsPublished = course.IsPublished,
+                Instructor = course.Instructor != null
+                    ? $"{course.Instructor.Name} {course.Instructor.Surname}"
                     : "No Instructor",
-                EnrolledStudents = item.EnrolledStudents != null
-                    ? item.EnrolledStudents.Select(s => $"{s.Name} {s.Surname}").ToList()
+                EnrolledStudents = course.EnrolledStudents != null
+                    ? course.EnrolledStudents.Select(s => $"{s.Name} {s.Surname}").ToList()
                     : new List<string>(),
-                Lessons = item.Lessons != null
-                    ? ObjectMapper.Map<List<LessonDto>>(item.Lessons)
+                Lessons = course.Lessons != null
+                    ? ObjectMapper.Map<List<LessonDto>>(course.Lessons)
                     : new List<LessonDto>(),
-                Quiz = item.Quiz != null
-                    ? ObjectMapper.Map<QuizDto>(item.Quiz)
+                Quiz = course.Quiz != null
+                    ? ObjectMapper.Map<QuizDto>(course.Quiz)
                     : null
             };
 
@@ -113,34 +113,37 @@ namespace OnlineLearningPlatform.Courses
 
             var totalCount = await query.CountAsync();
 
-            var items = await query
+            var courses = await query
                 .PageBy(input)
                 .ToListAsync();
 
             var listOutput = new List<CourseDto>();
 
-            foreach (var item in items)
+
+            foreach (var course in courses)
             {
                 try
                 {
                     var dto = new CourseDto
                     {
-                        Id = item.Id,
-                        Title = item.Title,
-                        Topic = item.Topic,
-                        Description = item.Description,
-                        IsPublished = item.IsPublished,
-                        Instructor = item.Instructor != null
-                            ? $"{item.Instructor.Name} {item.Instructor.Surname}"
+                        Id = course.Id,
+                        Title = course.Title,
+                        Topic = course.Topic,
+                        CoverImageUrl = course.CoverImageUrl,
+                        Category = course.Category,
+                        Description = course.Description,
+                        IsPublished = course.IsPublished,
+                        Instructor = course.Instructor != null
+                            ? $"{course.Instructor.Name} {course.Instructor.Surname}"
                             : "No Instructor",
-                        EnrolledStudents = item.EnrolledStudents != null
-                            ? item.EnrolledStudents.Select(s => $"{s.Name} {s.Surname}").ToList()
+                        EnrolledStudents = course.EnrolledStudents != null
+                            ? course.EnrolledStudents.Select(s => $"{s.Name} {s.Surname}").ToList()
                             : new List<string>(),
-                        Lessons = item.Lessons != null
-                            ? ObjectMapper.Map<List<LessonDto>>(item.Lessons)
+                        Lessons = course.Lessons != null
+                            ? ObjectMapper.Map<List<LessonDto>>(course.Lessons)
                             : new List<LessonDto>(),
-                        Quiz = item.Quiz != null
-                            ? ObjectMapper.Map<QuizDto>(item.Quiz)
+                        Quiz = course.Quiz != null
+                            ? ObjectMapper.Map<QuizDto>(course.Quiz)
                             : new QuizDto { }
                     };
 
@@ -148,7 +151,7 @@ namespace OnlineLearningPlatform.Courses
                 }
                 catch (Exception ex)
                 {
-                    Logger.Warn($"Failed to map Course ID: {item.Id}. Reason: {ex.Message}");
+                    throw new UserFriendlyException($"Failed to map Course ID: {course.Id}. Reason: {ex.Message}");
                 }
             }
 

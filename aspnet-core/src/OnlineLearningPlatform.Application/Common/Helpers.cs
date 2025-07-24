@@ -48,7 +48,6 @@ namespace OnlineLearningPlatform.Common
                     result.IncorrectAnswers.Add(studentAnswer);
                 }
             }
-
             return result;
         }
     }
