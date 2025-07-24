@@ -44,21 +44,8 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
             });
     }, [dispatch, instance, router]);
 
-    const createCourse = useCallback(async (course: ICourse) => {
-    const updateCourse = async (course: ICourse) => {
-    dispatch(updateCoursePending());
-    const endpoint: string = '/services/app/Course/Update';
-    await instance.put(endpoint, course)
-        .then(() => {
-            dispatch(updateCourseSuccess());
-        })
-        .catch((error) => {
-            dispatch(updateCourseError());
-            console.error(error);
-        });
-}
 
-    const createCourse = async (course: ICourse) => {
+    const createCourse = useCallback(async (course: ICourse) => {
         dispatch(createCoursePending());
         const endpoint:string = '/services/app/Course/Create';
         await instance.post(endpoint, course)
