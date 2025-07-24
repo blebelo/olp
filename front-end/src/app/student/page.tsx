@@ -7,40 +7,48 @@ import { useCourseActions, useCourseState } from "@/providers/course-provider";
 import { ICourse } from "@/providers/course-provider/context";
 import CourseModal, { Course } from "@/components/modal/course-modal/CourseModal";
 import { axiosInstance } from "@/utils/axiosInstance";
+import { useStudentEnrollmentActions } from "@/providers/enrollment-provider";
 
 const HomePage = () => {
     const { styles } = useStyles();
-    const { getAllCourses } = useCourseActions();
-    const {  courses } = useCourseState();
+    const { getAllCourses, getCourseById } = useCourseActions();
+    const {  courses, course } = useCourseState();
+
+    const { enrollStudentInCourse } = useStudentEnrollmentActions();
 
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+    //const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+    const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
+    //const [isLoadingCourse, setIsLoadingCourse] = useState(false);
 
     useEffect(() => {
         getAllCourses();
     }, []);
+
+    useEffect(() => {
+        if(selectedCourseId){
+            getCourseById(selectedCourseId);
+        }
+    }, [selectedCourseId, getCourseById]);
+
+    const currentStudentId = "student_id";
     
-    const handleCourseClick = (course: CourseType) => {
-        setSelectedCourse({
-            id: course.id,
-            title: course.name,
-            topic: course.topic,
-            description: course.description,
-            instructorName: "N/A", // Optional
-            lessons: [], // Optional
-        });
-        setIsModalVisible(true);
-        };
+   const handleCourseClick = (course: { id?: string }) => {
+    if (course.id) {
+      setSelectedCourseId(course.id);
+      setIsModalVisible(true);
+    }
+  };
         
     const handleCancelModal = () => {
         setIsModalVisible(false);
-        setSelectedCourse(null);
+        setSelectedCourseId(null);
     };
     const handleEnroll = async (courseId: string) => {
         try{
-            await axiosInstance.post(`/api/app/student/enroll?courseId=${courseId}`);
-            message.success("Enrolled successfully!");
-            setIsModalVisible(false);
+           const studentId = currentStudentId;
+           await enrollStudentInCourse(studentId, courseId);
+           message.success("Enrolled successfully!");
         }catch (error: unknown) {
             console.error(error);
     }
@@ -55,6 +63,20 @@ const HomePage = () => {
         description: course.description ?? 'No description provided.',
         thumbnail: "/images/image2.jpg",
     }));
+    // Right before return statement, inside HomePage component:
+
+const modalCourse: Course | null = course && selectedCourseId === course.id
+  ? {
+      id: course.id ?? '',
+      title: course.title ?? '',
+      topic: course.topic ?? '',
+      description: course.description ?? '',
+      instructorName: course.instructorId ?? 'N/A',  // or replace with actual name if you get it
+      lessons: (course.lessons ?? []).map(lesson => ({
+        title: lesson.title ?? 'Untitled Lesson',
+      })),
+    }
+  : null;
 
     return (
         <div className={styles.heroContainer}>
@@ -86,7 +108,7 @@ const HomePage = () => {
                     ))}
                 </Row>
             </div>
-        <CourseModal visible={isModalVisible} course={selectedCourse} onCancel={handleCancelModal} onEnroll={handleEnroll} />
+        <CourseModal visible={isModalVisible} course={modalCourse} onCancel={handleCancelModal} onEnroll={handleEnroll} />
         </div>
 
     );

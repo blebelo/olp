@@ -110,8 +110,32 @@ namespace OnlineLearningPlatform.Students
             };
 
         }
+        public async Task EnrollStudentInCourseAsync(Guid studentId, Guid courseId)
+        {
+            var student = await _studentRepository.GetAsync(studentId);
+            var course = await _courseRepository.GetAsync(courseId);
 
+            if(!student.EnrolledCourses.Contains(course))
+            {
+                student.EnrolledCourses.Add(course);
+                await _studentRepository.UpdateAsync(student);
+            }
+        }
+        public async Task UnenrollStudentFromCourseAsync(Guid studentId, Guid courseId)
+        {
+            var student = await _studentRepository.GetAsync(studentId);
+            var course = student.EnrolledCourses.FirstOrDefault(c => c.Id == courseId);
 
+            if (course != null)
+            {
+                student.EnrolledCourses.Remove(course);
+                await _studentRepository.UpdateAsync(student);
+            }
+            else
+            {
+                throw new UserFriendlyException("Course not found in student's enrolled courses.");
+            }
+        }
         public async Task<List<CourseDto>> GetStudentEnrolledCoursesAsync(Guid studentId)
         {
             try

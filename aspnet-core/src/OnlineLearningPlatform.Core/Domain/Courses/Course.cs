@@ -17,7 +17,7 @@ namespace OnlineLearningPlatform.Domain.Courses
         public string CoverImageUrl { get; set; }
         public bool IsPublished { get; set; }
         public Instructor Instructor { get; set; }
-        public ICollection<Student> EnrolledStudents { get; set; }
+        public ICollection<Student> EnrolledStudents { get; set; } = new List<Student>();
         public ICollection<Lesson> Lessons { get; set; }
         public Quiz Quiz { get; set; }
 

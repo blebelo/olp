@@ -9,6 +9,6 @@ namespace OnlineLearningPlatform.Domain.Students
     {
         public string Interests { get; set; }
         public string AcademicLevel { get; set; }
-        public ICollection<Course> EnrolledCourses { get; set; }
+        public ICollection<Course> EnrolledCourses { get; set; } = new List<Course>();
     }
 }
