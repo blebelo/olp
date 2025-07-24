@@ -14,9 +14,10 @@ import EditCourseModal from '@/components/modal/course-modal/EditCourseModal';
 const { Title, Paragraph } = Typography;
 
 const ManageCoursePage = () => {
+    const [saving, setSaving] = useState(false);
     const { styles } = useStyles();
     const { isError, course, isPending } = useCourseState();
-    const { getCourse, createLesson, getCourseById, updateCourse } = useCourseActions();
+    const { getCourse, createLesson, setCoursePublished, getCourseById, updateCourse } = useCourseActions();
     const [isAddLesson, setIsAddLesson] = useState(false);
     const [form] = Form.useForm();
     const [isAddQuiz, setIsAddQuiz] = useState(false);
@@ -38,13 +39,13 @@ const ManageCoursePage = () => {
         if (courseId) {
             getCourse(courseId);
         }
-    }, [courseId]);
+    }, [courseId, getCourse]);
 
     useEffect(() => {
         if (courseId) {
-            getCourseById(courseId as string);
+            getCourseById(courseId);
         }
-    }, [courseId]);
+    }, [courseId, getCourseById]);
 
     useEffect(() => {
         if (course?.lessons?.length) {
@@ -57,7 +58,7 @@ const ManageCoursePage = () => {
       await updateCourse({ ...updatedCourse, id: courseId });
       message.success('Course updated successfully');
       setIsEditModalVisible(false);
-      getCourseById(courseId as string); // Refresh UI
+      getCourseById(courseId); // Refresh UI
     } catch (error) {
         console.error(error);
       message.error('Failed to update course');
@@ -116,7 +117,9 @@ const ManageCoursePage = () => {
     ];
 
     if (isPending || !course) {
-        return <Spin fullscreen />;
+        if (!course) {
+            return <Spin fullscreen />;
+        }
     }
 
     if (isError) {
@@ -133,7 +136,7 @@ const ManageCoursePage = () => {
             <div className={styles.content}>
                 <aside className={styles.sidebar}>
                     <div>
-                        {course.lessons?.map((lesson) => (
+                        {course.lessons?.map((lesson: ILesson) => (
                             <Button
                                 key={lesson.id}
                                 type="primary"
@@ -182,8 +185,8 @@ const ManageCoursePage = () => {
                                 <strong>Materials:</strong>
                                 <div className={styles.materialLink}>
                                     {Array.isArray(activeLesson.studyMaterial)
-                                        ? activeLesson.studyMaterial.map((material, i) => (
-                                            <a key={i} href={material} target="_blank" rel="noopener noreferrer" className={styles.materialLink}>
+                                        ? activeLesson.studyMaterial.map((material) => (
+                                            <a key={material} href={material} target="_blank" rel="noopener noreferrer" className={styles.materialLink}>
                                                 <FileTextOutlined /> {material}
                                             </a>
                                         ))
@@ -218,8 +221,25 @@ const ManageCoursePage = () => {
                         setQuestions={setQuizQuestions}
                     />
 
-                    <Button type="primary" className={styles.completeButton}>
-                        Publish Course
+                    <Button
+                        type="primary"
+                        className={styles.completeButton}
+                        loading={saving}
+                        onClick={async () => {
+                            setSaving(true);
+                            try {
+                                await setCoursePublished(courseId, !course.isPublished);
+                                await getCourseById(courseId); // refetch course to update state
+                                message.success(`Course ${!course.isPublished ? 'published' : 'unpublished'} successfully.`);
+                            } catch (error) {
+                                console.error(error);
+                                message.error('Failed to update course publish status.');
+                            } finally {
+                                setSaving(false);
+                            }
+                        }}
+                    >
+                        {course.isPublished ? 'Unpublish' : 'Publish'}
                     </Button>
                      <Button type="primary" onClick={() => setIsEditModalVisible(true)} style={{ marginTop: 20 }}>
                         Edit Course

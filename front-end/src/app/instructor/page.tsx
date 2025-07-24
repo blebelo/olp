@@ -36,14 +36,14 @@ const Dashboard = () => {
     const { styles } = useStyles();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [form] = Form.useForm();
-    const { createCourse, getAllCourses } = useCourseActions();
+    const { createCourse, getAllCourses, setCoursePublished } = useCourseActions();
     const { profile } = useInstructorProfileState();
     const { isError } = useCourseState();
     const { courses } = useCourseState();
 
     useEffect(() => {
         getAllCourses();
-    }, []);
+    }, [getAllCourses]);
     if (profile?.id) {
         sessionStorage.setItem('userId', profile.id);
     }
@@ -54,6 +54,18 @@ const Dashboard = () => {
         topic: course.topic ?? 'General',
         description: course.description ?? 'No description provided.',
         thumbnail: "/images/image2.jpg",
+        isPublished: course.isPublished ?? false,
+        onPublishToggle: async (courseId: string, newStatus: boolean) => {
+            // Optimistically update UI
+            if (Array.isArray(courses)) {
+                const idx = courses.findIndex(c => c.id === courseId);
+                if (idx !== -1) {
+                    courses[idx].isPublished = newStatus;
+                }
+            }
+            await setCoursePublished(courseId, newStatus);
+            getAllCourses();
+        }
     }));
 
     const handleCreateCourse = () => {
@@ -112,12 +124,9 @@ const Dashboard = () => {
                 <Row gutter={[16, 16]}>
                     {mappedCourses.slice(0, 5).map((course) => (
                         <Col xs={24} sm={12} md={8} lg={6} key={course.id}>
-
-                            <Link href={`/instructor/course/${course.id}`}>
-                                <CourseCard course={course}>
-                                </CourseCard>
+                            <Link href={`/instructor/course/${course.id}`} style={{ display: 'block' }}>
+                                <CourseCard course={course} />
                             </Link>
-
                         </Col>
                     ))}
                 </Row>

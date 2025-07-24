@@ -18,7 +18,7 @@ const HomePage = () => {
 
     useEffect(() => {
         getAllCourses();
-    }, []);
+    }, [getAllCourses]);
     
     const handleCourseClick = (course: CourseType) => {
         setSelectedCourse({
@@ -47,14 +47,14 @@ const HomePage = () => {
     };
 
     const mappedCourses: CourseType[] = (courses || [])
-    .filter(course => course.isPublished)
-    .map((course: ICourse) => ({
-        id: course.id ?? 'unknown-id',
-        name: course.title ?? 'Untitled Course',
-        topic: course.topic ?? 'General',
-        description: course.description ?? 'No description provided.',
-        thumbnail: "/images/image2.jpg",
-    }));
+        .filter((course: ICourse) => course.isPublished)
+        .map((course: ICourse) => ({
+            id: course.id ?? 'unknown-id',
+            name: course.title ?? 'Untitled Course',
+            topic: course.topic ?? 'General',
+            description: course.description ?? 'No description provided.',
+            thumbnail: "/images/image2.jpg",
+        }));
 
     return (
         <div className={styles.heroContainer}>

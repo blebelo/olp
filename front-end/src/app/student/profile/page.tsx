@@ -3,12 +3,15 @@
 import React, { useEffect, useContext } from "react";
 import { IStudent } from "@/providers/types";
 import { useStyles } from "../Styles/style";
+import { useProfileFieldStyles } from "../../shared/profileFieldStyles";
 
 import { StudentProfileStateContext, StudentProfileActionContext } from "@/providers/studentProvider/context";
-import { Card, Spin, Typography, Button, Input, Form, message } from "antd";
+import { Card, Spin, Typography, Button, Input, Form, message, Avatar } from "antd";
+import { UserOutlined, BookOutlined, IdcardOutlined, BulbOutlined, SolutionOutlined } from '@ant-design/icons';
 
 const StudentProfilePage: React.FC = () => {
   const { styles } = useStyles();
+  const { styles: fieldStyles } = useProfileFieldStyles();
 
   const { profile, isPending, isError } = useContext(StudentProfileStateContext);
   const { getProfile, updateProfile } = useContext(StudentProfileActionContext) || {};
@@ -18,7 +21,7 @@ const StudentProfilePage: React.FC = () => {
 
   useEffect(() => {
     getProfile?.();
-  }, []);
+  }, [getProfile]);
 
 
 
@@ -60,7 +63,7 @@ const StudentProfilePage: React.FC = () => {
   return (
     <div className={styles.heroContainer}>
       <div className={styles.contentRow}>
-        <Card className={styles.courseCard} style={{ maxWidth: 500, margin: '0 auto', background: 'rgba(255,255,255,0.95)', position: 'relative' }}>
+        <Card className={styles.courseCard} style={{ maxWidth: 500, margin: '0 auto', background: 'rgba(255,255,255,0.95)', position: 'relative', boxShadow: '0 4px 32px rgba(68,160,141,0.12)', borderRadius: 20, padding: 24 }}>
           {(isPending || saving) && (
             <div style={{
               position: 'absolute',
@@ -77,7 +80,12 @@ const StudentProfilePage: React.FC = () => {
               <Spin size="large" />
             </div>
           )}
-          <Typography.Title level={2} style={{ color: '#44a08d', textAlign: 'center' }}>Student Profile</Typography.Title>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 24 }}>
+            <Avatar size={96} style={{ background: '#44a08d', fontSize: 36, marginBottom: 12 }}>
+              {profile?.name?.[0]?.toUpperCase() || 'S'}
+            </Avatar>
+            <Typography.Title level={2} style={{ color: '#44a08d', textAlign: 'center', marginBottom: 0 }}>Student Profile</Typography.Title>
+          </div>
           {editMode ? (
             <Form
               form={form}
@@ -108,14 +116,32 @@ const StudentProfilePage: React.FC = () => {
               </Form.Item>
             </Form>
           ) : (
-            <>
-              <Typography.Paragraph><b>Name:</b> {profile?.name}</Typography.Paragraph>
-              <Typography.Paragraph><b>Surname:</b> {profile?.surname}</Typography.Paragraph>
-              <Typography.Paragraph><b>Username:</b> {profile?.userName}</Typography.Paragraph>
-              <Typography.Paragraph><b>Academic Level:</b> {profile?.academicLevel}</Typography.Paragraph>
-              <Typography.Paragraph><b>Interests:</b> {profile?.interests ?? "-"}</Typography.Paragraph>
-              <Button type="primary" onClick={handleEdit} style={{ marginTop: 16 }}>Edit</Button>
-            </>
+            <div style={{ width: '100%', marginTop: 16 }}>
+              <div style={{ background: '#f6faf9', borderRadius: 12, padding: 20, boxShadow: '0 2px 8px rgba(68,160,141,0.06)' }}>
+                {[
+                  { icon: <UserOutlined />, label: 'Name', value: profile?.name },
+                  { icon: <IdcardOutlined />, label: 'Surname', value: profile?.surname },
+                  { icon: <BookOutlined />, label: 'Academic Level', value: profile?.academicLevel },
+                  { icon: <BulbOutlined />, label: 'Interests', value: profile?.interests ?? '-' },
+                  { icon: <SolutionOutlined />, label: 'Username', value: profile?.userName }
+                ].map((field, idx, arr) => (
+                  <div
+                    key={field.label}
+                    className={fieldStyles.profileFieldRow}
+                    style={{ borderBottom: idx !== arr.length - 1 ? '1px solid #e6e6e6' : 'none', padding: '10px 0' }}
+                  >
+                    <span className={fieldStyles.profileFieldLabel} style={{ minWidth: 120 }}>
+                      <Avatar icon={field.icon} style={{ background: '#44a08d', marginRight: 10 }} size={24} />
+                      {field.label}
+                    </span>
+                    <span className={fieldStyles.profileFieldValue}>
+                      {field.value || <span style={{ color: '#bbb' }}>-</span>}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <Button type="primary" onClick={handleEdit} style={{ marginTop: 24, width: '100%' }}>Edit</Button>
+            </div>
           )}
         </Card>
       </div>

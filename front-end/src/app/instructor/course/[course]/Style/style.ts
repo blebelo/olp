@@ -1,3 +1,4 @@
+
 import { createStyles, css } from 'antd-style';
 
 export const useStyles = createStyles({
@@ -46,7 +47,7 @@ export const useStyles = createStyles({
       text-align: center;
     }
   `,
-   secondary: css`
+  secondary: css`
     color: white;
     font-size: 2rem;
     font-weight: bold;
@@ -194,7 +195,7 @@ export const useStyles = createStyles({
   `,
   completeButton: css`
     margin-top: 1.5rem;
-    background-color: ##1890ff;
+    background-color: #1890ff;
     color: white;
     font-weight: 600;
     font-size: 1rem;
@@ -208,4 +209,55 @@ export const useStyles = createStyles({
       background-color: #73d13d;
     }
   `,
+
+  actionButtonGroup: css`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    margin-top: 1rem;
+  `,
+  actionButton: css`
+    background-color: #1890ff;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 0.4rem;
+    padding: 0.5rem 1.2rem;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+
+    &:hover {
+      background-color: #40a9ff;
+    }
+    &:not(:last-child) {
+      margin-right: 0.5rem;
+    }
+  `,
+
+  profileFieldRow: css`
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.2rem;
+    gap: 1.2rem;
+  `,
+  profileFieldLabel: css`
+    min-width: 120px;
+    font-weight: 500;
+    color: #333;
+    display: flex;
+    align-items: center;
+    margin-right: 1.5rem;
+    font-size: 1.05rem;
+  `,
+  profileFieldValue: css`
+    font-weight: bold;
+    color: #222;
+    font-size: 1.08rem;
+    word-break: break-word;
+  `
 });
