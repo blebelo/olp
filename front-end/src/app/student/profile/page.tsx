@@ -1,20 +1,28 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { Spin, Card, Typography, Button, Input, Form, message } from "antd";
-import { useStyles } from "../style";
-import { useInstructorProfileState, useInstructorProfileActions } from "@/providers/instructorProvider";
 
-export default function InstructorProfilePage() {
+"use client";
+import React, { useEffect, useContext } from "react";
+import { IStudent } from "@/providers/types";
+import { useStyles } from "../Styles/style";
+
+import { StudentProfileStateContext, StudentProfileActionContext } from "@/providers/studentProvider/context";
+import { Card, Spin, Typography, Button, Input, Form, message } from "antd";
+
+const StudentProfilePage: React.FC = () => {
   const { styles } = useStyles();
-  const { profile, isPending, isError } = useInstructorProfileState();
-  const { updateProfile, getProfile } = useInstructorProfileActions();
-  const [editMode, setEditMode] = useState(false);
+
+  const { profile, isPending, isError } = useContext(StudentProfileStateContext);
+  const { getProfile, updateProfile } = useContext(StudentProfileActionContext) || {};
+  const [editMode, setEditMode] = React.useState(false);
   const [form] = Form.useForm();
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving] = React.useState(false);
 
   useEffect(() => {
     getProfile?.();
   }, []);
+
+
+
+
 
   if (isError) {
     return (
@@ -34,7 +42,7 @@ export default function InstructorProfilePage() {
     setEditMode(false);
   };
 
-  const handleSave = async (values: Partial<{ name: string; surname: string; userName: string; profession: string; bio: string }>) => {
+  const handleSave = async (values: Partial<IStudent>) => {
     setSaving(true);
     try {
       const payload = { ...values, id: profile?.id };
@@ -52,7 +60,7 @@ export default function InstructorProfilePage() {
   return (
     <div className={styles.heroContainer}>
       <div className={styles.contentRow}>
-        <Card className={styles.courseCard} style={{ maxWidth: 500, margin: '0 auto', background: 'rgba(252, 252, 252, 0.95)', position: 'relative' }}>
+        <Card className={styles.courseCard} style={{ maxWidth: 500, margin: '0 auto', background: 'rgba(255,255,255,0.95)', position: 'relative' }}>
           {(isPending || saving) && (
             <div style={{
               position: 'absolute',
@@ -69,7 +77,7 @@ export default function InstructorProfilePage() {
               <Spin size="large" />
             </div>
           )}
-          <Typography.Title level={2} style={{ color: '#44a08d', textAlign: 'center' }}>Instructor Profile</Typography.Title>
+          <Typography.Title level={2} style={{ color: '#44a08d', textAlign: 'center' }}>Student Profile</Typography.Title>
           {editMode ? (
             <Form
               form={form}
@@ -82,8 +90,8 @@ export default function InstructorProfilePage() {
                 { label: "Name", name: "name", rules: [{ required: true, message: 'Please input your name' }] },
                 { label: "Surname", name: "surname", rules: [{ required: true, message: 'Please input your surname' }] },
                 { label: "Username", name: "userName", rules: [{ required: true, message: 'Please input your username' }] },
-                { label: "Profession", name: "profession" },
-                { label: "Bio", name: "bio" }
+                { label: "Academic Level", name: "academicLevel" },
+                { label: "Interests", name: "interests" }
               ].map(field => (
                 <Form.Item
                   key={field.name}
@@ -104,9 +112,8 @@ export default function InstructorProfilePage() {
               <Typography.Paragraph><b>Name:</b> {profile?.name}</Typography.Paragraph>
               <Typography.Paragraph><b>Surname:</b> {profile?.surname}</Typography.Paragraph>
               <Typography.Paragraph><b>Username:</b> {profile?.userName}</Typography.Paragraph>
-              <Typography.Paragraph><b>Email:</b> {profile?.email}</Typography.Paragraph>
-              <Typography.Paragraph><b>Profession:</b> {profile?.profession}</Typography.Paragraph>
-              <Typography.Paragraph><b>Bio:</b> {profile?.bio}</Typography.Paragraph>
+              <Typography.Paragraph><b>Academic Level:</b> {profile?.academicLevel}</Typography.Paragraph>
+              <Typography.Paragraph><b>Interests:</b> {profile?.interests ?? "-"}</Typography.Paragraph>
               <Button type="primary" onClick={handleEdit} style={{ marginTop: 16 }}>Edit</Button>
             </>
           )}
@@ -120,4 +127,8 @@ export default function InstructorProfilePage() {
       <div className={styles.decorativeSquareSmall}></div>
     </div>
   );
-}
+};
+
+export default StudentProfilePage;
+
+

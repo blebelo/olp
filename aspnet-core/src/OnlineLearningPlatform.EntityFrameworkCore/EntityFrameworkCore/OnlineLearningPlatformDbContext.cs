@@ -23,6 +23,7 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
         public DbSet<QuizAttempt> QuizAttempts { get; set; }
         public DbSet<StudentProgress> StudentProgresses { get; set; }
 
+
         public OnlineLearningPlatformDbContext(DbContextOptions<OnlineLearningPlatformDbContext> options)
             : base(options)
         {

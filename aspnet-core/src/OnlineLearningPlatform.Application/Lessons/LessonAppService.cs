@@ -6,6 +6,7 @@ using Abp.UI;
 using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Domain.Entities;
 using OnlineLearningPlatform.Domain.StudentProgresses;
+using OnlineLearningPlatform.Domain.Instructors;
 using OnlineLearningPlatform.Lessons.Dto;
 using System;
 using System.Collections.Generic;
@@ -27,20 +28,6 @@ namespace OnlineLearningPlatform.Lessons
             _courseRepository = courseRepository;
             _lessonRepository = lessonRepository;
             _progressRepository = progressRepository;
-        }
-
-        public async Task<LessonDto> CreateAsync(CreateLessonDto input)
-        {
-            try
-            {
-                var lesson = ObjectMapper.Map<Lesson>(input);
-                await _lessonRepository.InsertAsync(lesson);
-                return ObjectMapper.Map<LessonDto>(lesson);
-            }
-            catch (Exception)
-            {
-                throw new UserFriendlyException("Could not create the lesson. Please try again.");
-            }
         }
 
         public async Task<LessonDto> GetAsync(Guid lessonId)
@@ -152,6 +139,10 @@ namespace OnlineLearningPlatform.Lessons
             {
                 progress.IsCompleted = true;
             }
+
+        public Task<LessonDto> CreateAsync(LessonDto input)
+        {
+            throw new NotImplementedException("You may only create a lesson from a Course. ");
         }
     }
 }

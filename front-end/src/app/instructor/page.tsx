@@ -1,13 +1,14 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Row, Col, Typography, Button, Form } from "antd";
 import { useStyles } from "./style";
-import { instructorCourses } from "@/utils/sample-courses/instructorCourses";
-import CourseCard from "@/components/course-card/CourseCard";
+import CourseCard, { CourseType } from "@/components/course-card/CourseCard";
 import ReusableModalForm from "@/components/modal/ReusableModalForm";
 import { useCourseActions, useCourseState } from "@/providers/course-provider";
+import { useInstructorProfileState } from "@/providers/instructorProvider";
 import { ICourse } from "@/providers/course-provider/context";
 import type { FieldConfig } from "@/components/modal/ReusableModalForm";
+import Link from "next/link";
 
 const courseUpdateFields: FieldConfig[] = [
     {
@@ -31,13 +32,29 @@ const courseUpdateFields: FieldConfig[] = [
 
 ];
 
-
 const Dashboard = () => {
     const { styles } = useStyles();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [form] = Form.useForm();
-    const { createCourse } = useCourseActions();
+    const { createCourse, getAllCourses } = useCourseActions();
+    const { profile } = useInstructorProfileState();
     const { isError } = useCourseState();
+    const { courses } = useCourseState();
+
+    useEffect(() => {
+        getAllCourses();
+    }, []);
+    if (profile?.id) {
+        sessionStorage.setItem('userId', profile.id);
+    }
+
+    const mappedCourses: CourseType[] = (courses || []).map((course: ICourse) => ({
+        id: course.id ?? 'unknown-id',
+        name: course.title ?? 'Untitled Course',
+        topic: course.topic ?? 'General',
+        description: course.description ?? 'No description provided.',
+        thumbnail: "/images/image2.jpg",
+    }));
 
     const handleCreateCourse = () => {
         form.validateFields().then((values) => {
@@ -92,20 +109,18 @@ const Dashboard = () => {
                     />
                 </div>
 
-                {instructorCourses.map((category) => (
-                    <div key={category.category}>
-                        <Typography.Title level={3} className={styles.sectionTitle}>
-                            {category.category}
-                        </Typography.Title>
-                        <Row gutter={[16, 16]}>
-                            {category.courses.slice(0, 5).map((course) => (
-                                <Col xs={24} sm={12} md={8} lg={6} key={course.id}>
-                                    <CourseCard course={course} />
-                                </Col>
-                            ))}
-                        </Row>
-                    </div>
-                ))}
+                <Row gutter={[16, 16]}>
+                    {mappedCourses.slice(0, 5).map((course) => (
+                        <Col xs={24} sm={12} md={8} lg={6} key={course.id}>
+
+                            <Link href={`/instructor/course/${course.id}`}>
+                                <CourseCard course={course}>
+                                </CourseCard>
+                            </Link>
+
+                        </Col>
+                    ))}
+                </Row>
             </div>
         </div>
     );

@@ -1,5 +1,6 @@
 import { createAction } from "redux-actions";
-import { IInstructor, IInstructorStateContext } from "./context";
+import { IInstructorStateContext } from "./context";
+import { IInstructor } from "../types";
 
 // Enum for all InstructorProfile action types
 export enum InstructorActionEnums {

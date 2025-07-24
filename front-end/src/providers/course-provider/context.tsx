@@ -1,27 +1,42 @@
 import { createContext } from "react";
 
 export interface ICourse {
-    instructorId?: string,
+    id?: string,
     title?: string,
     topic?: string,
     description?: string,
     isPublished?: boolean,
-    instructor?: string
+    instructorId?: string,
+    lessons?: ILesson[]
 }
 
-export interface Lesson{
-    name?: string,
+export interface ILesson{
+    id?: string,
+    title?: string,
+    description?: string,
+    videoLink?: string,
+    isCompleted?: boolean,
+    studyMaterial?: string[]
 }
 
 export interface ICourseStateContext {
     isPending: boolean;
     isSuccess: boolean;
     isError: boolean;
-    course?: ICourse
+    course?: ICourse;
+    courses?: ICourse[];
+    totalCount?: number;
+   
 }
 
 export interface ICourseActionContext {
     createCourse: (course: ICourse) => void;
+    getAllCourses: () => void;
+    createLesson: (lesson: ILesson, courseId:string) => void;
+    // getInstructorCourses: () => void;
+    getCourse: (id: string) => void;
+    updateCourse: (course: ICourse) => void;
+    getCourseById: (courseId: string) => void;
 }
 
 export const INITIAL_STATE: ICourseStateContext = {

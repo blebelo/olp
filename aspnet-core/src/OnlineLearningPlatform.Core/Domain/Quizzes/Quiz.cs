@@ -1,4 +1,4 @@
-﻿using Abp.Domain.Entities.Auditing;
+using Abp.Domain.Entities.Auditing;
 using System;
 using System.Collections.Generic;
 
@@ -13,6 +13,6 @@ namespace OnlineLearningPlatform.Domain.Quizzes
         public Guid CourseId { get; set; }
         public ICollection<string> Questions { get; set; } = new List<string>();
         public ICollection<AnswerOption> AnswerOptions { get; set; } = new List<AnswerOption>();
-    }
 
+    }
 }

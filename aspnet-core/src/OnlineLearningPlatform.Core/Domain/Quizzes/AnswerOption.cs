@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Abp.Domain.Values;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
 namespace OnlineLearningPlatform.Domain.Quizzes
@@ -10,3 +11,4 @@ namespace OnlineLearningPlatform.Domain.Quizzes
         public ICollection<string> PossibleAnswers { get; set; } = new List<string>();
     }
 }
+

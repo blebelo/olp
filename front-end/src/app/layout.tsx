@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { AuthProvider } from "@/providers/auth-provider";
-import { InstructorProvider } from "@/providers/instructorProvider";
 import { CourseProvider } from "@/providers/course-provider";
+import { InstructorProvider } from "@/providers/instructorProvider";
 import "./globals.css";
 
 

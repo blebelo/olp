@@ -50,5 +50,52 @@ export const CourseReducer = handleActions<ICourseStateContext, ICourseStateCont
     [CourseActionEnum.deleteCourseError]: (state, action) => ({
         ...state,
         ...action.payload,
+    }), [CourseActionEnum.updateCoursePending]: (state, action) => ({
+        ...state,
+        ...action.payload,
     }),
+    [CourseActionEnum.updateCourseSuccess]: (state, action) => ({
+        ...state,
+        ...action.payload,
+    }),
+    [CourseActionEnum.updateCourseError]: (state, action) => ({
+        ...state,
+        ...action.payload,
+    }),
+    [CourseActionEnum.createLessonPending]: (state, action) => ({
+        ...state,
+        ...action.payload,
+    }),
+    [CourseActionEnum.createLessonSuccess]: (state, action) => ({
+        ...state,
+        ...action.payload,
+    }),
+    [CourseActionEnum.createLessonError]: (state, action) => ({
+        ...state,
+        ...action.payload,
+    }),
+    [CourseActionEnum.getInstructorCoursesPending]: (state, action) => ({
+        ...state,
+        ...action.payload,
+    }),
+     [CourseActionEnum.getInstructorCoursesSuccess]: (state, action) => ({
+        ...state,
+        ...action.payload,
+    }),
+     [CourseActionEnum.getInstructorCoursesError]: (state, action) => ({
+        ...state,
+        ...action.payload,
+    }),
+    [CourseActionEnum.getCourseByIdPending]: (state, action) => ({
+        ...state,
+        ...action.payload,
+    }),
+    [CourseActionEnum.getCourseByIdSuccess]: (state, action) => ({
+        ...state,
+        ...action.payload,
+    }),
+    [CourseActionEnum.getCourseByIdError]: (state, action) => ({
+        ...state,
+        ...action.payload,
+    })
 }, INITIAL_STATE)

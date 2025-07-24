@@ -10,9 +10,9 @@ import Link from "next/link";
 
 const StudentSignUp: React.FC = () => {
 
-    const {styles} = useStyles();
+    const { styles } = useStyles();
     const { registerStudent } = useAuthActions();
-    const {isError } = useAuthState();
+    const { isError } = useAuthState();
 
     if (isError) {
         return (<div>Error registering instructor</div>)
@@ -25,7 +25,7 @@ const StudentSignUp: React.FC = () => {
             userName: values.userName,
             email: values.email,
             password: values.password,
-            interest: values.interest,
+            interests: values.interests,
             academicLevel: values.academicLevel
 
         }
@@ -37,76 +37,58 @@ const StudentSignUp: React.FC = () => {
     };
 
     return (
-        <div className={styles.Container}>
+        <div className={styles.container}>
+            <div className={`${styles.decorativeCircle} ${styles.circleTopLeft}`} />
+            <div className={`${styles.decorativeCircle} ${styles.circleBottomRight}`} />
             <Form
-                name="basic"
-                className={styles.Form}
-                initialValues={{ remember: true }}
+                name="studentSignup"
+                className={styles.formWrapper}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
             >
-                <Typography className={styles.Typography}>Student Sign Up</Typography>
-                <div className={styles.FormItems}>
-                    <Form.Item<IUser>
-                        name="name"
-                        rules={[{ required: true, message: 'Please input your Name' }]}
-                    >
-                        <Input placeholder="Name" className={styles.Input} prefix={<UserOutlined/>} />
-                    </Form.Item>
-                    <Form.Item<IUser>
-                        name="surname"
-                        rules={[{ required: true, message: 'Please input your surname' }]}
-                    >
-                        <Input placeholder="Surname" className={styles.Input} prefix={<MailOutlined />}/>
-                    </Form.Item>
-                    <Form.Item<IUser>
-                        name="userName"
-                        rules={[{ required: true, message: 'Please input your username' }]}
-                    >
-                        <Input placeholder="Username" className={styles.Input} prefix={<MailOutlined />}/>
-                    </Form.Item>
-                    <Form.Item<IUser>
-                        name="email"
-                        rules={[{ required: true, message: 'Please input your email' }]}
-                    >
-                        <Input placeholder="Email" className={styles.Input} prefix={<MailOutlined />}/>
-                    </Form.Item>
-                    <Form.Item<IUser>
-                        name="password"
-                        rules={[{ required: true, message: 'Please input your password!' }]}
-                    >
-                        <Input.Password placeholder="Password" className={styles.Input} prefix={<LockOutlined />} />
-                    </Form.Item>
-                    <Form.Item<IUser>
-                        name="interest"
-                        rules={[{ required: true, message: 'Please input your interests' }]}
-                    >
-                        <Input placeholder="interests" className={styles.Input} prefix={<FormOutlined />}/>
-                    </Form.Item>
-                    <Form.Item<IUser>
-                        name="academicLevel"
-                        rules={[{ required: true, message: 'Please input your academicLevel' }]}
-                    >
-                        <Input placeholder="academicLevel" className={styles.Input} prefix={<FormOutlined />}/>
-                    </Form.Item>
-                    {/* <Form.Item
-                        name="confirmPassword"
-                        rules={[{ required: true, message: 'Please confirm password!' }]}
-                    >
-                        <Input.Password placeholder="Confirm Password" className={styles.Input} prefix={<LockOutlined />} />
-                    </Form.Item> */}
-                </div>
+                <Typography className={styles.brandName}>Dev Academy</Typography>
+                <Typography className={styles.title}>Student Sign Up</Typography>
+
+                <Form.Item<IUser> name="name" rules={[{ required: true, message: 'Please input your Name' }]} className={styles.formItem}>
+                    <Input placeholder="Name" className={styles.input} prefix={<UserOutlined />} />
+                </Form.Item>
+
+                <Form.Item<IUser> name="surname" rules={[{ required: true, message: 'Please input your surname' }]} className={styles.formItem}>
+                    <Input placeholder="Surname" className={styles.input} prefix={<MailOutlined />} />
+                </Form.Item>
+
+                <Form.Item<IUser> name="userName" rules={[{ required: true, message: 'Please input your username' }]} className={styles.formItem}>
+                    <Input placeholder="Username" className={styles.input} prefix={<MailOutlined />} />
+                </Form.Item>
+
+                <Form.Item<IUser> name="email" rules={[{ required: true, message: 'Please input your email' }]} className={styles.formItem}>
+                    <Input placeholder="Email" className={styles.input} prefix={<MailOutlined />} />
+                </Form.Item>
+
+                <Form.Item<IUser> name="password" rules={[{ required: true, message: 'Please input your password!' }]} className={styles.formItem}>
+                    <Input.Password placeholder="Password" className={styles.input} prefix={<LockOutlined />} />
+                </Form.Item>
+
+                <Form.Item<IUser> name="interests" rules={[{ required: true, message: 'Please input your interests' }]} className={styles.formItem}>
+                    <Input placeholder="Interests" className={styles.input} prefix={<FormOutlined />} />
+                </Form.Item>
+
+                <Form.Item<IUser> name="academicLevel" rules={[{ required: true, message: 'Please input your academic level' }]} className={styles.formItem}>
+                    <Input placeholder="Academic Level" className={styles.input} prefix={<FormOutlined />} />
+                </Form.Item>
 
                 <Form.Item>
-                    <Button type="primary" htmlType="submit" className={styles.Submit}>
+                    <Button type="primary" htmlType="submit" className={styles.submitButton}>
                         Sign Up
                     </Button>
                 </Form.Item>
-                <Link href={'login'}>
-                    <Typography className={styles.Text}>Already have an account? Login</Typography>
+
+                <Link href="/login">
+                    <Typography className={styles.linkText}>Already have an account? Login</Typography>
                 </Link>
             </Form>
+
         </div>
 
 

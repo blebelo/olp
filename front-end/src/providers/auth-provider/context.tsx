@@ -8,8 +8,8 @@ export interface IUser {
     password?: string,
     bio?: string,
     profession?: string,
-    userNameOrEmailAddress?: string
-    interest?: string;
+    userNameOrEmailAddress?: string,
+    interests?: string; //changed to match backend
     academicLevel?: string;
 }
 

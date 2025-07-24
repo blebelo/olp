@@ -8,7 +8,7 @@ namespace OnlineLearningPlatform.Lessons
 {
     public interface ILessonAppService : IApplicationService
     {
-        Task<LessonDto> CreateAsync(CreateLessonDto input);
+        Task<LessonDto> CreateAsync(LessonDto input);
         Task<LessonDto> GetAsync(Guid input);
         Task DeleteAsync(Guid input);
         Task<ListResultDto<LessonDto>> GetAllAsync(Guid courseId);
