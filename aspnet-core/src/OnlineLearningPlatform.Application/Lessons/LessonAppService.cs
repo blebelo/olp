@@ -106,15 +106,34 @@ namespace OnlineLearningPlatform.Lessons
         {
             try
             {
-                var lesson = await _lessonRepository.GetAsync(input.lessonId
-                    );
-                var progress = await _progressRepository.FirstOrDefaultAsync(p => p.Student.Id == input.studentId);
-                progress.CompletedLessons.Add(lesson);
-                lesson.IsCompleted = true;
+                var lesson = await _lessonRepository.GetAsync(input.lessonId);
+
+                var progress = await _progressRepository.FirstOrDefaultAsync(
+                    p => p.StudentId == input.studentId && p.CourseId == lesson.Course.Id);
+
+                if (progress == null)
+                {
+                    throw new UserFriendlyException("Student is not enrolled in this course.");
+                }
+
+                if (progress.CompletedLessonIds.Contains(input.lessonId))
+                {
+                    throw new UserFriendlyException("Lesson is already marked as complete.");
+                }
+
+                progress.CompletedLessonIds.Add(input.lessonId);
+
+                await UpdateCompletionPercentage(progress, lesson.Course.Id);
+
+                await _progressRepository.UpdateAsync(progress);
             }
             catch (EntityNotFoundException)
             {
                 throw new UserFriendlyException("The lesson or student was not found.");
+            }
+            catch (UserFriendlyException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -122,5 +141,17 @@ namespace OnlineLearningPlatform.Lessons
             }
         }
 
+        private async Task UpdateCompletionPercentage(StudentProgress progress, Guid courseId)
+        {
+            var totalLessons = await _lessonRepository.CountAsync(l => l.Course.Id == courseId);
+            var completedCount = progress.CompletedLessonIds.Count;
+
+            progress.CompletionPercentage = totalLessons > 0 ? (double)completedCount / totalLessons * 100 : 0;
+
+            if (completedCount == totalLessons && totalLessons > 0)
+            {
+                progress.IsCompleted = true;
+            }
+        }
     }
 }

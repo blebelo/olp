@@ -2,6 +2,7 @@
 using Abp.Application.Services.Dto;
 using Abp.Domain.Repositories;
 using Abp.UI;
+using Microsoft.EntityFrameworkCore;
 using OnlineLearningPlatform.Courses.Dto;
 using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Domain.Entities;
@@ -31,9 +32,9 @@ namespace OnlineLearningPlatform.Courses
 
         public CourseAppService(
             IRepository<StudentProgress, Guid> progressRepository,
-            IRepository<Quiz, Guid> quizRepository, 
-            IRepository<Course, Guid> repository, 
-            IRepository<Student, Guid> students, 
+            IRepository<Quiz, Guid> quizRepository,
+            IRepository<Course, Guid> repository,
+            IRepository<Student, Guid> students,
             IRepository<Instructor, Guid> instructorRepository
             )
             : base(repository)
@@ -90,24 +91,59 @@ namespace OnlineLearningPlatform.Courses
         {
             var course = await _courseRepository.GetAsync(courseId);
             var student = await _studentRepository.GetAsync(studentId);
+            var existingProgress = await _progressRepository.FirstOrDefaultAsync(sp => sp.StudentId == studentId && sp.CourseId == courseId);
 
-            if (!course.EnrolledStudents.Contains(student))
+            if (existingProgress != null)
+            {
+                throw new UserFriendlyException("Student is already enrolled in this course");
+            }
+
+            try 
             {
                 course.EnrolledStudents.Add(student);
+                student.EnrolledCourses.Add(course);
+                var initialProgress = new StudentProgress
+                {
+                    StudentId = studentId,
+                    CourseId = courseId,
+                    IsCompleted = false,
+                    CompletionPercentage = 0,
+                    CompletedLessonIds = new List<Guid>(),
+                    CompletedQuizIds = new List<Guid>()
+                };
+
                 await _courseRepository.UpdateAsync(course);
+                await _studentRepository.UpdateAsync(student);  
+                await _progressRepository.InsertAsync(initialProgress);
+            } 
+            catch (Exception ex) {
+                throw new UserFriendlyException("Could Not Enroll Student", ex.Message);
             }
         }
 
         public async Task UnEnrollStudentAsync(Guid courseId, Guid studentId)
         {
-            var course = await _courseRepository.GetAsync(courseId);
             var student = await _studentRepository.GetAsync(studentId);
-            var progress = await _progressRepository.FirstOrDefaultAsync(p => p.Student.Id == studentId);
+            var course = await _courseRepository.GetAsync(courseId);
+            var progress = await _progressRepository.FirstOrDefaultAsync(
+                p => p.StudentId == studentId && p.CourseId == courseId);
 
-            if (course.EnrolledStudents.Contains(student))
+            if (progress == null)
+            {
+                throw new UserFriendlyException("Student is not enrolled in this course");
+            }
+
+            try
             {
                 course.EnrolledStudents.Remove(student);
+                student.EnrolledCourses.Remove(course);
                 await _courseRepository.UpdateAsync(course);
+                await _studentRepository.UpdateAsync(student);
+                await _progressRepository.DeleteAsync(progress.Id);
+            }
+            catch (Exception ex)
+            {
+                throw new UserFriendlyException("Could not unenroll student", ex.Message);
             }
         }
 
@@ -138,8 +174,9 @@ namespace OnlineLearningPlatform.Courses
         public async Task AddQuizAsync(Guid courseId, CreateQuizDto quizDto)
         {
             var course = await _courseRepository.GetAsync(courseId);
-
             var quiz = ObjectMapper.Map<Quiz>(quizDto);
+            quiz.CourseId = courseId;
+
             if (course.Quiz == null)
             {
                 course.Quiz = quiz;
@@ -168,4 +205,3 @@ namespace OnlineLearningPlatform.Courses
         }
     }
 }
- 

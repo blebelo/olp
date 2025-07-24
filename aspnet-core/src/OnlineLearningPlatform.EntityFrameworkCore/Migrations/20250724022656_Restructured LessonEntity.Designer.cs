@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OnlineLearningPlatform.EntityFrameworkCore;
@@ -11,9 +12,11 @@ using OnlineLearningPlatform.EntityFrameworkCore;
 namespace OnlineLearningPlatform.Migrations
 {
     [DbContext(typeof(OnlineLearningPlatformDbContext))]
-    partial class OnlineLearningPlatformDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250724022656_Restructured LessonEntity")]
+    partial class RestructuredLessonEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1634,6 +1637,9 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<long?>("LastModifierUserId")
                         .HasColumnType("bigint");
 
+                    b.Property<Guid?>("QuizId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
@@ -1643,6 +1649,8 @@ namespace OnlineLearningPlatform.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("InstructorId");
+
+                    b.HasIndex("QuizId");
 
                     b.ToTable("Courses");
                 });
@@ -1759,9 +1767,6 @@ namespace OnlineLearningPlatform.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -1799,9 +1804,6 @@ namespace OnlineLearningPlatform.Migrations
                         .HasColumnType("text[]");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CourseId")
-                        .IsUnique();
 
                     b.ToTable("Quizzes");
                 });
@@ -2248,7 +2250,13 @@ namespace OnlineLearningPlatform.Migrations
                         .WithMany("CoursesCreated")
                         .HasForeignKey("InstructorId");
 
+                    b.HasOne("OnlineLearningPlatform.Domain.Quizzes.Quiz", "Quiz")
+                        .WithMany()
+                        .HasForeignKey("QuizId");
+
                     b.Navigation("Instructor");
+
+                    b.Navigation("Quiz");
                 });
 
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Entities.Lesson", b =>
@@ -2277,12 +2285,6 @@ namespace OnlineLearningPlatform.Migrations
 
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Quizzes.Quiz", b =>
                 {
-                    b.HasOne("OnlineLearningPlatform.Domain.Courses.Course", null)
-                        .WithOne("Quiz")
-                        .HasForeignKey("OnlineLearningPlatform.Domain.Quizzes.Quiz", "CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.OwnsMany("OnlineLearningPlatform.Domain.Quizzes.AnswerOption", "AnswerOptions", b1 =>
                         {
                             b1.Property<Guid>("QuizId")
@@ -2481,8 +2483,6 @@ namespace OnlineLearningPlatform.Migrations
                     b.Navigation("Lessons");
 
                     b.Navigation("Progresses");
-
-                    b.Navigation("Quiz");
                 });
 
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Instructors.Instructor", b =>

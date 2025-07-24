@@ -10,11 +10,11 @@ namespace OnlineLearningPlatform.Common
 {
     public class Helpers
     {
-        public static async Task<ResultDto> GradeQuiz(QuizAttemptDto submission, IRepository<Quiz, Guid> quizRepo)
+        public static async Task<Result> GradeQuiz(QuizAttemptDto submission, IRepository<Quiz, Guid> quizRepo)
         {
             var quiz = await quizRepo.GetAsync(submission.QuizId);
 
-            var result = new ResultDto
+            var result = new Result
             {
                 Score = 0,
                 CorrectAnswers = new List<string>(),

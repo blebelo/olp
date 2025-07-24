@@ -18,8 +18,8 @@ namespace OnlineLearningPlatform.Domain.StudentProgresses
 
         public bool IsCompleted { get; set; }
         public double CompletionPercentage { get; set; }
-        public ICollection<Lesson> CompletedLessons { get; set; } = new List<Lesson>();
-        public ICollection<QuizAttempt> CompletedQuizzes { get; set; } = new List<QuizAttempt>();
+        public ICollection<Guid> CompletedLessonIds { get; set; } = new List<Guid>();
+        public ICollection<Guid> CompletedQuizIds { get; set; } = new List<Guid>();
 
     }
 }

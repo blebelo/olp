@@ -13,7 +13,6 @@ namespace OnlineLearningPlatform.Domain.Entities
         public string VideoLink { get; set; }
         public Course Course { get; set; }
         public Instructor Instructor { get; set; }
-        public Boolean IsCompleted { get; set; }
         public ICollection<string> StudyMaterialLinks { get; set; }
 
     }

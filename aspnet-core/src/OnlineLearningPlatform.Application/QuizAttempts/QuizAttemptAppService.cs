@@ -35,13 +35,22 @@ namespace OnlineLearningPlatform.QuizAttempts
         {
             try
             {
-                if (quizAttempt == null)
-                {
-                    throw new ArgumentNullException(nameof(quizAttempt), "Quiz attempt cannot be null.");
-                }
-
+                var quiz = await _quizRepository.GetAsync(quizAttempt.QuizId);
                 var results = await Helpers.GradeQuiz(quizAttempt, _quizRepository);
-                var newQuizAttempt = ObjectMapper.Map<QuizAttempt>(quizAttempt);
+                var student  = await _studentRepository.GetAsync(quizAttempt.StudentId);
+                var progress = await _progressRepository.FirstOrDefaultAsync(
+                    p => p.StudentId == student.Id && p.CourseId == quiz.CourseId);
+
+                var newQuizAttempt = new QuizAttempt
+                {
+                    Quiz = quiz,
+                    Student = student,
+                    Percentage = results.Score,
+                    IsPassed = results.Score > quiz.PassingScore,
+                    IsCompleted = results.Score > quiz.PassingScore,
+                    Results = results,
+                    StudentAnswers = quizAttempt.StudentAnswers,
+                };
                 await _quizAttemptRepository.InsertAsync(newQuizAttempt);
                 return ObjectMapper.Map<QuizAttemptDto>(newQuizAttempt);
             }
@@ -49,7 +58,6 @@ namespace OnlineLearningPlatform.QuizAttempts
             {
                 throw new UserFriendlyException("An error occurred while submitting the quiz attempt. Please try again.", ex);
             }
-
         }
     }
 }
