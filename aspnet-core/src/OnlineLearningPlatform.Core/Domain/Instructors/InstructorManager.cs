@@ -47,6 +47,9 @@ namespace OnlineLearningPlatform.Domain.Instructors
 
             Instructor instructor = new Instructor
             {
+                Name = name,
+                Surname = surname,
+                Email = email,
                 Bio = bio,
                 Profession = profession,
                 UserAccount = user

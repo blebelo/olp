@@ -140,7 +140,10 @@ namespace OnlineLearningPlatform.Students
         {
             try
             {
-                var student = await _studentRepository.GetAsync(studentId);
+                var student = await _studentRepository
+                    .GetAll()
+                    .Include(s => s.EnrolledCourses)
+                    .FirstOrDefaultAsync(s => s.Id == studentId);
 
                 if (student?.EnrolledCourses == null || !student.EnrolledCourses.Any())
                     return new List<CourseDto>();
