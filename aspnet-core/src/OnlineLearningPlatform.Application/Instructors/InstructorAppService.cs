@@ -7,8 +7,12 @@ using OnlineLearningPlatform.Authorization.Users;
 using OnlineLearningPlatform.Courses.Dto;
 using OnlineLearningPlatform.Domain.Instructors;
 using OnlineLearningPlatform.Instructors.Dto;
+using OnlineLearningPlatform.Lessons.Dto;
+using OnlineLearningPlatform.Quizzes.Dto;
+using Sprache;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace OnlineLearningPlatform.Instructors
@@ -119,12 +123,11 @@ namespace OnlineLearningPlatform.Instructors
             };
         }
 
-        [AbpAuthorize]
         public async Task<ICollection<CourseDto>> GetCoursesAsync(long userId)
         {
-            
-            var instructor = await _instructorRepository.GetAll().Include(x => x.UserAccount)
-            .FirstOrDefaultAsync(x => x.UserAccount != null && x.UserAccount.Id == userId);
+            var instructor = await _instructorRepository
+                .GetAllIncluding(i => i.UserAccount, i => i.CoursesCreated)
+                .FirstOrDefaultAsync(i => i.UserAccount != null && i.UserAccount.Id == userId);
 
             var courses = instructor.CoursesCreated;
 
@@ -132,8 +135,41 @@ namespace OnlineLearningPlatform.Instructors
             {
                 throw new UserFriendlyException("No courses found for this instructor.");
             }
-            var listOfCourses = ObjectMapper.Map<List<CourseDto>>(courses);
+            var listOfCourses = new List<CourseDto>();
 
+            foreach (var course in courses)
+            {
+                try
+                {
+                    var dto = new CourseDto
+                    {
+                        Id = course.Id,
+                        Title = course.Title,
+                        Topic = course.Topic,
+                        Description = course.Description,
+                        IsPublished = course.IsPublished,
+                        Instructor = course.Instructor != null
+                            ? $"{course.Instructor.Name} {course.Instructor.Surname}"
+                            : "No Instructor",
+                        EnrolledStudents = course.EnrolledStudents != null
+                            ? course.EnrolledStudents.Select(s => $"{s.Name} {s.Surname}").ToList()
+                            : new List<string>(),
+                        Lessons = course.Lessons != null
+                            ? ObjectMapper.Map<List<LessonDto>>(course.Lessons)
+                            : new List<LessonDto>(),
+                        Quiz = course.Quiz != null
+                            ? ObjectMapper.Map<QuizDto>(course.Quiz)
+                            : null
+                    };
+
+                    listOfCourses.Add(dto);
+                }
+                catch (Exception ex)
+                {
+                    throw new UserFriendlyException($"Failed to map Course ID: {course.Id}. Reason: {ex.Message}");
+                }
+
+            }
             return listOfCourses;
         }
     }

@@ -15,6 +15,7 @@ namespace OnlineLearningPlatform.Courses.Dto
         public string Topic { get; set; }
         public string Description { get; set; }
         public string CoverImageUrl { get; set; }
+        public string Category { get; set; }
         public bool IsPublished { get; set; }
         public string Instructor { get; set; }
         public ICollection<string> EnrolledStudents { get; set; }
