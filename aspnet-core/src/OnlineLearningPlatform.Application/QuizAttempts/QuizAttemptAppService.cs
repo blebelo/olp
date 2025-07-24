@@ -31,13 +31,13 @@ namespace OnlineLearningPlatform.QuizAttempts
             _progressRepository = progressRepository;
 
         }
-        public async Task<QuizAttemptDto> SubmitQuizAsync(QuizAttemptDto quizAttempt)
+        public async Task<QuizAttemptDto> SubmitQuizAsync(QuizSubmissionDto submission)
         {
             try
             {
-                var quiz = await _quizRepository.GetAsync(quizAttempt.QuizId);
-                var results = await Helpers.GradeQuiz(quizAttempt, _quizRepository);
-                var student  = await _studentRepository.GetAsync(quizAttempt.StudentId);
+                var quiz = await _quizRepository.GetAsync(submission.QuizId);
+                var results = await Helpers.GradeQuiz(submission, _quizRepository);
+                var student  = await _studentRepository.GetAsync(submission.StudentId);
                 var progress = await _progressRepository.FirstOrDefaultAsync(
                     p => p.StudentId == student.Id && p.CourseId == quiz.CourseId);
 
@@ -49,7 +49,7 @@ namespace OnlineLearningPlatform.QuizAttempts
                     IsPassed = results.Score > quiz.PassingScore,
                     IsCompleted = results.Score > quiz.PassingScore,
                     Results = results,
-                    StudentAnswers = quizAttempt.StudentAnswers,
+                    StudentAnswers = submission.StudentAnswers,
                 };
                 await _quizAttemptRepository.InsertAsync(newQuizAttempt);
                 return ObjectMapper.Map<QuizAttemptDto>(newQuizAttempt);

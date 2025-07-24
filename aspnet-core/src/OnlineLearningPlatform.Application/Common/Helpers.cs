@@ -4,16 +4,16 @@ using OnlineLearningPlatform.Domain.Results;
 using OnlineLearningPlatform.QuizAttempts.Dto;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace OnlineLearningPlatform.Common
 {
     public class Helpers
     {
-        public static async Task<Result> GradeQuiz(QuizAttemptDto submission, IRepository<Quiz, Guid> quizRepo)
+        public static async Task<Result> GradeQuiz(QuizSubmissionDto submission, IRepository<Quiz, Guid> quizRepo)
         {
             var quiz = await quizRepo.GetAsync(submission.QuizId);
-
             var result = new Result
             {
                 Score = 0,
@@ -26,13 +26,17 @@ namespace OnlineLearningPlatform.Common
                 return result;
             }
 
-            var studentAnswersList = new List<string>(submission.StudentAnswers);
-            var quizAnswersList = new List<AnswerOption>(quiz.AnswerOptions);
+            var studentAnswersList = submission.StudentAnswers.ToList();
+            var quizAnswersList = quiz.AnswerOptions.ToList();
 
-            for (int i = 0; i < Math.Min(studentAnswersList.Count, quizAnswersList.Count); i++)
+            int questionsToGrade = studentAnswersList.Count;
+
+            for (int i = 0; i < questionsToGrade; i++)
             {
                 var studentAnswer = studentAnswersList[i];
-                var correctAnswer = quizAnswersList[i].CorrectAnswer;
+                var answerOption = quizAnswersList[i];
+
+                var correctAnswer = answerOption.PossibleAnswers.ElementAt(answerOption.CorrectAnswer);
 
                 if (string.Equals(studentAnswer, correctAnswer, StringComparison.OrdinalIgnoreCase))
                 {

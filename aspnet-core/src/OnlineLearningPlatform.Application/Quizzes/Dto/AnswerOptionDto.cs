@@ -7,7 +7,7 @@ namespace OnlineLearningPlatform.Quizzes.Dto
     [AutoMap(typeof(AnswerOption))]
     public class AnswerOptionDto
     {
-        public int QuestionIndex { get; set; }
+        public int CorrectIndex { get; set; }
         public List<string> PossibleAnswers { get; set; } 
     }
 }

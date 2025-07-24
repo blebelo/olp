@@ -97,7 +97,10 @@ namespace OnlineLearningPlatform.Courses
                     : new List<string>(),
                 Lessons = item.Lessons != null
                     ? ObjectMapper.Map<List<LessonDto>>(item.Lessons)
-                    : new List<LessonDto>()
+                    : new List<LessonDto>(),
+                Quiz = item.Quiz != null
+                    ? ObjectMapper.Map<QuizDto>(item.Quiz)
+                    : null
             };
 
             return dto;
@@ -135,7 +138,10 @@ namespace OnlineLearningPlatform.Courses
                             : new List<string>(),
                         Lessons = item.Lessons != null
                             ? ObjectMapper.Map<List<LessonDto>>(item.Lessons)
-                            : new List<LessonDto>()
+                            : new List<LessonDto>(),
+                        Quiz = item.Quiz != null
+                            ? ObjectMapper.Map<QuizDto>(item.Quiz)
+                            : null
                     };
 
                     listOutput.Add(dto);
@@ -171,7 +177,7 @@ namespace OnlineLearningPlatform.Courses
                 throw new UserFriendlyException("Student is already enrolled in this course");
             }
 
-            try 
+            try
             {
                 course.EnrolledStudents.Add(student);
                 student.EnrolledCourses.Add(course);
@@ -186,10 +192,11 @@ namespace OnlineLearningPlatform.Courses
                 };
 
                 await _courseRepository.UpdateAsync(course);
-                await _studentRepository.UpdateAsync(student);  
+                await _studentRepository.UpdateAsync(student);
                 await _progressRepository.InsertAsync(initialProgress);
-            } 
-            catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 throw new UserFriendlyException("Could Not Enroll Student", ex.Message);
             }
         }
@@ -308,7 +315,7 @@ namespace OnlineLearningPlatform.Courses
             await _courseRepository.UpdateAsync(course);
         }
 
-        public async Task UnublishAsync(Guid courseId)
+        public async Task UnpublishAsync(Guid courseId)
         {
             var course = await _courseRepository.GetAsync(courseId);
             course.IsPublished = false;
@@ -325,7 +332,6 @@ namespace OnlineLearningPlatform.Courses
                 ObjectMapper.Map<List<GetAllCoursesDto>>(items)
             );
         }
-
 
     }
 }
