@@ -36,6 +36,7 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
     await instance.put(endpoint, course)
         .then(() => {
             dispatch(updateCourseSuccess());
+            router.push('/instructor');
         })
         .catch((error) => {
             dispatch(updateCourseError());
