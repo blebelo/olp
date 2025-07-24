@@ -1,5 +1,7 @@
 import { createAction } from "redux-actions";
 import { ICourse, ICourseStateContext, ILesson } from "./context";
+// Publish course
+// Publish or unpublish course
 
 export enum CourseActionEnum {
     //Create Course

@@ -1,6 +1,5 @@
 ﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
-using Abp.AutoMapper;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
 using Abp.UI;
@@ -10,6 +9,7 @@ using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Domain.Entities;
 using OnlineLearningPlatform.Domain.Instructors;
 using OnlineLearningPlatform.Domain.Quizzes;
+using OnlineLearningPlatform.Domain.StudentProgresses;
 using OnlineLearningPlatform.Domain.Students;
 using OnlineLearningPlatform.Instructors.Dto;
 using OnlineLearningPlatform.Lessons.Dto;
@@ -17,7 +17,6 @@ using OnlineLearningPlatform.Quizzes.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace OnlineLearningPlatform.Courses
@@ -28,18 +27,28 @@ namespace OnlineLearningPlatform.Courses
     {
         private readonly IRepository<Quiz, Guid> _quizRepository;
         private readonly IRepository<Course, Guid> _courseRepository;
-        private readonly IRepository<Lesson, Guid> _lessonRepository;
         private readonly IRepository<Student, Guid> _studentRepository;
         private readonly IRepository<Instructor, Guid> _instructorRepository;
+        private readonly IRepository<StudentProgress, Guid> _progressRepository;
+        private readonly IRepository<Lesson, Guid> _lessonRepository;
 
-        public CourseAppService(IRepository<Quiz, Guid> quizRepository, IRepository<Course, Guid> repository, IRepository<Student, Guid> students, IRepository<Instructor, Guid> instructorRepository, IRepository<Lesson, Guid> lessonRepository)
+        public CourseAppService(
+            IRepository<StudentProgress, Guid> progressRepository,
+            IRepository<Quiz, Guid> quizRepository,
+            IRepository<Course, Guid> repository,
+            IRepository<Student, Guid> students,
+            IRepository<Instructor, Guid> instructorRepository,
+            IRepository<Lesson, Guid> lessonRepository
+            )
             : base(repository)
         {
             _quizRepository = quizRepository;
             _courseRepository = repository;
             _studentRepository = students;
             _instructorRepository = instructorRepository;
+            _progressRepository = progressRepository;
             _lessonRepository = lessonRepository;
+
         }
 
         public override async Task<CourseDto> CreateAsync(CreateCourseDto input)
@@ -67,26 +76,31 @@ namespace OnlineLearningPlatform.Courses
 
         public override async Task<CourseDto> GetAsync(EntityDto<Guid> input)
         {
-            var item = await _courseRepository
-                .GetAllIncluding(c => c.Instructor, c => c.EnrolledStudents, c => c.Lessons)
+            var course = await _courseRepository
+                .GetAllIncluding(c => c.Instructor, c => c.EnrolledStudents, c => c.Lessons, c => c.Quiz)
                 .FirstOrDefaultAsync(c => c.Id == input.Id);
 
             var dto = new CourseDto
             {
-                Id = item.Id,
-                Title = item.Title,
-                Topic = item.Topic,
-                Description = item.Description,
-                IsPublished = item.IsPublished,
-                Instructor = item.Instructor != null
-                    ? $"{item.Instructor.Name} {item.Instructor.Surname}"
+                Id = course.Id,
+                Title = course.Title,
+                Topic = course.Topic,
+                CoverImageUrl = course.CoverImageUrl,
+                Category = course.Category,
+                Description = course.Description,
+                IsPublished = course.IsPublished,
+                Instructor = course.Instructor != null
+                    ? $"{course.Instructor.Name} {course.Instructor.Surname}"
                     : "No Instructor",
-                EnrolledStudents = item.EnrolledStudents != null
-                    ? item.EnrolledStudents.Select(s => $"{s.Name} {s.Surname}").ToList()
+                EnrolledStudents = course.EnrolledStudents != null
+                    ? course.EnrolledStudents.Select(s => $"{s.Name} {s.Surname}").ToList()
                     : new List<string>(),
-                Lessons = item.Lessons != null
-                    ? ObjectMapper.Map<List<LessonDto>>(item.Lessons)
-                    : new List<LessonDto>()
+                Lessons = course.Lessons != null
+                    ? ObjectMapper.Map<List<LessonDto>>(course.Lessons)
+                    : new List<LessonDto>(),
+                Quiz = course.Quiz != null
+                    ? ObjectMapper.Map<QuizDto>(course.Quiz)
+                    : null
             };
 
             return dto;
@@ -95,43 +109,48 @@ namespace OnlineLearningPlatform.Courses
         public override async Task<PagedResultDto<CourseDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
         {
             var query = _courseRepository
-                .GetAllIncluding(c => c.Instructor, c => c.EnrolledStudents, c => c.Lessons);
+                .GetAllIncluding(c => c.Instructor, c => c.EnrolledStudents, c => c.Lessons, c => c.Quiz);
 
             var totalCount = await query.CountAsync();
 
-            var items = await query
+            var courses = await query
                 .PageBy(input)
                 .ToListAsync();
 
             var listOutput = new List<CourseDto>();
 
-            foreach (var item in items)
+            foreach (var course in courses)
             {
                 try
                 {
                     var dto = new CourseDto
                     {
-                        Id = item.Id,
-                        Title = item.Title,
-                        Topic = item.Topic,
-                        Description = item.Description,
-                        IsPublished = item.IsPublished,
-                        Instructor = item.Instructor != null
-                            ? $"{item.Instructor.Name} {item.Instructor.Surname}"
+                        Id = course.Id,
+                        Title = course.Title,
+                        Topic = course.Topic,
+                        CoverImageUrl = course.CoverImageUrl,
+                        Category = course.Category,
+                        Description = course.Description,
+                        IsPublished = course.IsPublished,
+                        Instructor = course.Instructor != null
+                            ? $"{course.Instructor.Name} {course.Instructor.Surname}"
                             : "No Instructor",
-                        EnrolledStudents = item.EnrolledStudents != null
-                            ? item.EnrolledStudents.Select(s => $"{s.Name} {s.Surname}").ToList()
+                        EnrolledStudents = course.EnrolledStudents != null
+                            ? course.EnrolledStudents.Select(s => $"{s.Name} {s.Surname}").ToList()
                             : new List<string>(),
-                        Lessons = item.Lessons != null
-                            ? ObjectMapper.Map<List<LessonDto>>(item.Lessons)
-                            : new List<LessonDto>()
+                        Lessons = course.Lessons != null
+                            ? ObjectMapper.Map<List<LessonDto>>(course.Lessons)
+                            : new List<LessonDto>(),
+                        Quiz = course.Quiz != null
+                            ? ObjectMapper.Map<QuizDto>(course.Quiz)
+                            : null
                     };
 
                     listOutput.Add(dto);
                 }
                 catch (Exception ex)
                 {
-                    Logger.Warn($"Failed to map Course ID: {item.Id}. Reason: {ex.Message}");
+                    throw new UserFriendlyException($"Failed to map Course ID: {course.Id}. Reason: {ex.Message}");
                 }
             }
 
@@ -152,24 +171,61 @@ namespace OnlineLearningPlatform.Courses
         public async Task EnrollStudentAsync(Guid courseId, Guid studentId)
         {
             var course = await _courseRepository.GetAsync(courseId);
-            Student student = await _studentRepository.GetAsync(studentId);
+            var student = await _studentRepository.GetAsync(studentId);
+            var existingProgress = await _progressRepository.FirstOrDefaultAsync(sp => sp.StudentId == studentId && sp.CourseId == courseId);
 
-            if (!course.EnrolledStudents.Contains(student))
+            if (existingProgress != null)
+            {
+                throw new UserFriendlyException("Student is already enrolled in this course");
+            }
+
+            try
             {
                 course.EnrolledStudents.Add(student);
+                student.EnrolledCourses.Add(course);
+                var initialProgress = new StudentProgress
+                {
+                    StudentId = studentId,
+                    CourseId = courseId,
+                    IsCompleted = false,
+                    CompletionPercentage = 0,
+                    CompletedLessonIds = new List<Guid>(),
+                    CompletedQuizIds = new List<Guid>()
+                };
+
                 await _courseRepository.UpdateAsync(course);
+                await _studentRepository.UpdateAsync(student);
+                await _progressRepository.InsertAsync(initialProgress);
+            }
+            catch (Exception ex)
+            {
+                throw new UserFriendlyException("Could Not Enroll Student", ex.Message);
             }
         }
 
         public async Task UnEnrollStudentAsync(Guid courseId, Guid studentId)
         {
+            var student = await _studentRepository.GetAsync(studentId);
             var course = await _courseRepository.GetAsync(courseId);
-            Student student = await _studentRepository.GetAsync(studentId);
+            var progress = await _progressRepository.FirstOrDefaultAsync(
+                p => p.StudentId == studentId && p.CourseId == courseId);
 
-            if (course.EnrolledStudents.Contains(student))
+            if (progress == null)
+            {
+                throw new UserFriendlyException("Student is not enrolled in this course");
+            }
+
+            try
             {
                 course.EnrolledStudents.Remove(student);
+                student.EnrolledCourses.Remove(course);
                 await _courseRepository.UpdateAsync(course);
+                await _studentRepository.UpdateAsync(student);
+                await _progressRepository.DeleteAsync(progress.Id);
+            }
+            catch (Exception ex)
+            {
+                throw new UserFriendlyException("Could not unenroll student", ex.Message);
             }
         }
 
@@ -261,7 +317,7 @@ namespace OnlineLearningPlatform.Courses
             await _courseRepository.UpdateAsync(course);
         }
 
-        public async Task UnublishAsync(Guid courseId)
+        public async Task UnpublishAsync(Guid courseId)
         {
             var course = await _courseRepository.GetAsync(courseId);
             course.IsPublished = false;
@@ -278,7 +334,6 @@ namespace OnlineLearningPlatform.Courses
                 ObjectMapper.Map<List<GetAllCoursesDto>>(items)
             );
         }
-
 
     }
 }

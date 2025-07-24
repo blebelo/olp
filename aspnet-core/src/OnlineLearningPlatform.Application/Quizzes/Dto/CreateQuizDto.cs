@@ -15,7 +15,6 @@ namespace OnlineLearningPlatform.Quizzes.Dto
         public decimal PassingScore { get; set; }
         public Guid CourseId { get; set; }
         public ICollection<string> Questions { get; set; }
-        public ICollection<string> Memorandum { get; set; }
-        public ICollection<string> AnswerOptions { get; set; }
+        public ICollection<AnswerOptionDto> AnswerOptions { get; set; }
     }
 }

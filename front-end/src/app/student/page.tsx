@@ -33,6 +33,7 @@ const HomePage = () => {
   }
 
   const handleCourseClick = (course: CourseType) => {
+
         setSelectedCourse({
             id: course.id,
             title: course.name,
@@ -59,14 +60,14 @@ const HomePage = () => {
     };
 
     const mappedCourses: CourseType[] = (courses || [])
-    .filter(course => course.isPublished)
-    .map((course: ICourse) => ({
-        id: course.id ?? 'unknown-id',
-        name: course.title ?? 'Untitled Course',
-        topic: course.topic ?? 'General',
-        description: course.description ?? 'No description provided.',
-        thumbnail: "/images/image2.jpg",
-    }));
+        .filter((course: ICourse) => course.isPublished)
+        .map((course: ICourse) => ({
+            id: course.id ?? 'unknown-id',
+            name: course.title ?? 'Untitled Course',
+            topic: course.topic ?? 'General',
+            description: course.description ?? 'No description provided.',
+            thumbnail: "/images/image2.jpg",
+        }));
 
 const modalCourse: Course | null = course && selectedCourse?.id === course.id
   ? {

@@ -49,6 +49,7 @@ namespace OnlineLearningPlatform.Domain.Instructors
             {
                 Name = name,
                 Surname = surname,
+                UserName = username,
                 Email = email,
                 Bio = bio,
                 Profession = profession,

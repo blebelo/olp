@@ -6,6 +6,7 @@ using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Domain.Entities;
 using OnlineLearningPlatform.Domain.Instructors;
 using OnlineLearningPlatform.Domain.Quizzes;
+using OnlineLearningPlatform.Domain.StudentProgresses;
 using OnlineLearningPlatform.Domain.Students;
 using OnlineLearningPlatform.MultiTenancy;
 
@@ -20,6 +21,8 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
         public DbSet<Student> Students { get; set; }
         public DbSet<Quiz> Quizzes { get; set; }
         public DbSet<QuizAttempt> QuizAttempts { get; set; }
+        public DbSet<StudentProgress> StudentProgresses { get; set; }
+
 
         public OnlineLearningPlatformDbContext(DbContextOptions<OnlineLearningPlatformDbContext> options)
             : base(options)
@@ -29,6 +32,7 @@ namespace OnlineLearningPlatform.EntityFrameworkCore
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
         }
     }
 }

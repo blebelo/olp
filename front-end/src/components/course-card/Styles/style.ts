@@ -91,5 +91,20 @@ export const useStyles = createStyles({
     object-fit: cover;
     border-top-left-radius: 0.5rem;
     border-top-right-radius: 0.5rem;
+  `,
+  publishButton: css`
+    background-color: #44a08d;
+    color: #fff;
+    border: none;
+    border-radius: 0.3rem;
+    padding: 0.5rem 1rem;
+    margin-top: 0.5rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+    &:hover {
+      background-color: #4ecdc4;
+      color: #222;
+    }
   `
 });

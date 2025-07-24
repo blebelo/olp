@@ -2,6 +2,7 @@
 using OnlineLearningPlatform.Domain.Entities;
 using OnlineLearningPlatform.Domain.Instructors;
 using OnlineLearningPlatform.Domain.Quizzes;
+using OnlineLearningPlatform.Domain.StudentProgresses;
 using OnlineLearningPlatform.Domain.Students;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,8 @@ namespace OnlineLearningPlatform.Domain.Courses
         public bool IsPublished { get; set; }
         public Instructor Instructor { get; set; }
         public ICollection<Student> EnrolledStudents { get; set; } = new List<Student>();
-        public ICollection<Lesson> Lessons { get; set; }
+        public ICollection<Lesson> Lessons { get; set; } = new List<Lesson>();
+        public ICollection<StudentProgress> Progresses { get; set; } = new List<StudentProgress>();
         public Quiz Quiz { get; set; }
 
     }

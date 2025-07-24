@@ -17,34 +17,13 @@ namespace OnlineLearningPlatform.Quizzes
           IQuizAppService
     {
         private readonly IRepository<Quiz, Guid> _quizRepository;
-        private readonly IRepository<Course, Guid> _courseRepository;
 
         public QuizAppService(IRepository<Quiz, Guid> quizRepository, IRepository<Course, Guid> courseRepository)
             : base(quizRepository)
         {
             _quizRepository = quizRepository;
-            _courseRepository = courseRepository;
         }
 
-        public override async Task<QuizDto> CreateAsync(CreateQuizDto input)
-        {
-            try
-            {
-                var course = await _courseRepository.GetAsync(input.CourseId);
-                if (course == null)
-                    throw new EntityNotFoundException(typeof(Course), input.CourseId);
-
-                var quiz = ObjectMapper.Map<Quiz>(input);
-
-                await _quizRepository.InsertAsync(quiz);
-
-                return ObjectMapper.Map<QuizDto>(quiz);
-            }
-            catch (Exception ex)
-            {
-                throw new UserFriendlyException("Error creating quiz. Please try again later.", ex);
-            }
-        }
 
         public override async Task<QuizDto> GetAsync(EntityDto<Guid> input)
         {
@@ -93,9 +72,8 @@ namespace OnlineLearningPlatform.Quizzes
                 quiz.Description = input.Description;
                 quiz.Duration = input.Duration;
                 quiz.PassingScore = input.PassingScore;
-                quiz.AnswerOptions = input.AnswerOptions;
+                quiz.AnswerOptions = ObjectMapper.Map<List<AnswerOption>>(input.AnswerOptions);
                 quiz.Questions = input.Questions;
-                quiz.Memorandum = input.Memorandum;
 
                 await _quizRepository.UpdateAsync(quiz);
 

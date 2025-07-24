@@ -6,7 +6,12 @@ using Microsoft.EntityFrameworkCore;
 using OnlineLearningPlatform.Authorization.Users;
 using OnlineLearningPlatform.Courses.Dto;
 using OnlineLearningPlatform.Domain.Courses;
+using OnlineLearningPlatform.Domain.Entities;
+using OnlineLearningPlatform.Domain.Quizzes;
+using OnlineLearningPlatform.Domain.StudentProgresses;
 using OnlineLearningPlatform.Domain.Students;
+using OnlineLearningPlatform.Lessons.Dto;
+using OnlineLearningPlatform.Quizzes.Dto;
 using OnlineLearningPlatform.Students.Dto;
 using Sprache;
 using System;
@@ -23,7 +28,12 @@ namespace OnlineLearningPlatform.Students
         private readonly IRepository<User, long> _userRepository;
         private readonly StudentManager _studentManager;
 
-        public StudentAppService(IRepository<Student, Guid> studentRepository, StudentManager studentManager, UserManager userManager, IRepository<Course, Guid> courseRepository)
+        public StudentAppService(
+            IRepository<Student, Guid> studentRepository, 
+            StudentManager studentManager, 
+            UserManager userManager, 
+            IRepository<Course, Guid> courseRepository
+            )
             : base(studentRepository)
         {
             _studentRepository = studentRepository;
@@ -44,6 +54,7 @@ namespace OnlineLearningPlatform.Students
                     input.AcademicLevel
                 );
 
+
                 return ObjectMapper.Map<StudentDto>(newStudent);
             }
             catch (Exception ex)
@@ -52,11 +63,8 @@ namespace OnlineLearningPlatform.Students
             }
         }
 
-
         public async Task<StudentProfileDto> GetStudentProfileAsync()
         {
-
-            //Find the student by the current user
             var student = await _studentRepository
                 .GetAll()
                 .Include(s => s.UserAccount)
@@ -75,7 +83,6 @@ namespace OnlineLearningPlatform.Students
                 AcademicLevel = student.AcademicLevel
             };
         }
-
 
         public async Task<StudentProfileDto> UpdateStudentProfileAsync(UpdateStudentDto input)
         {
@@ -110,63 +117,55 @@ namespace OnlineLearningPlatform.Students
             };
 
         }
-        public async Task EnrollStudentInCourseAsync(Guid studentId, Guid courseId)
+
+        public async Task<ICollection<CourseDto>> GetCoursesAsync(long userId)
         {
-            var student = await _studentRepository.GetAsync(studentId);
-            var course = await _courseRepository.GetAsync(courseId);
+            var student = await _studentRepository
+                .GetAllIncluding(s => s.UserAccount, s => s.EnrolledCourses)
+                .FirstOrDefaultAsync(s => s.UserAccount != null && s.UserAccount.Id == userId);
 
-            if(!student.EnrolledCourses.Contains(course))
+            var courses = student.EnrolledCourses;
+
+            if (courses == null || courses.Count == 0)
             {
-                student.EnrolledCourses.Add(course);
-                var results = await _studentRepository.UpdateAsync(student);
+                throw new UserFriendlyException("No courses found for this instructor.");
             }
+            var listOfCourses = new List<CourseDto>();
 
-            
-        }
-        public async Task UnenrollStudentFromCourseAsync(Guid studentId, Guid courseId)
-        {
-            var student = await _studentRepository.GetAsync(studentId);
-            var course = student.EnrolledCourses.FirstOrDefault(c => c.Id == courseId);
-
-            if (course != null)
+            foreach (var course in courses)
             {
-                student.EnrolledCourses.Remove(course);
-                await _studentRepository.UpdateAsync(student);
-            }
-            else
-            {
-                throw new UserFriendlyException("Course not found in student's enrolled courses.");
-            }
-        }
-        public async Task<List<CourseDto>> GetStudentEnrolledCoursesAsync(Guid studentId)
-        {
-            try
-            {
-                var student = await _studentRepository
-                    .GetAll()
-                    .Include(s => s.EnrolledCourses)
-                    .FirstOrDefaultAsync(s => s.Id == studentId);
+                try
+                {
+                    var dto = new CourseDto
+                    {
+                        Id = course.Id,
+                        Title = course.Title,
+                        Topic = course.Topic,
+                        Description = course.Description,
+                        IsPublished = course.IsPublished,
+                        Instructor = course.Instructor != null
+                            ? $"{course.Instructor.Name} {course.Instructor.Surname}"
+                            : "No Instructor",
+                        EnrolledStudents = course.EnrolledStudents != null
+                            ? course.EnrolledStudents.Select(s => $"{s.Name} {s.Surname}").ToList()
+                            : new List<string>(),
+                        Lessons = course.Lessons != null
+                            ? ObjectMapper.Map<List<LessonDto>>(course.Lessons)
+                            : new List<LessonDto>(),
+                        Quiz = course.Quiz != null
+                            ? ObjectMapper.Map<QuizDto>(course.Quiz)
+                            : null
+                    };
 
-                if (student?.EnrolledCourses == null || !student.EnrolledCourses.Any())
-                    return new List<CourseDto>();
+                    listOfCourses.Add(dto);
+                }
+                catch (Exception ex)
+                {
+                    throw new UserFriendlyException($"Failed to map Course ID: {course.Id}. Reason: {ex.Message}");
+                }
 
-                var courseIds = student.EnrolledCourses
-                    .Select(ec => ec.Id)
-                    .Distinct()
-                    .ToList();
-
-                var courses = await _courseRepository.GetAllListAsync(c => courseIds.Contains(c.Id));
-
-                return ObjectMapper.Map<List<CourseDto>>(courses);
             }
-            catch (EntityNotFoundException)
-            {
-                throw new UserFriendlyException("Student not found.");
-            }
-            catch (Exception ex)
-            {
-                throw new UserFriendlyException("An error occurred while retrieving enrolled courses.");
-            }
+            return listOfCourses;
         }
          
     }

@@ -1,11 +1,16 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Spin, Card, Typography, Button, Input, Form, message } from "antd";
+import { Spin, Card, Typography, Button, Input, Form, message, Avatar } from "antd";
+import { UserOutlined, MailOutlined, IdcardOutlined, SolutionOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useStyles } from "../style";
+import { useProfileFieldStyles } from "../../shared/profileFieldStyles";
+// If you have a dedicated style file for profile fields, import it here instead:
+// import { useStyles } from "../Styles/style";
 import { useInstructorProfileState, useInstructorProfileActions } from "@/providers/instructorProvider";
 
 export default function InstructorProfilePage() {
   const { styles } = useStyles();
+  const { styles: fieldStyles } = useProfileFieldStyles();
   const { profile, isPending, isError } = useInstructorProfileState();
   const { updateProfile, getProfile } = useInstructorProfileActions();
   const [editMode, setEditMode] = useState(false);
@@ -14,7 +19,7 @@ export default function InstructorProfilePage() {
 
   useEffect(() => {
     getProfile?.();
-  }, []);
+  }, [getProfile]);
 
   if (isError) {
     return (
@@ -52,7 +57,7 @@ export default function InstructorProfilePage() {
   return (
     <div className={styles.heroContainer}>
       <div className={styles.contentRow}>
-        <Card className={styles.courseCard} style={{ maxWidth: 500, margin: '0 auto', background: 'rgba(252, 252, 252, 0.95)', position: 'relative' }}>
+        <Card className={styles.courseCard} style={{ maxWidth: 500, margin: '0 auto', background: 'rgba(252, 252, 252, 0.95)', position: 'relative', boxShadow: '0 4px 32px rgba(68,160,141,0.12)', borderRadius: 20, padding: 24 }}>
           {(isPending || saving) && (
             <div style={{
               position: 'absolute',
@@ -69,7 +74,12 @@ export default function InstructorProfilePage() {
               <Spin size="large" />
             </div>
           )}
-          <Typography.Title level={2} style={{ color: '#44a08d', textAlign: 'center' }}>Instructor Profile</Typography.Title>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 24 }}>
+            <Avatar size={96} style={{ background: '#44a08d', fontSize: 36, marginBottom: 12 }}>
+              {profile?.name?.[0]?.toUpperCase() || 'I'}
+            </Avatar>
+            <Typography.Title level={2} style={{ color: '#44a08d', textAlign: 'center', marginBottom: 0 }}>Instructor Profile</Typography.Title>
+          </div>
           {editMode ? (
             <Form
               form={form}
@@ -100,15 +110,38 @@ export default function InstructorProfilePage() {
               </Form.Item>
             </Form>
           ) : (
-            <>
-              <Typography.Paragraph><b>Name:</b> {profile?.name}</Typography.Paragraph>
-              <Typography.Paragraph><b>Surname:</b> {profile?.surname}</Typography.Paragraph>
-              <Typography.Paragraph><b>Username:</b> {profile?.userName}</Typography.Paragraph>
-              <Typography.Paragraph><b>Email:</b> {profile?.email}</Typography.Paragraph>
-              <Typography.Paragraph><b>Profession:</b> {profile?.profession}</Typography.Paragraph>
-              <Typography.Paragraph><b>Bio:</b> {profile?.bio}</Typography.Paragraph>
-              <Button type="primary" onClick={handleEdit} style={{ marginTop: 16 }}>Edit</Button>
-            </>
+            <div style={{ width: '100%', marginTop: 16 }}>
+              <div style={{ background: '#f6faf9', borderRadius: 12, padding: 20, boxShadow: '0 2px 8px rgba(68,160,141,0.06)' }}>
+                {[{
+                  icon: <UserOutlined />, label: 'Name', value: profile?.name
+                }, {
+                  icon: <IdcardOutlined />, label: 'Surname', value: profile?.surname
+                }, {
+                  icon: <SolutionOutlined />, label: 'Username', value: profile?.userName
+                }, {
+                  icon: <MailOutlined />, label: 'Email', value: profile?.email
+                }, {
+                  icon: <InfoCircleOutlined />, label: 'Profession', value: profile?.profession
+                }, {
+                  icon: <InfoCircleOutlined />, label: 'Bio', value: profile?.bio
+                }].map((field, idx, arr) => (
+                  <div
+                    key={field.label}
+                    className={fieldStyles.profileFieldRow}
+                    style={{ borderBottom: idx !== arr.length - 1 ? '1px solid #e6e6e6' : 'none', padding: '10px 0' }}
+                  >
+                    <span className={fieldStyles.profileFieldLabel} style={{ minWidth: 120 }}>
+                      <Avatar icon={field.icon} style={{ background: '#44a08d', marginRight: 10 }} size={24} />
+                      {field.label}
+                    </span>
+                    <span className={fieldStyles.profileFieldValue}>
+                      {field.value || <span style={{ color: '#bbb' }}>-</span>}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <Button type="primary" onClick={handleEdit} style={{ marginTop: 24, width: '100%' }}>Edit</Button>
+            </div>
           )}
         </Card>
       </div>

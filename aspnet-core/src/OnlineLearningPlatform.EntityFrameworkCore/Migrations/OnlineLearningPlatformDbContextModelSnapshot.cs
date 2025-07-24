@@ -1637,9 +1637,6 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<long?>("LastModifierUserId")
                         .HasColumnType("bigint");
 
-                    b.Property<Guid?>("QuizId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
@@ -1649,8 +1646,6 @@ namespace OnlineLearningPlatform.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("InstructorId");
-
-                    b.HasIndex("QuizId");
 
                     b.ToTable("Courses");
                 });
@@ -1679,8 +1674,8 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("boolean");
+                    b.Property<Guid?>("InstructorId")
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -1703,6 +1698,8 @@ namespace OnlineLearningPlatform.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
+
+                    b.HasIndex("InstructorId");
 
                     b.ToTable("Lessons");
                 });
@@ -1765,6 +1762,9 @@ namespace OnlineLearningPlatform.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -1792,9 +1792,6 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<long?>("LastModifierUserId")
                         .HasColumnType("bigint");
 
-                    b.PrimitiveCollection<string[]>("Memorandum")
-                        .HasColumnType("text[]");
-
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
@@ -1805,6 +1802,9 @@ namespace OnlineLearningPlatform.Migrations
                         .HasColumnType("text[]");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CourseId")
+                        .IsUnique();
 
                     b.ToTable("Quizzes");
                 });
@@ -1848,9 +1848,6 @@ namespace OnlineLearningPlatform.Migrations
                     b.Property<Guid?>("QuizId")
                         .HasColumnType("uuid");
 
-                    b.Property<decimal>("Score")
-                        .HasColumnType("numeric");
-
                     b.PrimitiveCollection<string[]>("StudentAnswers")
                         .HasColumnType("text[]");
 
@@ -1866,6 +1863,39 @@ namespace OnlineLearningPlatform.Migrations
                     b.ToTable("QuizAttempts");
                 });
 
+            modelBuilder.Entity("OnlineLearningPlatform.Domain.StudentProgresses.StudentProgress", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.PrimitiveCollection<Guid[]>("CompletedLessonIds")
+                        .HasColumnType("uuid[]");
+
+                    b.PrimitiveCollection<Guid[]>("CompletedQuizIds")
+                        .HasColumnType("uuid[]");
+
+                    b.Property<double>("CompletionPercentage")
+                        .HasColumnType("double precision");
+
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("StudentProgresses");
+                });
+
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Students.Student", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1873,9 +1903,6 @@ namespace OnlineLearningPlatform.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("AcademicLevel")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Bio")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreationTime")
@@ -2224,20 +2251,22 @@ namespace OnlineLearningPlatform.Migrations
                         .WithMany("CoursesCreated")
                         .HasForeignKey("InstructorId");
 
-                    b.HasOne("OnlineLearningPlatform.Domain.Quizzes.Quiz", "Quiz")
-                        .WithMany()
-                        .HasForeignKey("QuizId");
-
                     b.Navigation("Instructor");
-
-                    b.Navigation("Quiz");
                 });
 
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Entities.Lesson", b =>
                 {
-                    b.HasOne("OnlineLearningPlatform.Domain.Courses.Course", null)
+                    b.HasOne("OnlineLearningPlatform.Domain.Courses.Course", "Course")
                         .WithMany("Lessons")
                         .HasForeignKey("CourseId");
+
+                    b.HasOne("OnlineLearningPlatform.Domain.Instructors.Instructor", "Instructor")
+                        .WithMany()
+                        .HasForeignKey("InstructorId");
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Instructor");
                 });
 
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Instructors.Instructor", b =>
@@ -2251,6 +2280,12 @@ namespace OnlineLearningPlatform.Migrations
 
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Quizzes.Quiz", b =>
                 {
+                    b.HasOne("OnlineLearningPlatform.Domain.Courses.Course", null)
+                        .WithOne("Quiz")
+                        .HasForeignKey("OnlineLearningPlatform.Domain.Quizzes.Quiz", "CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.OwnsMany("OnlineLearningPlatform.Domain.Quizzes.AnswerOption", "AnswerOptions", b1 =>
                         {
                             b1.Property<Guid>("QuizId")
@@ -2262,11 +2297,11 @@ namespace OnlineLearningPlatform.Migrations
 
                             NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
 
-                            b1.PrimitiveCollection<string[]>("Options")
-                                .HasColumnType("text[]");
-
-                            b1.Property<int>("QuestionIndex")
+                            b1.Property<int>("CorrectAnswer")
                                 .HasColumnType("integer");
+
+                            b1.PrimitiveCollection<string[]>("PossibleAnswers")
+                                .HasColumnType("text[]");
 
                             b1.HasKey("QuizId", "Id");
 
@@ -2289,7 +2324,50 @@ namespace OnlineLearningPlatform.Migrations
                         .WithMany()
                         .HasForeignKey("StudentId");
 
+                    b.OwnsOne("OnlineLearningPlatform.Domain.Results.Result", "Results", b1 =>
+                        {
+                            b1.Property<Guid>("QuizAttemptId")
+                                .HasColumnType("uuid");
+
+                            b1.PrimitiveCollection<string[]>("CorrectAnswers")
+                                .HasColumnType("text[]");
+
+                            b1.PrimitiveCollection<string[]>("IncorrectAnswers")
+                                .HasColumnType("text[]");
+
+                            b1.Property<int>("Score")
+                                .HasColumnType("integer");
+
+                            b1.HasKey("QuizAttemptId");
+
+                            b1.ToTable("QuizAttempts");
+
+                            b1.WithOwner()
+                                .HasForeignKey("QuizAttemptId");
+                        });
+
                     b.Navigation("Quiz");
+
+                    b.Navigation("Results");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("OnlineLearningPlatform.Domain.StudentProgresses.StudentProgress", b =>
+                {
+                    b.HasOne("OnlineLearningPlatform.Domain.Courses.Course", "Course")
+                        .WithMany("Progresses")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OnlineLearningPlatform.Domain.Students.Student", "Student")
+                        .WithMany("Progress")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
 
                     b.Navigation("Student");
                 });
@@ -2404,11 +2482,20 @@ namespace OnlineLearningPlatform.Migrations
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Courses.Course", b =>
                 {
                     b.Navigation("Lessons");
+
+                    b.Navigation("Progresses");
+
+                    b.Navigation("Quiz");
                 });
 
             modelBuilder.Entity("OnlineLearningPlatform.Domain.Instructors.Instructor", b =>
                 {
                     b.Navigation("CoursesCreated");
+                });
+
+            modelBuilder.Entity("OnlineLearningPlatform.Domain.Students.Student", b =>
+                {
+                    b.Navigation("Progress");
                 });
 #pragma warning restore 612, 618
         }

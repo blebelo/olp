@@ -8,6 +8,8 @@ export interface CourseType {
   topic: string;
   description: string;
   thumbnail: string;
+  isPublished?: boolean;
+  onPublishToggle?: (courseId: string, newStatus: boolean) => void;
 };
 
 interface CourseCardProps {
@@ -19,32 +21,33 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onClick }) => {
   const { styles } = useStyles();
 
   return (
-      <Card 
-        className={styles.courseCard}
-        hoverable 
-        onClick={() => onClick?.(course)}
-        cover={
-          <div style={{ position: 'relative', width: '100%', height: '10rem' }}>
-            <Image
-              alt={course.name}
-              src={course.thumbnail}
-              fill
-              className={styles.image}
-              sizes="(max-width: 768px) 100vw, 33vw"
-            />
-          </div>
+    <Card
+      className={styles.courseCard}
+      hoverable
+      onClick={() => onClick?.(course)}
+      cover={
+        <div style={{ position: 'relative', width: '100%', height: '10rem' }}>
+          <Image
+            alt={course.name}
+            src={course.thumbnail}
+            fill
+            className={styles.image}
+            sizes="(max-width: 768px) 100vw, 33vw"
+          />
+        </div>
+      }
+    >
+      <Card.Meta
+        title={course.name}
+        description={
+          <>
+            <p><strong>Topic:</strong> {course.topic}</p>
+            <p>{course.description}</p>
+            {/* Publish/Unpublish button removed for dashboard view */}
+          </>
         }
-      >
-        <Card.Meta
-          title={course.name}
-          description={
-            <>
-              <p><strong>Topic:</strong> {course.topic}</p>
-              <p>{course.description}</p>
-            </>
-          }
-        />
-      </Card>
+      />
+    </Card>
   );
 };
 
