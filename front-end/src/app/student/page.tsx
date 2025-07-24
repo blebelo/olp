@@ -7,7 +7,7 @@ import { useCourseActions, useCourseState } from "@/providers/course-provider";
 import { ICourse } from "@/providers/course-provider/context";
 import CourseModal, { Course } from "@/components/modal/course-modal/CourseModal";
 import { StudentProfileActionContext, StudentProfileStateContext } from "@/providers/studentProvider/context";
-import { useStudentEnrollmentActions } from "@/providers/enrollment-provider";
+import { useStudentEnrollmentActions, useStudentEnrollmentState } from "@/providers/enrollment-provider";
 
 const HomePage = () => {
     const { styles } = useStyles();
@@ -15,7 +15,9 @@ const HomePage = () => {
     const { courses, course } = useCourseState();
     const {profile} = useContext(StudentProfileStateContext);
     const {getProfile} = useContext(StudentProfileActionContext)|| {};
-    const { enrollStudentInCourse } = useStudentEnrollmentActions();
+    const { enrollStudentInCourse, getStudentEnrolledCourses } = useStudentEnrollmentActions();
+    const {enrolledCourses} = useStudentEnrollmentState();
+
     const studentId = sessionStorage.getItem("userId") ?? '';
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
@@ -26,14 +28,23 @@ const HomePage = () => {
 
     useEffect(() => {
         getProfile?.();
-    }, [])
+    }, []);
 
-  if (profile?.id) {
-    sessionStorage.setItem("userId", profile.id);
-  }
+// useEffect(() => {
+//     const storedId = sessionStorage.getItem("Id");
+//      getStudentEnrolledCourses(Number(storedId));
+//   }, [])
+  useEffect(() => {
+        const storedId = sessionStorage.getItem("Id");
+        if (storedId !== null) {
+            const numericId = parseInt(storedId, 10);
+            if (!isNaN(numericId)) {
+                getStudentEnrolledCourses(numericId);
+            }
+        }
+    }, []);
 
   const handleCourseClick = (course: CourseType) => {
-
         setSelectedCourse({
             id: course.id,
             title: course.name,
@@ -56,8 +67,14 @@ const HomePage = () => {
             console.log("StudentId front: ", studentId);
            enrollStudentInCourse(studentId, course?.id);
            message.success("Enrolled successfully!");
-      
     };
+    const mappedEnrolledCourses: CourseType[] = (enrolledCourses || []).map((course: ICourse) => ({
+         id: course.id ?? 'unknown-id',
+         name: course.title ?? 'Untitled Course',
+         topic: course.topic ?? 'General',
+         description: course.description ?? 'No description provided.',
+         thumbnail: "/images/image2.jpg",
+    }));
 
     const mappedCourses: CourseType[] = (courses || [])
         .filter((course: ICourse) => course.isPublished)
@@ -100,6 +117,22 @@ const modalCourse: Course | null = course && selectedCourse?.id === course.id
                     <Button className={styles.primaryButton}>Browse All Courses</Button>
                 </div>
 
+                {/* only displays enrolled courses */}
+                {mappedEnrolledCourses.length > 0 && (
+                        <>
+                            <Typography.Title level={3} className={styles.sectionTitle}>
+                                My Enrolled Courses
+                            </Typography.Title>
+                            <Row gutter={[16, 16]}>
+                                {mappedEnrolledCourses.map((course) => (
+                                    <Col xs={24} sm={12} md={8} lg={6} key={course.id}>
+                                    <CourseCard course={course} onClick={handleCourseClick} />
+                                    </Col>
+                                ))}
+                            </Row>
+                        </>
+                    )
+                }
                 <Typography.Title level={3} className={styles.sectionTitle}>
                     All Courses
                 </Typography.Title>
