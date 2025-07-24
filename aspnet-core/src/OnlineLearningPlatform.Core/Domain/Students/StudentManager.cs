@@ -48,6 +48,7 @@ namespace OnlineLearningPlatform.Domain.Students
             {
                 Name = name,
                 Surname = surname,
+                UserName = username,
                 Email = email,
                 UserAccount = newUser,
                 Interests = interests,

@@ -19,11 +19,12 @@ export const StudentEnrollmentProvider = ({children}: {children: React.ReactNode
     const [state, dispatch] = useReducer(StudentEnrollmentReducer, INITIAL_STATE);
     const instance = axiosInstance;
 
-    const enrollStudentInCourse = async (studentId: string, courseId: string) => {
+    const enrollStudentInCourse = async (studentId?: string, courseId?: string) => {
         dispatch(enrollStudentInCoursePending());
 
         //matching endpoints with frontend
         const endpoint: string = `/services/app/Student/EnrollStudentInCourse?studentId=${studentId}&courseId=${courseId}`;
+        
         await instance.post(endpoint)
         .then((response) => {
             dispatch(enrollStudentInCourseSuccess());
