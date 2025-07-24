@@ -139,7 +139,7 @@ namespace OnlineLearningPlatform.Lessons
             {
                 progress.IsCompleted = true;
             }
-
+        }
         public Task<LessonDto> CreateAsync(LessonDto input)
         {
             throw new NotImplementedException("You may only create a lesson from a Course. ");

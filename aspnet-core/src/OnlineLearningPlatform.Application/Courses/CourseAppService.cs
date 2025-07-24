@@ -32,13 +32,15 @@ namespace OnlineLearningPlatform.Courses
         private readonly IRepository<Student, Guid> _studentRepository;
         private readonly IRepository<Instructor, Guid> _instructorRepository;
         private readonly IRepository<StudentProgress, Guid> _progressRepository;
+        private readonly IRepository<Lesson, Guid> _lessonRepository;
 
         public CourseAppService(
             IRepository<StudentProgress, Guid> progressRepository,
             IRepository<Quiz, Guid> quizRepository,
             IRepository<Course, Guid> repository,
             IRepository<Student, Guid> students,
-            IRepository<Instructor, Guid> instructorRepository
+            IRepository<Instructor, Guid> instructorRepository,
+            IRepository<Lesson, Guid> lessonRepository
             )
             : base(repository)
         {
@@ -47,6 +49,7 @@ namespace OnlineLearningPlatform.Courses
             _studentRepository = students;
             _instructorRepository = instructorRepository;
             _progressRepository = progressRepository;
+            _lessonRepository = lessonRepository;
 
         }
 
@@ -259,10 +262,6 @@ namespace OnlineLearningPlatform.Courses
 
         public async Task AddQuizAsync(Guid courseId, CreateQuizDto quizDto)
         {
-            var course = await _courseRepository.GetAsync(courseId);
-            var quiz = ObjectMapper.Map<Quiz>(quizDto);
-            quiz.CourseId = courseId;
-
             try
             {
                 var course = await _courseRepository.GetAsync(courseId);
