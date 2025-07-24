@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Button, Typography, Form, Spin } from 'antd';
+import { Button, Typography, Form, Spin, message } from 'antd';
 import { CheckCircleFilled, FileTextOutlined } from '@ant-design/icons';
 import { useStyles } from './Style/style';
 import type { FieldConfig } from "@/components/modal/ReusableModalForm";
@@ -8,14 +8,15 @@ import ReusableModalForm from '@/components/modal/ReusableModalForm';
 import QuizModalForm, { QuizQuestion } from '@/components/modal/quiz-modal/QuizModalForm';
 import { useParams } from 'next/navigation';
 import { useCourseActions, useCourseState } from '@/providers/course-provider';
-import { ILesson } from '@/providers/course-provider/context';
+import { ICourse, ILesson } from '@/providers/course-provider/context';
+import EditCourseModal from '@/components/modal/course-modal/EditCourseModal';
 
 const { Title, Paragraph } = Typography;
 
 const ManageCoursePage = () => {
     const { styles } = useStyles();
     const { isError, course, isPending } = useCourseState();
-    const { getCourse, createLesson, setCoursePublished } = useCourseActions();
+    const { getCourse, createLesson, setCoursePublished, getCourseById, updateCourse } = useCourseActions();
     const [isAddLesson, setIsAddLesson] = useState(false);
     const [form] = Form.useForm();
     const [isAddQuiz, setIsAddQuiz] = useState(false);
@@ -31,34 +32,7 @@ const ManageCoursePage = () => {
     const params = useParams();
     const courseId = params?.course as string;
 
-    // Dummy data for testing
-    const dummyCourses = [
-        {
-            id: 'dummy-1',
-            title: 'React Basics',
-            isPublished: true,
-            lessons: [
-                { id: 'l1', title: 'Intro', description: 'React intro', videoLink: '', studyMaterial: [], isCompleted: true },
-                { id: 'l2', title: 'JSX', description: 'JSX lesson', videoLink: '', studyMaterial: [], isCompleted: false }
-            ]
-        },
-        {
-            id: 'dummy-2',
-            title: 'Node Fundamentals',
-            isPublished: false,
-            lessons: [
-                { id: 'l3', title: 'Setup', description: 'Node setup', videoLink: '', studyMaterial: [], isCompleted: false }
-            ]
-        },
-        {
-            id: 'dummy-3',
-            title: 'CSS Mastery',
-            isPublished: true,
-            lessons: [
-                { id: 'l4', title: 'Selectors', description: 'CSS selectors', videoLink: '', studyMaterial: [], isCompleted: true }
-            ]
-        }
-    ];
+    const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
     useEffect(() => {
         if (courseId) {
@@ -67,10 +41,28 @@ const ManageCoursePage = () => {
     }, [courseId]);
 
     useEffect(() => {
+        if (courseId) {
+            getCourseById(courseId);
+        }
+    }, [courseId]);
+
+    useEffect(() => {
         if (course?.lessons?.length) {
             setActiveLesson(course.lessons[0]);
         }
     }, [course]);
+
+    const handleSaveChanges = async (updatedCourse: ICourse) => {
+    try {
+      await updateCourse({ ...updatedCourse, id: courseId });
+      message.success('Course updated successfully');
+      setIsEditModalVisible(false);
+      getCourseById(courseId); // Refresh UI
+    } catch (error) {
+        console.error(error);
+      message.error('Failed to update course');
+    }
+  };
 
     const handleCreateQuiz = (questions: QuizQuestion[]) => {
         console.log("Quiz submitted:", questions);
@@ -124,37 +116,9 @@ const ManageCoursePage = () => {
     ];
 
     if (isPending || !course) {
-        // For testing
         if (!course) {
-            return (
-                <div className={styles.pageContainer}>
-                    <h2 className={styles.header}>Manage Courses (Dummy Data)</h2>
-                    {dummyCourses.map((c) => (
-                        <div key={c.id} style={{ marginBottom: '2rem', border: '1px solid #eee', padding: '1rem', borderRadius: '8px' }}>
-                            <h1 className={styles.secondary}>Course Name: {c.title}</h1>
-                            <div>
-                                <Button type="primary" onClick={async () => {
-                                    await setCoursePublished(c.id, !c.isPublished);
-                                    c.isPublished = !c.isPublished;
-                                    alert(`Course is now ${c.isPublished ? 'published' : 'unpublished'}`);
-                                }}>
-                                    {c.isPublished ? 'Unpublish' : 'Publish'}
-                                </Button>
-                            </div>
-                            <div style={{ marginTop: '1rem' }}>
-                                <strong>Lessons:</strong>
-                                <ul>
-                                    {c.lessons.map(lesson => (
-                                        <li key={lesson.id}>{lesson.title} - {lesson.description}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            );
+            return <Spin fullscreen />;
         }
-        return <Spin fullscreen />;
     }
 
     if (isError) {
@@ -171,7 +135,7 @@ const ManageCoursePage = () => {
             <div className={styles.content}>
                 <aside className={styles.sidebar}>
                     <div>
-                        {course.lessons?.map((lesson) => (
+                        {course.lessons?.map((lesson: ILesson) => (
                             <Button
                                 key={lesson.id}
                                 type="primary"
@@ -220,8 +184,8 @@ const ManageCoursePage = () => {
                                 <strong>Materials:</strong>
                                 <div className={styles.materialLink}>
                                     {Array.isArray(activeLesson.studyMaterial)
-                                        ? activeLesson.studyMaterial.map((material, i) => (
-                                            <a key={i} href={material} target="_blank" rel="noopener noreferrer" className={styles.materialLink}>
+                                        ? activeLesson.studyMaterial.map((material) => (
+                                            <a key={material} href={material} target="_blank" rel="noopener noreferrer" className={styles.materialLink}>
                                                 <FileTextOutlined /> {material}
                                             </a>
                                         ))
@@ -266,6 +230,16 @@ const ManageCoursePage = () => {
                     >
                         {course.isPublished ? 'Unpublish' : 'Publish'}
                     </Button>
+                     <Button type="primary" onClick={() => setIsEditModalVisible(true)} style={{ marginTop: 20 }}>
+                        Edit Course
+                    </Button>
+
+                    <EditCourseModal
+                        visible={isEditModalVisible}
+                        course={course}
+                        onCancel={() => setIsEditModalVisible(false)}
+                        onSubmit={handleSaveChanges}
+                    />
                 </main>
             </div>
         </div>

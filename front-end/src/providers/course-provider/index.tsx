@@ -1,5 +1,5 @@
 "use client"
-import { useContext, useReducer } from "react";
+import { useContext, useReducer, useMemo } from "react";
 import { axiosInstance } from "@/utils/axiosInstance";
 import { INITIAL_STATE, ICourse, CourseActionContext, CourseStateContext, ILesson} from "./context";
 import { CourseReducer } from "./reducer";
@@ -19,7 +19,10 @@ import {
     createLessonError,
     getCoursePending,
     getCourseSuccess,
-    getCourseError
+    getCourseError,
+    getCourseByIdError,
+    getCourseByIdPending,
+    getCourseByIdSuccess
 } from "./actions";
 
 export const CourseProvider = ({children}: {children: React.ReactNode}) => {
@@ -98,18 +101,33 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
             const response = await instance.post('/api/services/app/Course/Publish', { courseId, isPublished });
             return response.data;
         } catch (error) {
+            console.error('Failed to publish/unpublish course:', error);
             throw error;
         }
     };
 
-    const actions = {
+    const getCourseById = async (courseId: string) => {
+        dispatch(getCourseByIdPending());
+        const endpoint: string = `/services/app/Course/Get?Id=${courseId}`;
+        await instance.get(endpoint)
+            .then((response) => {
+                dispatch(getCourseByIdSuccess(response?.data.result))
+                console.log(response?.data)
+            }).catch((error) => {
+                dispatch(getCourseByIdError());
+                console.error(error);
+            })
+    };
+
+    const actions = useMemo(() => ({
         createCourse,
         getAllCourses,
         updateCourse,
         createLesson,
         getCourse,
-        setCoursePublished
-    };
+        setCoursePublished,
+        getCourseById
+    }), [createCourse, getAllCourses, updateCourse, createLesson, getCourse, setCoursePublished, getCourseById]);
 
     return (
         <CourseStateContext.Provider value={state}>
