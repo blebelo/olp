@@ -35,7 +35,7 @@ export interface ICourseActionContext {
     createLesson: (lesson: ILesson, courseId:string) => void;
     getCourse: (id: string) => void;
     updateCourse: (course: ICourse) => void;
-    setCoursePublished: (courseId: string, isPublished: boolean) => Promise<any>;
+    setCoursePublished: (courseId: string, isPublished: boolean) => Promise<unknown>;
     getCourseById: (courseId: string) => void;
 }
 

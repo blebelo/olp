@@ -14,6 +14,7 @@ import EditCourseModal from '@/components/modal/course-modal/EditCourseModal';
 const { Title, Paragraph } = Typography;
 
 const ManageCoursePage = () => {
+    const [saving, setSaving] = useState(false);
     const { styles } = useStyles();
     const { isError, course, isPending } = useCourseState();
     const { getCourse, createLesson, setCoursePublished, getCourseById, updateCourse } = useCourseActions();
@@ -38,13 +39,13 @@ const ManageCoursePage = () => {
         if (courseId) {
             getCourse(courseId);
         }
-    }, [courseId]);
+    }, [courseId, getCourse]);
 
     useEffect(() => {
         if (courseId) {
             getCourseById(courseId);
         }
-    }, [courseId]);
+    }, [courseId, getCourseById]);
 
     useEffect(() => {
         if (course?.lessons?.length) {
@@ -223,9 +224,19 @@ const ManageCoursePage = () => {
                     <Button
                         type="primary"
                         className={styles.completeButton}
+                        loading={saving}
                         onClick={async () => {
-                            await setCoursePublished(courseId, !course.isPublished);
-                            getCourse(courseId); // refetch course to update state
+                            setSaving(true);
+                            try {
+                                await setCoursePublished(courseId, !course.isPublished);
+                                await getCourseById(courseId); // refetch course to update state
+                                message.success(`Course ${!course.isPublished ? 'published' : 'unpublished'} successfully.`);
+                            } catch (error) {
+                                console.error(error);
+                                message.error('Failed to update course publish status.');
+                            } finally {
+                                setSaving(false);
+                            }
                         }}
                     >
                         {course.isPublished ? 'Unpublish' : 'Publish'}

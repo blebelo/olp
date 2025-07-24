@@ -1,29 +1,29 @@
-import { Card } from 'antd';
+import { Card} from 'antd';
 import Image from 'next/image';
 import { useStyles } from './Styles/style';
 
-export type CourseType = {
+export interface CourseType {
   id: string;
   name: string;
   topic: string;
   description: string;
   thumbnail: string;
   isPublished?: boolean;
+  onPublishToggle?: (courseId: string, newStatus: boolean) => void;
 };
 
 interface CourseCardProps {
   course: CourseType;
   onClick?: (course: CourseType) => void;
-  onPublishToggle?: (courseId: string, isPublished: boolean) => void;
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({ course, onClick, onPublishToggle }) => {
+const CourseCard: React.FC<CourseCardProps> = ({ course, onClick }) => {
   const { styles } = useStyles();
 
   return (
-    <Card 
+    <Card
       className={styles.courseCard}
-      hoverable 
+      hoverable
       onClick={() => onClick?.(course)}
       cover={
         <div style={{ position: 'relative', width: '100%', height: '10rem' }}>
@@ -43,18 +43,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onClick, onPublishToggl
           <>
             <p><strong>Topic:</strong> {course.topic}</p>
             <p>{course.description}</p>
-            <p><strong>Status:</strong> {course.isPublished ? 'Published' : 'Unpublished'}</p>
-            {typeof course.isPublished === 'boolean' && (
-              <button
-                className={styles.publishButton}
-                onClick={e => {
-                  e.stopPropagation();
-                  onPublishToggle?.(course.id, !course.isPublished);
-                }}
-              >
-                {course.isPublished ? 'Unpublish' : 'Publish'}
-              </button>
-            )}
+            {/* Publish/Unpublish button removed for dashboard view */}
           </>
         }
       />

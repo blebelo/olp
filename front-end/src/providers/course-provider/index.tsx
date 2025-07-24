@@ -1,5 +1,5 @@
 "use client"
-import { useContext, useReducer, useMemo } from "react";
+import { useContext, useReducer, useMemo, useCallback } from "react";
 import { axiosInstance } from "@/utils/axiosInstance";
 import { INITIAL_STATE, ICourse, CourseActionContext, CourseStateContext, ILesson} from "./context";
 import { CourseReducer } from "./reducer";
@@ -30,7 +30,7 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
     const instance = axiosInstance;
     const router = useRouter();
 
-    const updateCourse = async (course: ICourse) => {
+    const updateCourse = useCallback(async (course: ICourse) => {
         dispatch(updateCoursePending());
         const endpoint: string = '/services/app/Course/Update';
         await instance.put(endpoint, course)
@@ -42,9 +42,9 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
                 dispatch(updateCourseError());
                 console.error(error);
             });
-    };
+    }, [dispatch, instance, router]);
 
-    const createCourse = async (course: ICourse) => {
+    const createCourse = useCallback(async (course: ICourse) => {
         dispatch(createCoursePending());
         const endpoint:string = '/services/app/Course/Create';
         await instance.post(endpoint, course)
@@ -55,9 +55,9 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
                 dispatch(createCourseError());
                 console.error(error)
             })
-    };
+    }, [dispatch, instance, router]);
 
-    const getAllCourses = async() => {
+    const getAllCourses = useCallback(async() => {
         dispatch(getAllCoursesPending());
         const endpoint:string = '/services/app/Course/GetAllMinimal';
         await instance.get(endpoint)
@@ -68,9 +68,9 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
                 dispatch(getAllCoursesError());
                 console.error(error)
             })
-    };
+    }, [dispatch, instance]);
 
-    const createLesson = async(lesson: ILesson, courseId: string) => {
+    const createLesson = useCallback(async(lesson: ILesson, courseId: string) => {
         dispatch(createLessonPending());
         const endpoint : string = `/services/app/Course/AddLesson?courseId=${courseId}`;
         await instance.post(endpoint, lesson)
@@ -81,9 +81,9 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
                 dispatch(createLessonError());
                 console.error(error)
             })
-    };
+    }, [dispatch, instance]);
 
-    const getCourse = async(courseId: string) => {
+    const getCourse = useCallback(async(courseId: string) => {
         dispatch(getCoursePending());
         const endpoint : string = `/services/app/Course/Get?Id=${courseId}`;
         await instance.get(endpoint)
@@ -94,19 +94,22 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
                 dispatch(getCourseError());
                 console.error(error)
             })
-    };
+    }, [dispatch, instance]);
 
-    const setCoursePublished = async (courseId: string, isPublished: boolean) => {
+    const setCoursePublished = useCallback(async (courseId: string, isPublished: boolean) => {
         try {
-            const response = await instance.post('/api/services/app/Course/Publish', { courseId, isPublished });
+            const endpoint = isPublished
+                ? `/services/app/Course/Publish?courseId=${courseId}`
+                : `/services/app/Course/Unublish?courseId=${courseId}`;
+            const response = await instance.post(endpoint);
             return response.data;
         } catch (error) {
             console.error('Failed to publish/unpublish course:', error);
             throw error;
         }
-    };
+    }, [instance]);
 
-    const getCourseById = async (courseId: string) => {
+    const getCourseById = useCallback(async (courseId: string) => {
         dispatch(getCourseByIdPending());
         const endpoint: string = `/services/app/Course/Get?Id=${courseId}`;
         await instance.get(endpoint)
@@ -117,7 +120,7 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
                 dispatch(getCourseByIdError());
                 console.error(error);
             })
-    };
+    }, [dispatch, instance]);
 
     const actions = useMemo(() => ({
         createCourse,

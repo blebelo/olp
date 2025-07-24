@@ -43,7 +43,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         getAllCourses();
-    }, []);
+    }, [getAllCourses]);
     if (profile?.id) {
         sessionStorage.setItem('userId', profile.id);
     }
@@ -55,6 +55,17 @@ const Dashboard = () => {
         description: course.description ?? 'No description provided.',
         thumbnail: "/images/image2.jpg",
         isPublished: course.isPublished ?? false,
+        onPublishToggle: async (courseId: string, newStatus: boolean) => {
+            // Optimistically update UI
+            if (Array.isArray(courses)) {
+                const idx = courses.findIndex(c => c.id === courseId);
+                if (idx !== -1) {
+                    courses[idx].isPublished = newStatus;
+                }
+            }
+            await setCoursePublished(courseId, newStatus);
+            getAllCourses();
+        }
     }));
 
     const handleCreateCourse = () => {
@@ -113,14 +124,9 @@ const Dashboard = () => {
                 <Row gutter={[16, 16]}>
                     {mappedCourses.slice(0, 5).map((course) => (
                         <Col xs={24} sm={12} md={8} lg={6} key={course.id}>
-                            <CourseCard
-                                course={course}
-                                onPublishToggle={async (courseId, newStatus) => {
-                                    await setCoursePublished(courseId, newStatus);
-                                    getAllCourses();
-                                }}
-                            />
-                            <Link href={`/instructor/course/${course.id}`}></Link>
+                            <Link href={`/instructor/course/${course.id}`} style={{ display: 'block' }}>
+                                <CourseCard course={course} />
+                            </Link>
                         </Col>
                     ))}
                 </Row>
