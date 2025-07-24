@@ -46,7 +46,9 @@ const HomePage = () => {
     }
     };
 
-    const mappedCourses: CourseType[] = (courses || []).map((course: ICourse) => ({
+    const mappedCourses: CourseType[] = (courses || [])
+    .filter(course => course.isPublished)
+    .map((course: ICourse) => ({
         id: course.id ?? 'unknown-id',
         name: course.title ?? 'Untitled Course',
         topic: course.topic ?? 'General',
