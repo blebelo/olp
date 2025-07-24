@@ -15,7 +15,7 @@ const { Title, Paragraph } = Typography;
 const ManageCoursePage = () => {
     const { styles } = useStyles();
     const { isError, course, isPending } = useCourseState();
-    const { getCourse, createLesson } = useCourseActions();
+    const { getCourse, createLesson, setCoursePublished } = useCourseActions();
     const [isAddLesson, setIsAddLesson] = useState(false);
     const [form] = Form.useForm();
     const [isAddQuiz, setIsAddQuiz] = useState(false);
@@ -30,6 +30,35 @@ const ManageCoursePage = () => {
 
     const params = useParams();
     const courseId = params?.course as string;
+
+    // Dummy data for testing
+    const dummyCourses = [
+        {
+            id: 'dummy-1',
+            title: 'React Basics',
+            isPublished: true,
+            lessons: [
+                { id: 'l1', title: 'Intro', description: 'React intro', videoLink: '', studyMaterial: [], isCompleted: true },
+                { id: 'l2', title: 'JSX', description: 'JSX lesson', videoLink: '', studyMaterial: [], isCompleted: false }
+            ]
+        },
+        {
+            id: 'dummy-2',
+            title: 'Node Fundamentals',
+            isPublished: false,
+            lessons: [
+                { id: 'l3', title: 'Setup', description: 'Node setup', videoLink: '', studyMaterial: [], isCompleted: false }
+            ]
+        },
+        {
+            id: 'dummy-3',
+            title: 'CSS Mastery',
+            isPublished: true,
+            lessons: [
+                { id: 'l4', title: 'Selectors', description: 'CSS selectors', videoLink: '', studyMaterial: [], isCompleted: true }
+            ]
+        }
+    ];
 
     useEffect(() => {
         if (courseId) {
@@ -95,6 +124,36 @@ const ManageCoursePage = () => {
     ];
 
     if (isPending || !course) {
+        // For testing
+        if (!course) {
+            return (
+                <div className={styles.pageContainer}>
+                    <h2 className={styles.header}>Manage Courses (Dummy Data)</h2>
+                    {dummyCourses.map((c) => (
+                        <div key={c.id} style={{ marginBottom: '2rem', border: '1px solid #eee', padding: '1rem', borderRadius: '8px' }}>
+                            <h1 className={styles.secondary}>Course Name: {c.title}</h1>
+                            <div>
+                                <Button type="primary" onClick={async () => {
+                                    await setCoursePublished(c.id, !c.isPublished);
+                                    c.isPublished = !c.isPublished;
+                                    alert(`Course is now ${c.isPublished ? 'published' : 'unpublished'}`);
+                                }}>
+                                    {c.isPublished ? 'Unpublish' : 'Publish'}
+                                </Button>
+                            </div>
+                            <div style={{ marginTop: '1rem' }}>
+                                <strong>Lessons:</strong>
+                                <ul>
+                                    {c.lessons.map(lesson => (
+                                        <li key={lesson.id}>{lesson.title} - {lesson.description}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
         return <Spin fullscreen />;
     }
 
@@ -197,8 +256,15 @@ const ManageCoursePage = () => {
                         setQuestions={setQuizQuestions}
                     />
 
-                    <Button type="primary" className={styles.completeButton}>
-                        Publish Course
+                    <Button
+                        type="primary"
+                        className={styles.completeButton}
+                        onClick={async () => {
+                            await setCoursePublished(courseId, !course.isPublished);
+                            getCourse(courseId); // refetch course to update state
+                        }}
+                    >
+                        {course.isPublished ? 'Unpublish' : 'Publish'}
                     </Button>
                 </main>
             </div>

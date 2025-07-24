@@ -36,7 +36,7 @@ const Dashboard = () => {
     const { styles } = useStyles();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [form] = Form.useForm();
-    const { createCourse, getAllCourses } = useCourseActions();
+    const { createCourse, getAllCourses, setCoursePublished } = useCourseActions();
     const { profile } = useInstructorProfileState();
     const { isError } = useCourseState();
     const { courses } = useCourseState();
@@ -54,6 +54,7 @@ const Dashboard = () => {
         topic: course.topic ?? 'General',
         description: course.description ?? 'No description provided.',
         thumbnail: "/images/image2.jpg",
+        isPublished: course.isPublished ?? false,
     }));
 
     const handleCreateCourse = () => {
@@ -112,12 +113,14 @@ const Dashboard = () => {
                 <Row gutter={[16, 16]}>
                     {mappedCourses.slice(0, 5).map((course) => (
                         <Col xs={24} sm={12} md={8} lg={6} key={course.id}>
-
-                            <Link href={`/instructor/course/${course.id}`}>
-                                <CourseCard course={course}>
-                                </CourseCard>
-                            </Link>
-
+                            <CourseCard
+                                course={course}
+                                onPublishToggle={async (courseId, newStatus) => {
+                                    await setCoursePublished(courseId, newStatus);
+                                    getAllCourses();
+                                }}
+                            />
+                            <Link href={`/instructor/course/${course.id}`}></Link>
                         </Col>
                     ))}
                 </Row>
