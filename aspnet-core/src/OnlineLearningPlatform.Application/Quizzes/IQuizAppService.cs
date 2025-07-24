@@ -7,6 +7,5 @@ namespace OnlineLearningPlatform.Quizzes
 {
      public interface IQuizAppService: IAsyncCrudAppService<QuizDto, Guid, PagedAndSortedResultRequestDto, CreateQuizDto, QuizDto>
     {
-        
     }
 }

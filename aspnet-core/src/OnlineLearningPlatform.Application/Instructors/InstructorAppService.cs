@@ -160,7 +160,7 @@ namespace OnlineLearningPlatform.Instructors
                             : new List<LessonDto>(),
                         Quiz = course.Quiz != null
                             ? ObjectMapper.Map<QuizDto>(course.Quiz)
-                            : new QuizDto { }
+                            : null
                     };
 
                     listOfCourses.Add(dto);
