@@ -19,7 +19,7 @@ export interface IStudentEnrollmentStateContext {
     enrolledCourses?: ICourseDtos[];
 }
 export interface IStudentEnrollmentActionContext{
-    enrollStudentInCourse: (studentId: string, courseId: string) => void;
+    enrollStudentInCourse: (studentId?: string, courseId?: string) => void;
     unenrollStudentFromCourse: (studentId: string, courseId: string) => void;
     getStudentEnrolledCourses: (studentId: string) => void;
 }

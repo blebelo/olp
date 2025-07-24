@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AuthProvider } from "@/providers/auth-provider";
 import { CourseProvider } from "@/providers/course-provider";
 import { InstructorProvider } from "@/providers/instructorProvider";
+import { StudentEnrollmentProvider } from "@/providers/enrollment-provider";
 import "./globals.css";
 
 
@@ -18,6 +19,7 @@ export default function RootLayout({
   return (
     <AuthProvider>
       <InstructorProvider>
+        <StudentEnrollmentProvider>
         <CourseProvider>
           <html lang="en">
             <body>
@@ -25,6 +27,7 @@ export default function RootLayout({
             </body>
           </html>
         </CourseProvider>
+        </StudentEnrollmentProvider>
       </InstructorProvider>
     </AuthProvider>
   );

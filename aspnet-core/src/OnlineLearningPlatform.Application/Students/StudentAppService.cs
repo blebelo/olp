@@ -118,8 +118,10 @@ namespace OnlineLearningPlatform.Students
             if(!student.EnrolledCourses.Contains(course))
             {
                 student.EnrolledCourses.Add(course);
-                await _studentRepository.UpdateAsync(student);
+                var results = await _studentRepository.UpdateAsync(student);
             }
+
+            
         }
         public async Task UnenrollStudentFromCourseAsync(Guid studentId, Guid courseId)
         {
@@ -166,6 +168,6 @@ namespace OnlineLearningPlatform.Students
                 throw new UserFriendlyException("An error occurred while retrieving enrolled courses.");
             }
         }
-
+         
     }
 }

@@ -8,6 +8,7 @@ export interface ICourse {
     isPublished?: boolean,
     instructorId?: string,
     lessons?: ILesson[]
+    
 }
 
 export interface ILesson{
