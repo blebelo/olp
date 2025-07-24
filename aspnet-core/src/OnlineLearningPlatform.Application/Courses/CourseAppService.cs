@@ -79,7 +79,7 @@ namespace OnlineLearningPlatform.Courses
         public override async Task<CourseDto> GetAsync(EntityDto<Guid> input)
         {
             var item = await _courseRepository
-                .GetAllIncluding(c => c.Instructor, c => c.EnrolledStudents, c => c.Lessons)
+                .GetAllIncluding(c => c.Instructor, c => c.EnrolledStudents, c => c.Lessons, c => c.Quiz)
                 .FirstOrDefaultAsync(c => c.Id == input.Id);
 
             var dto = new CourseDto
@@ -109,7 +109,7 @@ namespace OnlineLearningPlatform.Courses
         public override async Task<PagedResultDto<CourseDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
         {
             var query = _courseRepository
-                .GetAllIncluding(c => c.Instructor, c => c.EnrolledStudents, c => c.Lessons);
+                .GetAllIncluding(c => c.Instructor, c => c.EnrolledStudents, c => c.Lessons, c => c.Quiz);
 
             var totalCount = await query.CountAsync();
 
@@ -141,7 +141,7 @@ namespace OnlineLearningPlatform.Courses
                             : new List<LessonDto>(),
                         Quiz = item.Quiz != null
                             ? ObjectMapper.Map<QuizDto>(item.Quiz)
-                            : null
+                            : new QuizDto { }
                     };
 
                     listOutput.Add(dto);
