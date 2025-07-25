@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useContext } from "react";
-import { Typography, Button, Row, Col, message } from "antd";
+import { Typography, Row, Col, message } from "antd";
 import { useStyles } from "./Styles/style";
 import CourseCard, { CourseType } from "@/components/course-card/CourseCard";
 import { useCourseActions, useCourseState } from "@/providers/course-provider";
