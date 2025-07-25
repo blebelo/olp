@@ -13,14 +13,6 @@ namespace OnlineLearningPlatform.Tests.Instructors
 {
     public class InstructorAppService_Tests
     {
-        [Fact]
-        public void SimpleTest()
-        {
-            int x = 4;
-            int y = 6;
-            int sum = x + y;
-            Assert.Equal(10, sum);
-        }
 
         [Fact]
         public async Task CreateAsync_ReturnsInstructorDto()

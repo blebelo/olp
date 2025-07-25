@@ -12,14 +12,6 @@ namespace OnlineLearningPlatform.Tests.Students
 {
     public class StudentAppService_Tests
     {
-        [Fact]
-        public void SimpleTest()
-        {
-            int a = 2;
-            int b = 3;
-            int sum = a + b;
-            Assert.Equal(5, sum);
-        }
 
         [Fact]
         public async Task CreateAsync_ReturnsStudentDto()
