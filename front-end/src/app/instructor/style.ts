@@ -90,6 +90,7 @@ export const useStyles = createStyles({
     font-size: 1rem !important;
     font-weight: 500 !important;
     border-radius: 0.5rem !important;
+    margin-bottom: 1rem;
   `,
   sectionTitle: css`
     font-size: 2rem;

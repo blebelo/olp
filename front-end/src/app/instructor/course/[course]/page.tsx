@@ -182,7 +182,7 @@ const ManageCoursePage = () => {
                             </div>
 
                             <div className={styles.materialWrapper}>
-                                <strong>Materials:</strong>
+                                <strong>Github Links:</strong>
                                 <div className={styles.materialLink}>
                                     {Array.isArray(activeLesson.studyMaterial)
                                         ? activeLesson.studyMaterial.map((material) => (
@@ -199,12 +199,6 @@ const ManageCoursePage = () => {
                         <Paragraph>No lesson selected</Paragraph>
                     )}
 
-                    <Button
-                        type="primary"
-                        className={styles.completeButton}
-                    >
-                        Edit Lesson
-                    </Button>
                     <Button
                         type="primary"
                         className={styles.completeButton}
@@ -241,7 +235,7 @@ const ManageCoursePage = () => {
                     >
                         {course.isPublished ? 'Unpublish' : 'Publish'}
                     </Button>
-                     <Button type="primary" onClick={() => setIsEditModalVisible(true)} style={{ marginTop: 20 }}>
+                     <Button type="primary" className={styles.completeButton} onClick={() => setIsEditModalVisible(true)} style={{ marginTop: 20 }}>
                         Edit Course
                     </Button>
 

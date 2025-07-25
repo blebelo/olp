@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useContext } from "react";
-import { Typography, Button, Row, Col, message } from "antd";
+import { Typography, Row, Col, message } from "antd";
 import { useStyles } from "./Styles/style";
 import CourseCard, { CourseType } from "@/components/course-card/CourseCard";
 import { useCourseActions, useCourseState } from "@/providers/course-provider";
@@ -73,13 +73,7 @@ const HomePage = () => {
            enrollStudentInCourse(studentId, course?.id);
            message.success("Enrolled successfully!");
     };
-    const mappedEnrolledCourses: CourseType[] = (enrolledCourses || []).map((course: ICourse) => ({
-         id: course.id ?? 'unknown-id',
-         name: course.title ?? 'Untitled Course',
-         topic: course.topic ?? 'General',
-         description: course.description ?? 'No description provided.',
-         thumbnail: "/images/image2.jpg",
-    }));
+
 
     const mappedCourses: CourseType[] = (courses || [])
         .filter((course: ICourse) => course.isPublished)
@@ -119,25 +113,10 @@ const modalCourse: Course | null = course && selectedCourse?.id === course.id
                     <Typography.Paragraph className={styles.subtitleText}>
                         Learn from expert instructors. Build your future today.
                     </Typography.Paragraph>
-                    <Button className={styles.primaryButton}>Browse All Courses</Button>
                 </div>
 
                 {/* only displays enrolled courses */}
-                {mappedEnrolledCourses.length > 0 && (
-                        <>
-                            <Typography.Title level={3} className={styles.sectionTitle}>
-                                My Enrolled Courses
-                            </Typography.Title>
-                            <Row gutter={[16, 16]}>
-                                {mappedEnrolledCourses.map((course) => (
-                                    <Col xs={24} sm={12} md={8} lg={6} key={course.id}>
-                                    <CourseCard course={course} onClick={handleCourseClick} />
-                                    </Col>
-                                ))}
-                            </Row>
-                        </>
-                    )
-                }
+
                 <Typography.Title level={3} className={styles.sectionTitle}>
                     All Courses
                 </Typography.Title>
