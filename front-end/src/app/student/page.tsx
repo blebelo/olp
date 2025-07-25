@@ -8,6 +8,7 @@ import { ICourse } from "@/providers/course-provider/context";
 import CourseModal, { Course } from "@/components/modal/course-modal/CourseModal";
 import { StudentProfileActionContext, StudentProfileStateContext } from "@/providers/studentProvider/context";
 import { useStudentEnrollmentActions, useStudentEnrollmentState } from "@/providers/enrollment-provider";
+import { useRouter } from "next/navigation";
 
 const HomePage = () => {
     const { styles } = useStyles();
@@ -17,7 +18,7 @@ const HomePage = () => {
     const {getProfile} = useContext(StudentProfileActionContext)|| {};
     const { enrollStudentInCourse, getStudentEnrolledCourses } = useStudentEnrollmentActions();
     const {enrolledCourses} = useStudentEnrollmentState();
-
+    const router = useRouter();
     const studentId = sessionStorage.getItem("userId") ?? '';
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
@@ -30,10 +31,6 @@ const HomePage = () => {
         getProfile?.();
     }, []);
 
-// useEffect(() => {
-//     const storedId = sessionStorage.getItem("Id");
-//      getStudentEnrolledCourses(Number(storedId));
-//   }, [])
   useEffect(() => {
         const storedId = sessionStorage.getItem("Id");
         if (storedId !== null) {
@@ -45,6 +42,13 @@ const HomePage = () => {
     }, []);
 
   const handleCourseClick = (course: CourseType) => {
+
+    const isEnrolled = enrolledCourses?.some((enrolled) => enrolled.id === course.id);
+    if(isEnrolled){
+        router.push(`/student/enrolled-course/${course.id}`); 
+
+        return;
+    }
         setSelectedCourse({
             id: course.id,
             title: course.name,
