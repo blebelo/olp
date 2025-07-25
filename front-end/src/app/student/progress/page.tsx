@@ -48,7 +48,7 @@ export default function StudentProgressPage() {
                             <Paragraph className={styles.courseDescription}>{course.description}</Paragraph>
                         </div>
                             <Button type="primary" className={styles.actionButton} onClick={() => handleCourseClick(course)}>
-                                {/* {course.completion === 100 ? 'View Course' : 'Continue Learning'} */}
+                               
                                 Continue
                             </Button>                   
                     </div>
