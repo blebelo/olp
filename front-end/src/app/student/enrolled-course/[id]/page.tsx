@@ -1,14 +1,30 @@
 'use client';
 
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { Button, Typography } from 'antd';
 import { CheckCircleFilled, FileTextOutlined } from '@ant-design/icons';
 import { useStyles } from '../Style/style';
-import { initialLessons } from '@/utils/sample-courses/lessons';
-import { StudentEnrollmentStateContext } from '@/providers/enrollment-provider/context';
 import { useCourseActions, useCourseState } from '@/providers/course-provider';
 const { Title, Paragraph } = Typography;
+
+const getEmbeddedURL = (url: string) : string => {
+  if(!url) return '';
+
+  // YouTube standard format
+  const youtubeMatch = url.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/);
+  if (youtubeMatch?.[1]) {
+    return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+  }
+
+  // YouTube short link format
+  const shortMatch = url.match(/(?:https?:\/\/)?youtu\.be\/([^?&]+)/);
+  if (shortMatch?.[1]) {
+    return `https://www.youtube.com/embed/${shortMatch[1]}`;
+  }
+
+  return url;
+}
 
 export default function CourseLessonsPage() {
   const { styles } = useStyles();
@@ -17,12 +33,7 @@ export default function CourseLessonsPage() {
   const { course } = useCourseState();
   const [ activeLessonIndex, setActiveLessonIndex ] = useState(0);
   const [ completedLessons, setCompletedLessons ] = useState<number[]>([]);
-
-  const {enrolledCourses} = useContext(StudentEnrollmentStateContext);
-  
- // const [lessons, setLessons] = useState(initialLessons);
-  //const [activeLesson, setActiveLesson] = useState(initialLessons[0]);
-  const [selectdCourseTitle, setSelectedCourseTitle] = useState('');
+  const [selectedCourseTitle, setSelectedCourseTitle] = useState('');
 
 useEffect(() => {
   if (id) {
@@ -30,6 +41,11 @@ useEffect(() => {
   }
 }, [id]);
 
+useEffect(() => {
+  if (course?.title) {
+    setSelectedCourseTitle(course.title);
+  }
+}, [course]);
  // Mark a lesson as completed
   const markLessonComplete = (index: number) => {
     setCompletedLessons(prev => [...prev, index]);
@@ -37,20 +53,13 @@ useEffect(() => {
   const lessons = course?.lessons || [];
   const activeLesson = lessons[activeLessonIndex];
   
-  // const markLessonComplete = (id: number) => {
-  //   setLessons(prev =>
-  //     prev.map(lesson =>
-  //       lesson.id === id ? { ...lesson, isCompleted: true } : lesson
-  //     )
-  //   );
-  // };
 
   return (
     <div className={styles.pageContainer}>
       <div className={styles.decorativeCircle} />
       <div className={styles.decorativeSquare} />
 
-      <h1 className={styles.header}>Course Name: {selectdCourseTitle ?? 'Loading...'}</h1>
+      <h1 className={styles.header}>Course Name: {selectedCourseTitle ?? 'Loading...'}</h1>
 
       <div className={styles.content}>
         <aside className={styles.sidebar}>
@@ -83,7 +92,7 @@ useEffect(() => {
 
           <div className={styles.videoWrapper}>
             <iframe
-              src={activeLesson?.videoLink}
+              src={getEmbeddedURL(activeLesson?.videoLink || '')}
               style={{ border: 'none' }}
               allow="autoplay; encrypted-media"
               allowFullScreen

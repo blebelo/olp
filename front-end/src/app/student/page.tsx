@@ -6,7 +6,7 @@ import CourseCard, { CourseType } from "@/components/course-card/CourseCard";
 import { useCourseActions, useCourseState } from "@/providers/course-provider";
 import { ICourse } from "@/providers/course-provider/context";
 import CourseModal, { Course } from "@/components/modal/course-modal/CourseModal";
-import { StudentProfileActionContext, StudentProfileStateContext } from "@/providers/studentProvider/context";
+import { StudentProfileActionContext } from "@/providers/studentProvider/context";
 import { useStudentEnrollmentActions, useStudentEnrollmentState } from "@/providers/enrollment-provider";
 import { useRouter } from "next/navigation";
 
@@ -14,7 +14,6 @@ const HomePage = () => {
     const { styles } = useStyles();
     const { getAllCourses, getCourse } = useCourseActions();
     const { courses, course } = useCourseState();
-    const {profile} = useContext(StudentProfileStateContext);
     const {getProfile} = useContext(StudentProfileActionContext)|| {};
     const { enrollStudentInCourse, getStudentEnrolledCourses } = useStudentEnrollmentActions();
     const {enrolledCourses} = useStudentEnrollmentState();
