@@ -13,6 +13,14 @@ using OnlineLearningPlatform.Domain.Quizzes;
 using OnlineLearningPlatform.Domain.Instructors;
 using OnlineLearningPlatform.Domain.Entities;
 using OnlineLearningPlatform.Courses;
+using System.Linq;
+using System.Linq.Expressions;
+using Abp.Linq.Extensions;
+using Abp.AutoMapper;
+using Abp.Application.Services.Dto;
+using OnlineLearningPlatform.Lessons.Dto;
+using OnlineLearningPlatform.Quizzes.Dto;
+using OnlineLearningPlatform.Instructors.Dto;
 
 namespace OnlineLearningPlatform.Tests.Courses
 {
