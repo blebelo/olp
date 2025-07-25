@@ -6,7 +6,7 @@ import CourseCard, { CourseType } from "@/components/course-card/CourseCard";
 import { useCourseActions, useCourseState } from "@/providers/course-provider";
 import { ICourse } from "@/providers/course-provider/context";
 import CourseModal, { Course } from "@/components/modal/course-modal/CourseModal";
-import { StudentProfileActionContext } from "@/providers/studentProvider/context";
+import { StudentProfileActionContext, StudentProfileStateContext } from "@/providers/studentProvider/context";
 import { useStudentEnrollmentActions, useStudentEnrollmentState } from "@/providers/enrollment-provider";
 import { useRouter } from "next/navigation";
 
@@ -16,6 +16,7 @@ const HomePage = () => {
     const { courses, course } = useCourseState();
     const {getProfile} = useContext(StudentProfileActionContext)|| {};
     const { enrollStudentInCourse, getStudentEnrolledCourses } = useStudentEnrollmentActions();
+    const {profile} = useContext(StudentProfileStateContext);
     const {enrolledCourses} = useStudentEnrollmentState();
     const router = useRouter();
     const studentId = sessionStorage.getItem("userId") ?? '';
@@ -28,6 +29,7 @@ const HomePage = () => {
 
     useEffect(() => {
         getProfile?.();
+        if (profile?.id) sessionStorage.setItem('userId', profile.id);
     }, []);
 
   useEffect(() => {
