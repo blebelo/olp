@@ -81,7 +81,6 @@ const QuizPage: React.FC = () => {
 
   const handleSubmit = () => {
     console.log("Submitted Answers:", answers);
-    // Add actual submit logic (API call, etc.)
   };
 
   return (

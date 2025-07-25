@@ -8,7 +8,19 @@ export interface ICourse {
     isPublished?: boolean,
     instructorId?: string,
     lessons?: ILesson[]
-    
+}
+
+export interface IQuiz {
+  name: string;
+  description: string;
+  duration: string;
+  passingScore: number;
+  courseId: string;
+  questions: string[];
+  answerOptions: {
+    correctIndex: number;
+    possibleAnswers: string[];
+  }[];
 }
 
 export interface ILesson{
@@ -38,6 +50,7 @@ export interface ICourseActionContext {
     updateCourse: (course: ICourse) => void;
     setCoursePublished: (courseId: string, isPublished: boolean) => Promise<unknown>;
     getCourseById: (courseId: string) => void;
+    createQuiz: (quiz: IQuiz, courseId: string) => void
 }
 
 export const INITIAL_STATE: ICourseStateContext = {

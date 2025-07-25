@@ -56,7 +56,6 @@ const Dashboard = () => {
         thumbnail: "/images/image2.jpg",
         isPublished: course.isPublished ?? false,
         onPublishToggle: async (courseId: string, newStatus: boolean) => {
-            // Optimistically update UI
             if (Array.isArray(courses)) {
                 const idx = courses.findIndex(c => c.id === courseId);
                 if (idx !== -1) {

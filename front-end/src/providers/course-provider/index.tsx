@@ -1,7 +1,7 @@
 "use client"
 import { useContext, useReducer, useMemo, useCallback } from "react";
 import { axiosInstance } from "@/utils/axiosInstance";
-import { INITIAL_STATE, ICourse, CourseActionContext, CourseStateContext, ILesson} from "./context";
+import { INITIAL_STATE, ICourse, CourseActionContext, CourseStateContext, ILesson, IQuiz} from "./context";
 import { CourseReducer } from "./reducer";
 import { useRouter } from "next/navigation";
 import { 
@@ -22,7 +22,9 @@ import {
     getCourseError,
     getCourseByIdError,
     getCourseByIdPending,
-    getCourseByIdSuccess
+    getCourseByIdSuccess,
+    createQuizSuccess,
+    createQuizPending
 } from "./actions";
 
 export const CourseProvider = ({children}: {children: React.ReactNode}) => {
@@ -57,6 +59,19 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
                 console.error(error)
             })
     }, [dispatch, instance, router]);
+
+    const createQuiz = useCallback(async (quiz: IQuiz, courseId: string) => {
+        dispatch(createQuizPending());
+        const endpoint: string = `/services/app/Course/AddQuiz/?courseId=${courseId}`;
+        await instance.post(endpoint, quiz)
+            .then((response) => {
+                dispatch(createQuizSuccess(response?.data.result))
+                console.log(response?.data)
+            }).catch((error) => {
+                dispatch(createCourseError());
+                console.error(error);
+            })
+    }, [dispatch, instance]);
 
     const getAllCourses = useCallback(async() => {
         dispatch(getAllCoursesPending());
@@ -130,8 +145,9 @@ export const CourseProvider = ({children}: {children: React.ReactNode}) => {
         createLesson,
         getCourse,
         setCoursePublished,
-        getCourseById
-    }), [createCourse, getAllCourses, updateCourse, createLesson, getCourse, setCoursePublished, getCourseById]);
+        getCourseById,
+        createQuiz
+    }), [createCourse, getAllCourses, updateCourse, createLesson, getCourse, setCoursePublished, getCourseById, createQuiz]);
 
     return (
         <CourseStateContext.Provider value={state}>

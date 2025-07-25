@@ -97,5 +97,18 @@ export const CourseReducer = handleActions<ICourseStateContext, ICourseStateCont
     [CourseActionEnum.getCourseByIdError]: (state, action) => ({
         ...state,
         ...action.payload,
-    })
+    }),
+    [CourseActionEnum.createQuizPending]: (state, action) => ({
+    ...state,
+    ...action.payload,
+    }),
+    [CourseActionEnum.createQuizSuccess]: (state, action) => ({
+        ...state,
+        ...action.payload,
+    }),
+    [CourseActionEnum.createQuizError]: (state, action) => ({
+        ...state,
+        ...action.payload,
+    }),
+
 }, INITIAL_STATE)
