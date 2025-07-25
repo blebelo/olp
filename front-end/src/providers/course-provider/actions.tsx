@@ -1,5 +1,5 @@
 import { createAction } from "redux-actions";
-import { ICourse, ICourseStateContext, ILesson } from "./context";
+import { ICourse, ICourseStateContext, ILesson, IQuiz } from "./context";
 // Publish course
 // Publish or unpublish course
 
@@ -42,6 +42,12 @@ export enum CourseActionEnum {
     getCourseByIdPending = "GET_COURSE_BY_ID_PENDING",
     getCourseByIdSuccess = "GET_COURSE_BY_ID_SUCCESS",
     getCourseByIdError = "GET_COURSE_BY_ID_ERROR",
+
+// CREATE QUIZ
+createQuizPending = "CREATE_QUIZ_PENDING",
+createQuizSuccess = "CREATE_QUIZ_SUCCESS",
+createQuizError = "CREATE_QUIZ_ERROR",
+
 }
 
 
@@ -293,6 +299,38 @@ export const getCourseByIdSuccess = createAction<ICourseStateContext, ICourse>(
 
 export const getCourseByIdError = createAction<ICourseStateContext>(
     CourseActionEnum.getCourseByIdError, () => (
+        {
+            isPending: false,
+            isSuccess: false,
+            isError: true,
+        }
+    )
+)
+
+// Create Quiz
+export const createQuizPending = createAction<ICourseStateContext>(
+    CourseActionEnum.createQuizPending, () => (
+        {
+            isPending: true,
+            isSuccess: false,
+            isError: false,
+        }
+    )
+)
+
+export const createQuizSuccess = createAction<ICourseStateContext, IQuiz>(
+    CourseActionEnum.createQuizSuccess, (quiz: IQuiz) => (
+        {
+            isPending: false,
+            isSuccess: true,
+            isError: false,
+            quiz 
+        }
+    )
+)
+
+export const createQuizError = createAction<ICourseStateContext>(
+    CourseActionEnum.createQuizError, () => (
         {
             isPending: false,
             isSuccess: false,

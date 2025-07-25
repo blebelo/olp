@@ -5,10 +5,10 @@ import { CheckCircleFilled, FileTextOutlined } from '@ant-design/icons';
 import { useStyles } from './Style/style';
 import type { FieldConfig } from "@/components/modal/ReusableModalForm";
 import ReusableModalForm from '@/components/modal/ReusableModalForm';
-import QuizModalForm, { QuizQuestion } from '@/components/modal/quiz-modal/QuizModalForm';
+import QuizModalForm from '@/components/modal/quiz-modal/QuizModalForm';
 import { useParams } from 'next/navigation';
 import { useCourseActions, useCourseState } from '@/providers/course-provider';
-import { ICourse, ILesson } from '@/providers/course-provider/context';
+import { ICourse, ILesson, IQuiz } from '@/providers/course-provider/context';
 import EditCourseModal from '@/components/modal/course-modal/EditCourseModal';
 
 const { Title, Paragraph } = Typography;
@@ -16,21 +16,24 @@ const { Title, Paragraph } = Typography;
 const ManageCoursePage = () => {
     const [saving, setSaving] = useState(false);
     const { styles } = useStyles();
+    const params = useParams();
     const { isError, course, isPending } = useCourseState();
-    const { getCourse, createLesson, setCoursePublished, getCourseById, updateCourse } = useCourseActions();
+    const { getCourse, createLesson, setCoursePublished, getCourseById, updateCourse, createQuiz } = useCourseActions();
     const [isAddLesson, setIsAddLesson] = useState(false);
     const [form] = Form.useForm();
     const [isAddQuiz, setIsAddQuiz] = useState(false);
     const [activeLesson, setActiveLesson] = useState<ILesson | null>(null);
-    const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([
-        {
-            question: "",
-            options: ["", "", "", ""],
-            correctAnswer: 0,
-        },
-    ]);
+    const [QuizData, setQuizData] = useState<IQuiz>({
+        name: "",
+        description: "",
+        duration: "",
+        passingScore: 70,
+        courseId: params?.course as string,
+        questions: [],
+        answerOptions: []
+    });
 
-    const params = useParams();
+    
     const courseId = params?.course as string;
 
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
@@ -58,15 +61,17 @@ const ManageCoursePage = () => {
       await updateCourse({ ...updatedCourse, id: courseId });
       message.success('Course updated successfully');
       setIsEditModalVisible(false);
-      getCourseById(courseId); // Refresh UI
+      getCourseById(courseId); 
     } catch (error) {
         console.error(error);
       message.error('Failed to update course');
     }
   };
 
-    const handleCreateQuiz = (questions: QuizQuestion[]) => {
-        console.log("Quiz submitted:", questions);
+    
+    const handleCreateQuiz = (quiz: IQuiz) => {
+        createQuiz(quiz, courseId)
+        console.log("Quiz submitted:", quiz);
         setIsAddQuiz(false);
     };
 
@@ -217,8 +222,8 @@ const ManageCoursePage = () => {
                         visible={isAddQuiz}
                         onCancel={() => setIsAddQuiz(false)}
                         onSubmit={handleCreateQuiz}
-                        questions={quizQuestions}
-                        setQuestions={setQuizQuestions}
+                        quiz={QuizData}
+                        setQuiz={setQuizData}
                     />
 
                     <Button
