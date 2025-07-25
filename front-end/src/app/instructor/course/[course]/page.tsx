@@ -67,7 +67,6 @@ const ManageCoursePage = () => {
       message.error('Failed to update course');
     }
   };
-
     
     const handleCreateQuiz = (quiz: IQuiz) => {
         createQuiz(quiz, courseId)

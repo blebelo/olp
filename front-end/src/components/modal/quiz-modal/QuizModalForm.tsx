@@ -65,7 +65,7 @@ const QuizModalForm: React.FC<QuizModalFormProps> = ({
     setQuiz(updatedQuiz);
   };
 
-  const updateQuizField = (field: keyof IQuiz, value: any) => {
+  const updateQuizField = (field: keyof IQuiz, value: IQuiz[keyof IQuiz]) => {
     setQuiz({ ...currentQuiz, [field]: value });
   };
 
