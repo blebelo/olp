@@ -7,6 +7,7 @@ using OnlineLearningPlatform.Authorization.Users;
 using OnlineLearningPlatform.Courses.Dto;
 using OnlineLearningPlatform.Domain.Courses;
 using OnlineLearningPlatform.Domain.Students;
+using OnlineLearningPlatform.EmailService;
 using OnlineLearningPlatform.Students.Dto;
 using Sprache;
 using System;
@@ -22,13 +23,16 @@ namespace OnlineLearningPlatform.Students
         private readonly IRepository<Course, Guid> _courseRepository;
         private readonly IRepository<User, long> _userRepository;
         private readonly StudentManager _studentManager;
+        private readonly EmailAdminService _emailService;
 
-        public StudentAppService(IRepository<Student, Guid> studentRepository, StudentManager studentManager, UserManager userManager, IRepository<Course, Guid> courseRepository)
+        public StudentAppService(IRepository<Student, Guid> studentRepository, StudentManager studentManager, UserManager userManager, IRepository<Course, Guid> courseRepository, EmailAdminService emailService)
             : base(studentRepository)
         {
             _studentRepository = studentRepository;
             _studentManager = studentManager;
             _courseRepository = courseRepository;
+            _emailService = emailService;
+
         }
         public override async Task<StudentDto> CreateAsync(CreateStudentDto input)
         {
@@ -44,12 +48,33 @@ namespace OnlineLearningPlatform.Students
                     input.AcademicLevel
                 );
 
+                // Send welcome email after successful creation
+                await SendWelcomeEmailAsync(input.Email, input.Name, "Student");
+
                 return ObjectMapper.Map<StudentDto>(newStudent);
             }
             catch (Exception ex)
             {
                 throw new UserFriendlyException("An error occurred while creating the student. Please try again.");
             }
+        }
+
+
+        private async Task SendWelcomeEmailAsync(string email, string name, string role)
+        {
+            var subject = "Welcome to Your Learning Journey! 🚀";
+            var message = $@"Hey {name}! 
+
+            Welcome to the future of education! You've just stepped into a realm where knowledge meets innovation, and learning transcends traditional boundaries. 
+
+            As an Student, you're not just joining a platform – you're becoming part of a revolutionary movement that's reshaping how we share wisdom, inspire minds, and unlock human potential. Get ready to elevate your teaching to dimensions you never imagined possible.
+
+            Your mission to transform lives through learning starts now. Let's create some educational magic together! ✨
+
+            Stay inspired, stay innovative!
+            The OLP Team";
+
+            await _emailService.SendEmail(subject, email, name, message);
         }
 
 

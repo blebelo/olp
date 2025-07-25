@@ -13,6 +13,7 @@ namespace OnlineLearningPlatform
         public override void PreInitialize()
         {
             Configuration.Authorization.Providers.Add<OnlineLearningPlatformAuthorizationProvider>();
+
         }
 
         public override void Initialize()
@@ -26,5 +27,8 @@ namespace OnlineLearningPlatform
                 cfg => cfg.AddMaps(thisAssembly)
             );
         }
+
+
+
     }
 }

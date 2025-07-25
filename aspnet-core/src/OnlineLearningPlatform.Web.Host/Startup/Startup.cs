@@ -42,6 +42,8 @@ namespace OnlineLearningPlatform.Web.Host.Startup
             {
                 options.Filters.Add(new AbpAutoValidateAntiforgeryTokenAttribute());
             });
+            // Ensure controllers are resolved via DI
+            services.AddControllers().AddControllersAsServices();
 
             IdentityRegistrar.Register(services);
             AuthConfigurer.Configure(services, _appConfiguration);
@@ -80,6 +82,9 @@ namespace OnlineLearningPlatform.Web.Host.Startup
                         .AllowAnyHeader();
                 });
             });
+
+            // Register EmailAdminService for DI
+            services.AddTransient<OnlineLearningPlatform.EmailService.EmailAdminService>();
 
         }
 

@@ -17,6 +17,15 @@
     <None Remove="Services\**" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="EmailAdminService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="EmailService\EmailAdminService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SendGrid" Version="9.29.3" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\OnlineLearningPlatform.Core\OnlineLearningPlatform.Core.csproj" />
   </ItemGroup>
 </Project>

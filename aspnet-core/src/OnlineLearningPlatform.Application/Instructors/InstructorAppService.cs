@@ -6,9 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using OnlineLearningPlatform.Authorization.Users;
 using OnlineLearningPlatform.Courses.Dto;
 using OnlineLearningPlatform.Domain.Instructors;
+using OnlineLearningPlatform.EmailService;
 using OnlineLearningPlatform.Instructors.Dto;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Threading.Tasks;
 
 namespace OnlineLearningPlatform.Instructors
@@ -18,17 +20,20 @@ namespace OnlineLearningPlatform.Instructors
         private readonly IRepository<Instructor, Guid> _instructorRepository;
         private readonly UserManager _userManager;
         private readonly InstructorManager _instructorManager;
+        private readonly EmailAdminService _emailAdminService;
 
         public InstructorAppService(
             IRepository<Instructor, Guid> repository,
             UserManager userManager,
-            InstructorManager instructorManager
+            InstructorManager instructorManager,
+             EmailAdminService emailService
             )
             : base(repository)
         {
             _instructorRepository = repository;
             _userManager = userManager;
             _instructorManager = instructorManager;
+            _emailAdminService = emailService;
         }
 
         public override async Task<CreateInstructorDto> CreateAsync(CreateInstructorDto input)
@@ -36,7 +41,27 @@ namespace OnlineLearningPlatform.Instructors
 
             var createInstructor = await _instructorManager.CreateInstructorAsync(input.Name, input.Surname, input.UserName, input.Email, input.Password, input.Bio, input.Profession);
 
+            // Send welcome email after successful creation
+            await SendWelcomeEmailAsync(input.Email, input.Name, "Instructor");
+
             return input;
+        }
+
+        private async Task SendWelcomeEmailAsync(string email, string name, string role)
+        {
+            var subject = "Welcome to Your Teaching Journey! 🚀";
+            var message = $@"Hey {name}! 
+
+            Welcome to the future of education! You've just stepped into a realm where knowledge meets innovation, and teaching transcends traditional boundaries. 
+
+            As an Instructor, you're not just joining a platform – you're becoming part of a revolutionary movement that's reshaping how we share wisdom, inspire minds, and unlock human potential. Get ready to elevate your teaching to dimensions you never imagined possible.
+
+            Your mission to transform lives through learning starts now. Let's create some educational magic together! ✨
+
+            Stay inspired, stay innovative!
+            The OLP Team";
+
+            await _emailAdminService.SendEmail(subject, email, name, message);
         }
 
 
